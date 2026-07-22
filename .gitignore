@@ -1,0 +1,4 @@
+# Local preview of the flasher: a real merged image plus a manifest pointing at
+# it, so flash.html can be exercised before CI has published anything.
+_preview/
+_preview_flash.html
