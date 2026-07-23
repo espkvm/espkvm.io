@@ -6,7 +6,7 @@
     <title>ESP-KVM &mdash; an IP-KVM on the ESP32-P4</title>
     <meta
       name="description"
-      content="An open IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge: the target's screen and a USB keyboard and mouse, in a browser, over HTTPS."
+      content="An open IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge: the target's screen and a USB keyboard and mouse, in a browser, over HTTPS. Boot a target from a disk image, update over the network, all from a megabyte of firmware."
     />
     <link rel="icon" href="favicon.ico" sizes="any" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
@@ -14,33 +14,38 @@
     <meta property="og:title" content="ESP-KVM" />
     <meta
       property="og:description"
-      content="An IP-KVM on the ESP32-P4: HDMI capture, USB keyboard and mouse, in a browser."
+      content="An IP-KVM on the ESP32-P4: HDMI capture, USB keyboard and mouse, boot-from-image, in a browser."
     />
     <meta property="og:type" content="website" />
 
     <!--
       Everything is in this file on purpose. No fonts, no analytics, no CDN:
       the project exists to work on networks that have no way out, and a page
-      describing it should not need one either.
+      describing it should not need one either. The board photos and the
+      screenshot are the only assets, and they sit next to this file.
     -->
     <style>
       :root {
         color-scheme: dark;
         --bg: #0e1116;
         --bg-raised: #161b22;
+        --bg-soft: #12171e;
         --border: #2a313c;
+        --border-soft: #222831;
         --text: #e6edf3;
         --muted: #9aa7b4;
         --faint: #6b7885;
         --accent: #4c9aff;
         --accent-hover: #6bb0ff;
         --accent-text: #08121f;
+        --accent-soft: rgba(76, 154, 255, 0.12);
         --ok: #46c17c;
         --warn: #e3a33c;
         --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
           Arial, "Noto Sans", sans-serif;
         --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
           "Liberation Mono", monospace;
+        --maxw: 820px;
       }
 
       @media (prefers-color-scheme: light) {
@@ -48,13 +53,16 @@
           color-scheme: light;
           --bg: #f2f4f7;
           --bg-raised: #ffffff;
+          --bg-soft: #eaeef3;
           --border: #d3d9e0;
+          --border-soft: #e2e7ec;
           --text: #10151c;
           --muted: #4c5764;
           --faint: #6b7885;
           --accent: #1f6feb;
           --accent-hover: #1158c7;
           --accent-text: #ffffff;
+          --accent-soft: rgba(31, 111, 235, 0.1);
           --ok: #1a7f4b;
           --warn: #9a6700;
         }
@@ -64,9 +72,13 @@
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 76px;
+      }
+
       body {
         margin: 0;
-        padding: 0 20px 64px;
         background: var(--bg);
         color: var(--text);
         font-family: var(--font);
@@ -75,54 +87,133 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      main {
-        max-width: 720px;
+      .wrap {
+        max-width: var(--maxw);
         margin: 0 auto;
-      }
-
-      header {
-        padding: 72px 0 40px;
-        text-align: center;
-      }
-
-      header svg {
-        color: var(--text);
-      }
-
-      h1 {
-        margin: 20px 0 8px;
-        font-size: 34px;
-        letter-spacing: -0.01em;
-      }
-
-      .tagline {
-        margin: 0 auto;
-        max-width: 34em;
-        color: var(--muted);
-        font-size: 18px;
-      }
-
-      h2 {
-        margin: 48px 0 12px;
-        font-size: 20px;
-        letter-spacing: -0.01em;
-      }
-
-      h3 {
-        margin: 28px 0 6px;
-        font-size: 16px;
-      }
-
-      p {
-        margin: 0 0 14px;
+        padding: 0 20px;
       }
 
       a {
         color: var(--accent);
       }
-
       a:hover {
         color: var(--accent-hover);
+      }
+
+      /* ---- top navigation ------------------------------------------------ */
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--border-soft);
+        background: color-mix(in srgb, var(--bg) 82%, transparent);
+        backdrop-filter: saturate(140%) blur(10px);
+      }
+
+      .nav-inner {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 20px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        text-decoration: none;
+        font-size: 16px;
+      }
+
+      .brand svg {
+        display: block;
+        border-radius: 6px;
+      }
+
+      .nav-links {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .nav-gh {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      @media (max-width: 640px) {
+        .nav-hide {
+          display: none;
+        }
+      }
+
+      /* ---- hero ---------------------------------------------------------- */
+
+      .hero {
+        text-align: center;
+        padding: 68px 0 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 12px 5px 10px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-raised);
+        color: var(--muted);
+        font-size: 13px;
+        text-decoration: none;
+        margin-bottom: 22px;
+      }
+      .pill:hover {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+      .pill b {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .pill .tag {
+        padding: 1px 8px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+
+      .hero h1 {
+        margin: 6px 0 12px;
+        font-size: clamp(34px, 6vw, 52px);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      .tagline {
+        margin: 0 auto;
+        max-width: 36em;
+        color: var(--muted);
+        font-size: clamp(17px, 2.4vw, 20px);
       }
 
       .actions {
@@ -130,163 +221,271 @@
         flex-wrap: wrap;
         gap: 12px;
         justify-content: center;
-        margin-top: 28px;
+        margin-top: 30px;
       }
 
       .btn {
-        display: inline-block;
-        padding: 10px 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
         border: 1px solid var(--border);
-        border-radius: 6px;
+        border-radius: 8px;
         background: var(--bg-raised);
         color: var(--text);
         text-decoration: none;
         font-size: 15px;
+        font-weight: 500;
       }
-
       .btn:hover {
         border-color: var(--accent);
         color: var(--text);
       }
-
       .btn-primary {
         background: var(--accent);
         border-color: var(--accent);
         color: var(--accent-text);
       }
-
       .btn-primary:hover {
         background: var(--accent-hover);
         border-color: var(--accent-hover);
         color: var(--accent-text);
       }
 
+      /* ---- screenshot ---------------------------------------------------- */
 
-      .diagram {
-        margin: 8px 0 6px;
+      .shot {
+        margin: 40px 0 8px;
+      }
+      .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .shot figcaption {
+        margin-top: 10px;
+        color: var(--faint);
+        font-size: 14px;
+        text-align: center;
       }
 
+      /* ---- sections ------------------------------------------------------ */
+
+      section {
+        padding: 30px 0;
+      }
+      section + section {
+        border-top: 1px solid var(--border-soft);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: clamp(22px, 3.4vw, 28px);
+        letter-spacing: -0.015em;
+      }
+
+      .lead {
+        margin: 0 0 22px;
+        color: var(--muted);
+      }
+
+      .prose p {
+        margin: 0 0 14px;
+      }
+
+      h3 {
+        margin: 24px 0 6px;
+        font-size: 17px;
+      }
+
+      /* ---- diagram ------------------------------------------------------- */
+
+      .diagram {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-soft);
+      }
       .diagram svg {
         width: 100%;
         height: auto;
       }
-
       .diagram .box {
         fill: var(--bg-raised);
         stroke: var(--border);
         stroke-width: 1.5;
       }
-
       .diagram .box-accent {
         stroke: var(--accent);
       }
-
       .diagram .label {
         fill: var(--text);
         font-family: var(--font);
         font-size: 13px;
         font-weight: 600;
       }
-
       .diagram .sub {
         fill: var(--muted);
         font-family: var(--font);
         font-size: 11px;
       }
-
       .diagram .wire {
         stroke: var(--muted);
         stroke-width: 1.5;
         fill: none;
       }
-
       .diagram .wire-accent {
         stroke: var(--accent);
       }
-
       .diagram .wire-label {
         fill: var(--muted);
         font-family: var(--mono);
         font-size: 11px;
       }
-
       .caption {
-        margin: 0 0 14px;
+        margin: 14px 0 0;
         color: var(--faint);
         font-size: 14px;
       }
 
-
-      .shot {
-        margin: 8px 0 32px;
-      }
-
-      .shot img {
-        display: block;
-        width: 100%;
-        height: auto;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-      }
-
-      .shot figcaption {
-        margin-top: 8px;
-        color: var(--faint);
-        font-size: 14px;
-        text-align: center;
-      }
-
-      .card {
-        padding: 16px 18px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg-raised);
-      }
+      /* ---- feature grid -------------------------------------------------- */
 
       .grid {
         display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       }
 
-      .grid h3 {
-        margin: 0 0 4px;
+      .card {
+        padding: 18px 20px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-raised);
       }
 
-      .grid p {
+      .card .ico {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        margin-bottom: 12px;
+      }
+      .card .ico svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+
+      .card h3 {
+        margin: 0 0 5px;
+        font-size: 16px;
+      }
+      .card p {
         margin: 0;
         color: var(--muted);
         font-size: 15px;
       }
+
+      /* ---- hardware cards (photos) --------------------------------------- */
+
+      .hw {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+      .hw-card {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-raised);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .hw-photo {
+        background: #ffffff;
+        aspect-ratio: 16 / 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+      }
+      .hw-photo img {
+        max-width: 100%;
+        max-height: 100%;
+        height: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+      .hw-body {
+        padding: 16px 18px 18px;
+      }
+      .hw-body .role {
+        color: var(--faint);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .hw-body h3 {
+        margin: 4px 0 6px;
+        font-size: 17px;
+      }
+      .hw-body p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .hw-body a {
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      .hw-body a:hover {
+        text-decoration: underline;
+      }
+      .hw-cables {
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* ---- tables -------------------------------------------------------- */
 
       table {
         width: 100%;
         border-collapse: collapse;
         font-size: 15px;
       }
-
+      .table-scroll {
+        overflow-x: auto;
+      }
       th,
       td {
-        padding: 8px 10px;
+        padding: 9px 12px;
         border-bottom: 1px solid var(--border);
         text-align: left;
         vertical-align: top;
       }
-
       th {
         color: var(--muted);
         font-weight: 600;
       }
-
       td.num {
         font-family: var(--mono);
         white-space: nowrap;
       }
-
+      .status td:last-child {
+        white-space: nowrap;
+        font-size: 14px;
+      }
       .yes {
         color: var(--ok);
       }
-
       .no {
         color: var(--faint);
       }
@@ -302,7 +501,6 @@
         font-size: 13px;
         line-height: 1.5;
       }
-
       code {
         font-family: var(--mono);
         font-size: 0.92em;
@@ -310,56 +508,115 @@
 
       .note {
         border-left: 3px solid var(--warn);
-        padding: 10px 14px;
+        padding: 12px 16px;
         background: var(--bg-raised);
-        border-radius: 0 6px 6px 0;
+        border-radius: 0 8px 8px 0;
         color: var(--muted);
       }
-
       .note strong {
         color: var(--text);
       }
 
+      /* ---- footer -------------------------------------------------------- */
+
       footer {
-        margin-top: 56px;
-        padding-top: 20px;
         border-top: 1px solid var(--border);
-        color: var(--faint);
+        margin-top: 20px;
+      }
+      .foot-inner {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 32px 20px 56px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px 48px;
+        align-items: flex-start;
+      }
+      .foot-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
         font-size: 14px;
       }
-
-      footer a {
+      .foot-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 22px;
+        margin-left: auto;
+      }
+      .foot-links a {
         color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .foot-links a:hover {
+        color: var(--text);
+      }
+      .foot-note {
+        flex-basis: 100%;
+        color: var(--faint);
+        font-size: 13px;
+        margin: 0;
       }
     </style>
   </head>
 
   <body>
-    <main>
-      <header>
-        <!-- The project mark: the name on a 5x5 grid, same as the firmware's favicon. -->
-        <svg viewBox="0 0 64 64" width="88" height="88" role="img" aria-label="ESP-KVM">
-          <rect width="64" height="64" rx="12" fill="#0e1116" />
-          <g fill="#e6edf3">
-            <rect x="6" y="15" width="3" height="3" /><rect x="9" y="15" width="3" height="3" /><rect x="12" y="15" width="3" height="3" /><rect x="15" y="15" width="3" height="3" /><rect x="18" y="15" width="3" height="3" /><rect x="6" y="18" width="3" height="3" /><rect x="6" y="21" width="3" height="3" /><rect x="9" y="21" width="3" height="3" /><rect x="12" y="21" width="3" height="3" /><rect x="15" y="21" width="3" height="3" /><rect x="6" y="24" width="3" height="3" /><rect x="6" y="27" width="3" height="3" /><rect x="9" y="27" width="3" height="3" /><rect x="12" y="27" width="3" height="3" /><rect x="15" y="27" width="3" height="3" /><rect x="18" y="27" width="3" height="3" />
-            <rect x="24" y="15" width="3" height="3" /><rect x="27" y="15" width="3" height="3" /><rect x="30" y="15" width="3" height="3" /><rect x="33" y="15" width="3" height="3" /><rect x="36" y="15" width="3" height="3" /><rect x="24" y="18" width="3" height="3" /><rect x="24" y="21" width="3" height="3" /><rect x="27" y="21" width="3" height="3" /><rect x="30" y="21" width="3" height="3" /><rect x="33" y="21" width="3" height="3" /><rect x="36" y="21" width="3" height="3" /><rect x="36" y="24" width="3" height="3" /><rect x="24" y="27" width="3" height="3" /><rect x="27" y="27" width="3" height="3" /><rect x="30" y="27" width="3" height="3" /><rect x="33" y="27" width="3" height="3" /><rect x="36" y="27" width="3" height="3" />
-            <rect x="42" y="15" width="3" height="3" /><rect x="45" y="15" width="3" height="3" /><rect x="48" y="15" width="3" height="3" /><rect x="51" y="15" width="3" height="3" /><rect x="54" y="15" width="3" height="3" /><rect x="42" y="18" width="3" height="3" /><rect x="54" y="18" width="3" height="3" /><rect x="42" y="21" width="3" height="3" /><rect x="45" y="21" width="3" height="3" /><rect x="48" y="21" width="3" height="3" /><rect x="51" y="21" width="3" height="3" /><rect x="54" y="21" width="3" height="3" /><rect x="42" y="24" width="3" height="3" /><rect x="42" y="27" width="3" height="3" />
-            <rect x="6" y="33" width="3" height="3" /><rect x="18" y="33" width="3" height="3" /><rect x="6" y="36" width="3" height="3" /><rect x="15" y="36" width="3" height="3" /><rect x="6" y="39" width="3" height="3" /><rect x="9" y="39" width="3" height="3" /><rect x="12" y="39" width="3" height="3" /><rect x="6" y="42" width="3" height="3" /><rect x="15" y="42" width="3" height="3" /><rect x="6" y="45" width="3" height="3" /><rect x="18" y="45" width="3" height="3" />
-            <rect x="24" y="33" width="3" height="3" /><rect x="36" y="33" width="3" height="3" /><rect x="24" y="36" width="3" height="3" /><rect x="36" y="36" width="3" height="3" /><rect x="24" y="39" width="3" height="3" /><rect x="36" y="39" width="3" height="3" /><rect x="27" y="42" width="3" height="3" /><rect x="33" y="42" width="3" height="3" /><rect x="30" y="45" width="3" height="3" />
-            <rect x="42" y="33" width="3" height="3" /><rect x="54" y="33" width="3" height="3" /><rect x="42" y="36" width="3" height="3" /><rect x="45" y="36" width="3" height="3" /><rect x="51" y="36" width="3" height="3" /><rect x="54" y="36" width="3" height="3" /><rect x="42" y="39" width="3" height="3" /><rect x="48" y="39" width="3" height="3" /><rect x="54" y="39" width="3" height="3" /><rect x="42" y="42" width="3" height="3" /><rect x="54" y="42" width="3" height="3" /><rect x="42" y="45" width="3" height="3" /><rect x="54" y="45" width="3" height="3" />
-          </g>
-        </svg>
+    <!-- top navigation -->
+    <nav class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#top" aria-label="ESP-KVM home">
+          <svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+            <rect width="64" height="64" rx="12" fill="#0e1116" />
+            <g fill="#e6edf3">
+              <rect x="6" y="15" width="3" height="3" /><rect x="9" y="15" width="3" height="3" /><rect x="12" y="15" width="3" height="3" /><rect x="15" y="15" width="3" height="3" /><rect x="18" y="15" width="3" height="3" /><rect x="6" y="18" width="3" height="3" /><rect x="6" y="21" width="3" height="3" /><rect x="9" y="21" width="3" height="3" /><rect x="12" y="21" width="3" height="3" /><rect x="15" y="21" width="3" height="3" /><rect x="6" y="24" width="3" height="3" /><rect x="6" y="27" width="3" height="3" /><rect x="9" y="27" width="3" height="3" /><rect x="12" y="27" width="3" height="3" /><rect x="15" y="27" width="3" height="3" /><rect x="18" y="27" width="3" height="3" />
+              <rect x="24" y="15" width="3" height="3" /><rect x="27" y="15" width="3" height="3" /><rect x="30" y="15" width="3" height="3" /><rect x="33" y="15" width="3" height="3" /><rect x="36" y="15" width="3" height="3" /><rect x="24" y="18" width="3" height="3" /><rect x="24" y="21" width="3" height="3" /><rect x="27" y="21" width="3" height="3" /><rect x="30" y="21" width="3" height="3" /><rect x="33" y="21" width="3" height="3" /><rect x="36" y="21" width="3" height="3" /><rect x="36" y="24" width="3" height="3" /><rect x="24" y="27" width="3" height="3" /><rect x="27" y="27" width="3" height="3" /><rect x="30" y="27" width="3" height="3" /><rect x="33" y="27" width="3" height="3" /><rect x="36" y="27" width="3" height="3" />
+              <rect x="42" y="15" width="3" height="3" /><rect x="45" y="15" width="3" height="3" /><rect x="48" y="15" width="3" height="3" /><rect x="51" y="15" width="3" height="3" /><rect x="54" y="15" width="3" height="3" /><rect x="42" y="18" width="3" height="3" /><rect x="54" y="18" width="3" height="3" /><rect x="42" y="21" width="3" height="3" /><rect x="45" y="21" width="3" height="3" /><rect x="48" y="21" width="3" height="3" /><rect x="51" y="21" width="3" height="3" /><rect x="54" y="21" width="3" height="3" /><rect x="42" y="24" width="3" height="3" /><rect x="42" y="27" width="3" height="3" />
+              <rect x="6" y="33" width="3" height="3" /><rect x="18" y="33" width="3" height="3" /><rect x="6" y="36" width="3" height="3" /><rect x="15" y="36" width="3" height="3" /><rect x="6" y="39" width="3" height="3" /><rect x="9" y="39" width="3" height="3" /><rect x="12" y="39" width="3" height="3" /><rect x="6" y="42" width="3" height="3" /><rect x="15" y="42" width="3" height="3" /><rect x="6" y="45" width="3" height="3" /><rect x="18" y="45" width="3" height="3" />
+              <rect x="24" y="33" width="3" height="3" /><rect x="36" y="33" width="3" height="3" /><rect x="24" y="36" width="3" height="3" /><rect x="36" y="36" width="3" height="3" /><rect x="24" y="39" width="3" height="3" /><rect x="36" y="39" width="3" height="3" /><rect x="27" y="42" width="3" height="3" /><rect x="33" y="42" width="3" height="3" /><rect x="30" y="45" width="3" height="3" />
+              <rect x="42" y="33" width="3" height="3" /><rect x="54" y="33" width="3" height="3" /><rect x="42" y="36" width="3" height="3" /><rect x="45" y="36" width="3" height="3" /><rect x="51" y="36" width="3" height="3" /><rect x="54" y="36" width="3" height="3" /><rect x="42" y="39" width="3" height="3" /><rect x="48" y="39" width="3" height="3" /><rect x="54" y="39" width="3" height="3" /><rect x="42" y="42" width="3" height="3" /><rect x="54" y="42" width="3" height="3" /><rect x="42" y="45" width="3" height="3" /><rect x="54" y="45" width="3" height="3" />
+            </g>
+          </svg>
+          ESP-KVM
+        </a>
+        <div class="nav-links">
+          <a class="nav-hide" href="#features">Features</a>
+          <a class="nav-hide" href="#specs">Numbers</a>
+          <a class="nav-hide" href="#hardware">Hardware</a>
+          <a class="nav-hide" href="#start">Get started</a>
+          <a href="https://github.com/espkvm/espkvm/releases">Releases</a>
+          <a class="nav-gh" href="https://github.com/espkvm/espkvm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.22-3.37-1.22-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.34c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" />
+            </svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </nav>
 
-        <h1>ESP-KVM</h1>
+    <a id="top"></a>
+
+    <div class="wrap">
+      <!-- hero -->
+      <header class="hero">
+        <a class="pill" href="https://github.com/espkvm/espkvm/releases">
+          <span class="tag">v0.2.0</span>
+          <span>Virtual media &mdash; boot from a disk image. <b>What&rsquo;s new &rarr;</b></span>
+        </a>
+
+        <h1>The machine, in a browser tab.</h1>
         <p class="tagline">
           An IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge. The
-          target machine's screen, and a USB keyboard and mouse it cannot tell
-          from real ones, in a browser.
+          target machine&rsquo;s screen, and a USB keyboard and mouse it cannot
+          tell from real ones, over HTTPS &mdash; even when it has no operating
+          system at all.
         </p>
 
         <div class="actions">
-          <a class="btn btn-primary" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
-          <a class="btn" href="flash.html">Flash from the browser</a>
+          <a class="btn btn-primary" href="flash.html">Flash from the browser</a>
+          <a class="btn" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
           <a class="btn" href="https://github.com/espkvm/espkvm/releases">Download firmware</a>
         </div>
       </header>
@@ -377,323 +634,432 @@
         </figcaption>
       </figure>
 
-      <p>
-        The point is to reach a machine that has no working operating system &mdash; a
-        BIOS screen, a boot menu, a kernel that will not come up &mdash; from a device
-        that costs a fraction of a commercial KVM-over-IP. It captures HDMI,
-        presents itself over USB as a keyboard and mouse, and serves the whole
-        thing over HTTPS from a megabyte of firmware &mdash; the console inside it is
-        43 KB.
-      </p>
-
-
-      <h2>How it connects</h2>
-
-      <div class="diagram">
-        <svg viewBox="0 0 760 250" role="img" aria-labelledby="diagram-title">
-          <title id="diagram-title">
-            The target machine's HDMI goes to the capture board, which feeds the
-            ESP32-P4 over MIPI CSI-2. The ESP32-P4 reaches the operator's
-            browser over Ethernet, and plugs back into the target as a USB
-            keyboard and mouse.
-          </title>
-
-          <defs>
-            <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7"
-                    markerHeight="7" orient="auto-start-reverse">
-              <path d="M0,0 L8,4 L0,8 z" fill="currentColor" />
-            </marker>
-          </defs>
-
-          <!-- target machine -->
-          <rect class="box" x="8" y="34" width="150" height="76" rx="8" />
-          <text class="label" x="83" y="66" text-anchor="middle">target machine</text>
-          <text class="sub" x="83" y="86" text-anchor="middle">no OS needed</text>
-
-          <!-- capture board -->
-          <rect class="box" x="212" y="34" width="150" height="76" rx="8" />
-          <text class="label" x="287" y="60" text-anchor="middle">TC358743</text>
-          <text class="sub" x="287" y="78" text-anchor="middle">HDMI capture</text>
-          <text class="sub" x="287" y="94" text-anchor="middle">Geekworm C790</text>
-
-          <!-- the device -->
-          <rect class="box box-accent" x="416" y="34" width="150" height="76" rx="8" />
-          <text class="label" x="491" y="60" text-anchor="middle">ESP32-P4</text>
-          <text class="sub" x="491" y="78" text-anchor="middle">ESP-KVM firmware</text>
-          <text class="sub" x="491" y="94" text-anchor="middle">Waveshare P4-ETH</text>
-
-          <!-- operator -->
-          <rect class="box" x="620" y="34" width="132" height="76" rx="8" />
-          <text class="label" x="686" y="66" text-anchor="middle">your browser</text>
-          <text class="sub" x="686" y="86" text-anchor="middle">anywhere on the LAN</text>
-
-          <!-- HDMI -->
-          <line class="wire" x1="158" y1="72" x2="206" y2="72" marker-end="url(#arrow)"
-                color="var(--muted)" />
-          <text class="wire-label" x="182" y="60" text-anchor="middle">HDMI</text>
-
-          <!-- CSI -->
-          <line class="wire" x1="362" y1="72" x2="410" y2="72" marker-end="url(#arrow)"
-                color="var(--muted)" />
-          <text class="wire-label" x="386" y="60" text-anchor="middle">CSI-2</text>
-
-          <!-- Ethernet -->
-          <line class="wire wire-accent" x1="566" y1="72" x2="614" y2="72"
-                marker-end="url(#arrow)" color="var(--accent)" />
-          <text class="wire-label" x="590" y="60" text-anchor="middle">HTTPS</text>
-
-          <!-- USB HID back to the target -->
-          <path class="wire" d="M491,110 L491,180 L83,180 L83,116"
-                marker-end="url(#arrow)" color="var(--muted)" />
-          <text class="wire-label" x="287" y="200" text-anchor="middle">
-            USB &mdash; keyboard and mouse the target cannot tell from real ones
-          </text>
-        </svg>
-      </div>
-
-      <p class="caption">
-        Two cables to the target, one to the network. Nothing is installed on
-        the target machine and nothing runs on it &mdash; which is the point, since it
-        may not be running anything at all.
-      </p>
-
-      <h2>What it does</h2>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Follows the target</h3>
-          <p>
-            A machine switching from an 800&times;600 firmware screen to a 1080p
-            desktop is followed without intervention.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Clicks land where aimed</h3>
-          <p>
-            An absolute USB pointer, so the target's mouse acceleration cannot
-            drift the cursor away from the button you meant.
-          </p>
-        </div>
-        <div class="card">
-          <h3>MJPEG or H.264</h3>
-          <p>
-            Both encoded by hardware. H.264 costs a fraction of the bandwidth on
-            a screen that barely changes.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Updates itself</h3>
-          <p>
-            Two app slots and automatic rollback: an image that fails to start
-            returns the device to the one that worked.
-          </p>
-        </div>
-        <div class="card">
-          <h3>HTTPS and a login</h3>
-          <p>
-            A certificate the device issues itself on first boot, and a password
-            you can clear with the board button if you forget it.
-          </p>
-        </div>
-        <div class="card">
-          <h3>Says what it cannot do</h3>
-          <p>
-            Every feature reports whether the hardware supports it. A control
-            that cannot work is shown disabled, with the reason.
-          </p>
-        </div>
-      </div>
-
-      <h2>Measured, not estimated</h2>
-
-      <p>
-        Every number here came off the hardware, at 1080p. The ones that
-        contradicted the documentation are written down in
-        <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md"
-          >the hardware notes</a
-        >.
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>MJPEG</th>
-            <th>H.264</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Frame rate</td>
-            <td class="num">20 fps</td>
-            <td class="num">5&ndash;7 fps</td>
-          </tr>
-          <tr>
-            <td>Idle screen</td>
-            <td class="num">0 kbit/s</td>
-            <td class="num">170 kbit/s</td>
-          </tr>
-          <tr>
-            <td>Screen in motion</td>
-            <td class="num">8.5 Mbit/s</td>
-            <td class="num">~500 kbit/s</td>
-          </tr>
-          <tr>
-            <td>Chip temperature, full load</td>
-            <td class="num" colspan="2">46 &deg;C in open air</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>
-        So H.264 is not the faster option &mdash; it is the one that fits down a narrow
-        link. Browsers decode it through WebCodecs, which they only offer on
-        secure pages, which is one reason the device serves HTTPS.
-      </p>
-
-      <h3>These are this board's numbers, not the ceiling</h3>
-
-      <p>
-        The frame rates above come from one particular ESP32-P4, revision v1.3,
-        and the biggest cost in the H.264 path is something that revision forces
-        on us. Below silicon revision 3.0 the CSI receiver cannot hand over
-        YUV420 and the encoder will not accept RGB, so every frame takes a
-        detour through the pixel accelerator to change colour space &mdash; 76 ms of
-        the 145 ms a 1080p frame costs. On revision 3.0 and later that detour
-        does not exist: the camera path can deliver what the encoder wants
-        directly.
-      </p>
-
-      <p>
-        We have not run that, because we do not have that silicon. But the
-        reason is specific and checkable &mdash; it is a revision test in Espressif's
-        own driver, quoted in
-        <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md"
-          >the hardware notes</a
-        >
-        &mdash; so a newer board should move H.264 from a bandwidth trade to a
-        straight win. There is room on our side too: the conversion and the
-        encode currently run one after the other in the same task when they
-        could overlap.
-      </p>
-
-      <h2>Where it stands</h2>
-
-      <table>
-        <tbody>
-          <tr>
-            <td>Video capture, resolution changes, MJPEG, H.264</td>
-            <td class="yes">works</td>
-          </tr>
-          <tr>
-            <td>Keyboard, absolute and relative pointer, media keys, paste</td>
-            <td class="yes">works</td>
-          </tr>
-          <tr>
-            <td>HTTPS, login, physical password reset</td>
-            <td class="yes">works</td>
-          </tr>
-          <tr>
-            <td>Firmware updates over the network, with rollback</td>
-            <td class="yes">works</td>
-          </tr>
-          <tr>
-            <td>Thermal protection</td>
-            <td class="yes">works</td>
-          </tr>
-          <tr>
-            <td>Virtual media &mdash; booting the target from an ISO</td>
-            <td class="no">not yet</td>
-          </tr>
-          <tr>
-            <td>ATX power control</td>
-            <td class="no">not yet</td>
-          </tr>
-          <tr>
-            <td>HDMI audio</td>
-            <td class="no">not yet</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p class="note">
-        <strong>Not for the public internet.</strong> There is a login and there
-        is TLS, but nothing here has been through a security review, and a
-        device holding a keyboard on someone else's machine is worth more to an
-        attacker than most things on a network. Keep it on a network you trust,
-        or behind a VPN.
-      </p>
-
-      <h2>What you need</h2>
-
-      <table>
-        <tbody>
-          <tr>
-            <td>Board</td>
-            <td>
-              Waveshare ESP32-P4-ETH, or any ESP32-P4 module with a
-              Raspberry-Pi-compatible CSI connector and Ethernet
-            </td>
-          </tr>
-          <tr>
-            <td>Capture</td>
-            <td>Geekworm C790, or another TC358743 HDMI &rarr; MIPI CSI-2 board</td>
-          </tr>
-          <tr>
-            <td>Cables</td>
-            <td>
-              CSI ribbon between the two, HDMI from the target, USB-C from the
-              board to the target
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2>Getting started</h2>
-
-      <p>
-        The easiest way is
-        <a href="flash.html">flashing straight from the browser</a> &mdash; Chrome and
-        Edge can talk to the board over USB, and nothing needs installing. If
-        you would rather use the command line, take the full-flash archive from
-        the <a href="https://github.com/espkvm/espkvm/releases">releases page</a>,
-        unpack it, and write it with
-        <a href="https://github.com/espressif/esptool">esptool</a>:
-      </p>
-
-      <pre><code>esptool --chip esp32p4 -b 921600 write-flash @flash_args</code></pre>
-
-      <p>
-        Then plug in Ethernet, HDMI from the target and USB to the target, and
-        open <code>https://espkvm.local/</code>. The browser will warn about the
-        certificate once &mdash; the device signed it itself, and nothing else
-        vouches for it. Sign in as <code>admin / admin</code>; the console will
-        not go any further until that password is changed.
-      </p>
-
-      <h2>Built on someone else's work</h2>
-
-      <p>
-        This project exists because of
-        <strong>Jonathan Rowny</strong> and his
-        <a href="https://github.com/jrowny/p4kvm">p4kvm</a> proof of concept. He
-        was the one who got an ESP32-P4 to pull frames off a TC358743 at all,
-        and put it in the open with a working
-        <a href="https://youtu.be/f21f6RnW5Yc">demonstration</a> for anyone to
-        build on &mdash; this is that thing built on. Two pieces of his work are
-        reverse engineering no datasheet would have handed us: the TC358743
-        bring-up sequence, and the direct programming of the ESP32-P4's
-        <code>MIPI_CSI_BRIDGE</code> registers, which the camera API does not
-        expose. Both still carry this firmware; the layers above them were
-        rewritten. Thank you, Jonathan, for publishing it.
-      </p>
-
-      <footer>
+      <section class="prose" style="border: 0">
         <p>
-          Apache-2.0 &middot;
-          <a href="https://github.com/espkvm/espkvm">github.com/espkvm/espkvm</a>
+          The point is to reach a machine that has no working operating system
+          &mdash; a BIOS screen, a boot menu, a kernel that will not come up &mdash;
+          from a device that costs a fraction of a commercial KVM-over-IP. It
+          captures HDMI, presents itself over USB as a keyboard and mouse,
+          hands the target a disk image to boot from, and serves the whole
+          thing over HTTPS from a megabyte of firmware &mdash; the console inside
+          it is 44&nbsp;KB.
         </p>
-      </footer>
-    </main>
+      </section>
+
+      <!-- how it connects -->
+      <section>
+        <h2>How it connects</h2>
+        <p class="lead">
+          Two cables to the target, one to the network. Nothing is installed on
+          the target and nothing runs on it.
+        </p>
+
+        <div class="diagram">
+          <svg viewBox="0 0 760 250" role="img" aria-labelledby="diagram-title">
+            <title id="diagram-title">
+              The target machine's HDMI goes to the capture board, which feeds
+              the ESP32-P4 over MIPI CSI-2. The ESP32-P4 reaches the operator's
+              browser over Ethernet, and plugs back into the target as a USB
+              keyboard and mouse.
+            </title>
+
+            <defs>
+              <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7"
+                      markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L8,4 L0,8 z" fill="currentColor" />
+              </marker>
+            </defs>
+
+            <rect class="box" x="8" y="34" width="150" height="76" rx="8" />
+            <text class="label" x="83" y="66" text-anchor="middle">target machine</text>
+            <text class="sub" x="83" y="86" text-anchor="middle">no OS needed</text>
+
+            <rect class="box" x="212" y="34" width="150" height="76" rx="8" />
+            <text class="label" x="287" y="60" text-anchor="middle">TC358743</text>
+            <text class="sub" x="287" y="78" text-anchor="middle">HDMI capture</text>
+            <text class="sub" x="287" y="94" text-anchor="middle">Geekworm C790</text>
+
+            <rect class="box box-accent" x="416" y="34" width="150" height="76" rx="8" />
+            <text class="label" x="491" y="60" text-anchor="middle">ESP32-P4</text>
+            <text class="sub" x="491" y="78" text-anchor="middle">ESP-KVM firmware</text>
+            <text class="sub" x="491" y="94" text-anchor="middle">Waveshare P4-ETH</text>
+
+            <rect class="box" x="620" y="34" width="132" height="76" rx="8" />
+            <text class="label" x="686" y="66" text-anchor="middle">your browser</text>
+            <text class="sub" x="686" y="86" text-anchor="middle">anywhere on the LAN</text>
+
+            <line class="wire" x1="158" y1="72" x2="206" y2="72" marker-end="url(#arrow)"
+                  color="var(--muted)" />
+            <text class="wire-label" x="182" y="60" text-anchor="middle">HDMI</text>
+
+            <line class="wire" x1="362" y1="72" x2="410" y2="72" marker-end="url(#arrow)"
+                  color="var(--muted)" />
+            <text class="wire-label" x="386" y="60" text-anchor="middle">CSI-2</text>
+
+            <line class="wire wire-accent" x1="566" y1="72" x2="614" y2="72"
+                  marker-end="url(#arrow)" color="var(--accent)" />
+            <text class="wire-label" x="590" y="60" text-anchor="middle">HTTPS</text>
+
+            <path class="wire" d="M491,110 L491,180 L83,180 L83,116"
+                  marker-end="url(#arrow)" color="var(--muted)" />
+            <text class="wire-label" x="287" y="200" text-anchor="middle">
+              USB &mdash; keyboard and mouse the target cannot tell from real ones
+            </text>
+          </svg>
+          <p class="caption">
+            Nothing runs on the target machine &mdash; which is the point, since it
+            may not be running anything at all.
+          </p>
+        </div>
+      </section>
+
+      <!-- what it does -->
+      <section id="features">
+        <h2>What it does</h2>
+        <p class="lead">
+          What the firmware ships with. Anything the hardware cannot support, the
+          device shows disabled with the reason &mdash; it does not pretend.
+        </p>
+
+        <div class="grid">
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </span>
+            <h3>Follows the target</h3>
+            <p>
+              A machine switching from an 800&times;600 firmware screen to a
+              1080p desktop is followed without intervention.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l7 16 2-7 7-2z"/></svg>
+            </span>
+            <h3>Clicks land where aimed</h3>
+            <p>
+              An absolute USB pointer, so the target&rsquo;s mouse acceleration
+              cannot drift the cursor away from the button you meant.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3z"/></svg>
+            </span>
+            <h3>MJPEG or H.264</h3>
+            <p>
+              Both encoded by hardware. H.264 costs a fraction of the bandwidth
+              on a screen that barely changes.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6c0-1.1 3.6-2 8-2s8 .9 8 2-3.6 2-8 2-8-.9-8-2z"/><path d="M4 6v12c0 1.1 3.6 2 8 2s8-.9 8-2V6"/><path d="M4 12c0 1.1 3.6 2 8 2s8-.9 8-2"/></svg>
+            </span>
+            <h3>Boot from a disk image</h3>
+            <p>
+              A rescue or live image on a microSD card, handed to the target as
+              a USB drive it can boot from. Read-only, with the limits noted
+              below.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+            </span>
+            <h3>Updates itself</h3>
+            <p>
+              Two app slots and automatic rollback: an image that fails to start
+              returns the device to the one that worked.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </span>
+            <h3>HTTPS and a login</h3>
+            <p>
+              A certificate the device issues itself on first boot, and a
+              password you can clear with the board button if you forget it.
+            </p>
+          </div>
+        </div>
+
+        <p class="note" style="margin-top: 20px">
+          <strong>Virtual media, honestly.</strong> The microSD is served
+          read-only &mdash; this board cannot write it reliably &mdash; so images
+          go on the card in a reader, formatted FAT32, up to 4&nbsp;GB each.
+          Reads run around 1.5&nbsp;MB/s: quick for a rescue or minimal image,
+          several minutes for a heavy graphical one. It is a known ESP32-P4 SD
+          limitation, and the console tells you so.
+        </p>
+      </section>
+
+      <!-- numbers -->
+      <section id="specs">
+        <h2>Measured, not estimated</h2>
+        <p class="lead">
+          Every number here came off the hardware, at 1080p. The ones that
+          contradicted the documentation are written down in
+          <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">the hardware notes</a>.
+        </p>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>MJPEG</th>
+                <th>H.264</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Frame rate</td>
+                <td class="num">20 fps</td>
+                <td class="num">5&ndash;7 fps</td>
+              </tr>
+              <tr>
+                <td>Idle screen</td>
+                <td class="num">0 kbit/s</td>
+                <td class="num">170 kbit/s</td>
+              </tr>
+              <tr>
+                <td>Screen in motion</td>
+                <td class="num">8.5 Mbit/s</td>
+                <td class="num">~500 kbit/s</td>
+              </tr>
+              <tr>
+                <td>Chip temperature, full load</td>
+                <td class="num" colspan="2">46 &deg;C in open air</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prose">
+          <p style="margin-top: 18px">
+            So H.264 is not the faster option &mdash; it is the one that fits down a
+            narrow link. Browsers decode it through WebCodecs, which they only
+            offer on secure pages, which is one reason the device serves HTTPS.
+          </p>
+
+          <h3>These are this board&rsquo;s numbers, not the ceiling</h3>
+          <p>
+            The frame rates above come from one particular ESP32-P4, revision
+            v1.3, and the biggest cost in the H.264 path is something that
+            revision forces on us. Below silicon revision 3.0 the CSI receiver
+            cannot hand over YUV420 and the encoder will not accept RGB, so every
+            frame takes a detour through the pixel accelerator to change colour
+            space &mdash; 76&nbsp;ms of the 145&nbsp;ms a 1080p frame costs. On
+            revision 3.0 and later that detour does not exist: the camera path can
+            deliver what the encoder wants directly.
+          </p>
+          <p>
+            We have not run that, because we do not have that silicon. But the
+            reason is specific and checkable &mdash; it is a revision test in
+            Espressif&rsquo;s own driver, quoted in
+            <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">the hardware notes</a>
+            &mdash; so a newer board should move H.264 from a bandwidth trade to a
+            straight win. There is room on our side too: the conversion and the
+            encode currently run one after the other in the same task when they
+            could overlap.
+          </p>
+        </div>
+      </section>
+
+      <!-- where it stands -->
+      <section>
+        <h2>Where it stands</h2>
+        <p class="lead">An honest status board, the same one the device reports about itself.</p>
+
+        <div class="table-scroll">
+          <table class="status">
+            <tbody>
+              <tr>
+                <td>Video capture, resolution changes, MJPEG, H.264</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Keyboard, absolute and relative pointer, media keys, paste</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>HTTPS, login, physical password reset</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Firmware updates over the network, with rollback</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Thermal protection</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Virtual media &mdash; boot the target from a disk image</td>
+                <td class="yes">works, read-only</td>
+              </tr>
+              <tr>
+                <td>ATX power control</td>
+                <td class="no">not yet</td>
+              </tr>
+              <tr>
+                <td>HDMI audio</td>
+                <td class="no">not yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="note" style="margin-top: 18px">
+          <strong>Not for the public internet.</strong> There is a login and
+          there is TLS, but nothing here has been through a security review, and
+          a device holding a keyboard on someone else&rsquo;s machine is worth
+          more to an attacker than most things on a network. Keep it on a network
+          you trust, or behind a VPN.
+        </p>
+      </section>
+
+      <!-- hardware -->
+      <section id="hardware">
+        <h2>What you need</h2>
+        <p class="lead">
+          Two boards and three cables. Both boards are off-the-shelf; any
+          equivalent works, these are the ones this project is built and tested
+          on.
+        </p>
+
+        <div class="hw">
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="board-p4.webp" width="680" height="680" loading="lazy"
+                   alt="Waveshare ESP32-P4-ETH board" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The device</div>
+              <h3>Waveshare ESP32-P4-ETH</h3>
+              <p>
+                ESP32-P4 with 100M Ethernet, a Raspberry-Pi-compatible CSI
+                connector, USB-C OTG and a microSD slot. Another ESP32-P4 board
+                with Ethernet and the same CSI connector can run it too, after
+                remapping the pins in the firmware.
+              </p>
+              <a href="https://www.waveshare.com/esp32-p4-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="board-c790.webp" width="680" height="680" loading="lazy"
+                   alt="Geekworm C790 TC358743 HDMI-to-CSI capture board" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The capture</div>
+              <h3>Geekworm C790</h3>
+              <p>
+                A TC358743 HDMI&nbsp;&rarr;&nbsp;MIPI CSI-2 bridge that turns the
+                target&rsquo;s HDMI into a camera stream the ESP32-P4 can read.
+                Any other TC358743 capture board should do just as well.
+              </p>
+              <a href="https://wiki.geekworm.com/C790" rel="noopener">Geekworm wiki page &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="hw-cables">
+          <strong>Cables:</strong> a CSI ribbon between the two boards, HDMI from
+          the target, and USB-C from the board to the target. A microSD card if
+          you want boot-from-image.
+        </p>
+      </section>
+
+      <!-- getting started -->
+      <section id="start">
+        <h2>Getting started</h2>
+        <div class="prose">
+          <p>
+            The easiest way is
+            <a href="flash.html">flashing straight from the browser</a> &mdash;
+            Chrome and Edge can talk to the board over USB, and nothing needs
+            installing. If you would rather use the command line, take the
+            full-flash archive from the
+            <a href="https://github.com/espkvm/espkvm/releases">releases page</a>,
+            unpack it, and write it with
+            <a href="https://github.com/espressif/esptool">esptool</a>:
+          </p>
+
+          <pre><code>esptool --chip esp32p4 -b 921600 write-flash @flash_args</code></pre>
+
+          <p>
+            Then plug in Ethernet, HDMI from the target and USB to the target,
+            and open <code>https://espkvm.local/</code>. The browser will warn
+            about the certificate once &mdash; the device signed it itself, and
+            nothing else vouches for it. Sign in as <code>admin / admin</code>;
+            the console will not go any further until that password is changed.
+          </p>
+        </div>
+      </section>
+
+      <!-- credit -->
+      <section>
+        <h2>Built on someone else&rsquo;s work</h2>
+        <div class="prose">
+          <p>
+            This project exists because of <strong>Jonathan Rowny</strong> and
+            his <a href="https://github.com/jrowny/p4kvm">p4kvm</a> proof of
+            concept. He was the one who got an ESP32-P4 to pull frames off a
+            TC358743 at all, and put it in the open with a working
+            <a href="https://youtu.be/f21f6RnW5Yc">demonstration</a> for anyone
+            to build on &mdash; this is that thing built on. Two pieces of his
+            work are reverse engineering no datasheet would have handed us: the
+            TC358743 bring-up sequence, and the direct programming of the
+            ESP32-P4&rsquo;s <code>MIPI_CSI_BRIDGE</code> registers, which the
+            camera API does not expose. Both still carry this firmware; the
+            layers above them were rewritten. Thank you, Jonathan, for
+            publishing it.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="foot-inner">
+        <div class="foot-brand">
+          <svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+            <rect width="64" height="64" rx="12" fill="#0e1116" />
+            <g fill="#e6edf3">
+              <rect x="6" y="15" width="3" height="3" /><rect x="9" y="15" width="3" height="3" /><rect x="12" y="15" width="3" height="3" /><rect x="15" y="15" width="3" height="3" /><rect x="18" y="15" width="3" height="3" /><rect x="6" y="18" width="3" height="3" /><rect x="6" y="21" width="3" height="3" /><rect x="9" y="21" width="3" height="3" /><rect x="12" y="21" width="3" height="3" /><rect x="15" y="21" width="3" height="3" /><rect x="6" y="24" width="3" height="3" /><rect x="6" y="27" width="3" height="3" /><rect x="9" y="27" width="3" height="3" /><rect x="12" y="27" width="3" height="3" /><rect x="15" y="27" width="3" height="3" /><rect x="18" y="27" width="3" height="3" />
+              <rect x="24" y="15" width="3" height="3" /><rect x="27" y="15" width="3" height="3" /><rect x="30" y="15" width="3" height="3" /><rect x="33" y="15" width="3" height="3" /><rect x="36" y="15" width="3" height="3" /><rect x="24" y="18" width="3" height="3" /><rect x="24" y="21" width="3" height="3" /><rect x="27" y="21" width="3" height="3" /><rect x="30" y="21" width="3" height="3" /><rect x="33" y="21" width="3" height="3" /><rect x="36" y="21" width="3" height="3" /><rect x="36" y="24" width="3" height="3" /><rect x="24" y="27" width="3" height="3" /><rect x="27" y="27" width="3" height="3" /><rect x="30" y="27" width="3" height="3" /><rect x="33" y="27" width="3" height="3" /><rect x="36" y="27" width="3" height="3" />
+              <rect x="42" y="15" width="3" height="3" /><rect x="45" y="15" width="3" height="3" /><rect x="48" y="15" width="3" height="3" /><rect x="51" y="15" width="3" height="3" /><rect x="54" y="15" width="3" height="3" /><rect x="42" y="18" width="3" height="3" /><rect x="54" y="18" width="3" height="3" /><rect x="42" y="21" width="3" height="3" /><rect x="45" y="21" width="3" height="3" /><rect x="48" y="21" width="3" height="3" /><rect x="51" y="21" width="3" height="3" /><rect x="54" y="21" width="3" height="3" /><rect x="42" y="24" width="3" height="3" /><rect x="42" y="27" width="3" height="3" />
+              <rect x="6" y="33" width="3" height="3" /><rect x="18" y="33" width="3" height="3" /><rect x="6" y="36" width="3" height="3" /><rect x="15" y="36" width="3" height="3" /><rect x="6" y="39" width="3" height="3" /><rect x="9" y="39" width="3" height="3" /><rect x="12" y="39" width="3" height="3" /><rect x="6" y="42" width="3" height="3" /><rect x="15" y="42" width="3" height="3" /><rect x="6" y="45" width="3" height="3" /><rect x="18" y="45" width="3" height="3" />
+              <rect x="24" y="33" width="3" height="3" /><rect x="36" y="33" width="3" height="3" /><rect x="24" y="36" width="3" height="3" /><rect x="36" y="36" width="3" height="3" /><rect x="24" y="39" width="3" height="3" /><rect x="36" y="39" width="3" height="3" /><rect x="27" y="42" width="3" height="3" /><rect x="33" y="42" width="3" height="3" /><rect x="30" y="45" width="3" height="3" />
+              <rect x="42" y="33" width="3" height="3" /><rect x="54" y="33" width="3" height="3" /><rect x="42" y="36" width="3" height="3" /><rect x="45" y="36" width="3" height="3" /><rect x="51" y="36" width="3" height="3" /><rect x="54" y="36" width="3" height="3" /><rect x="42" y="39" width="3" height="3" /><rect x="48" y="39" width="3" height="3" /><rect x="54" y="39" width="3" height="3" /><rect x="42" y="42" width="3" height="3" /><rect x="54" y="42" width="3" height="3" /><rect x="42" y="45" width="3" height="3" /><rect x="54" y="45" width="3" height="3" />
+            </g>
+          </svg>
+          ESP-KVM
+        </div>
+        <div class="foot-links">
+          <a href="https://github.com/espkvm/espkvm">Source</a>
+          <a href="https://github.com/espkvm/espkvm/releases">Releases</a>
+          <a href="flash.html">Flasher</a>
+          <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">Hardware notes</a>
+          <a href="https://github.com/espkvm/espkvm/blob/main/LICENSE">License</a>
+        </div>
+        <p class="foot-note">
+          Apache-2.0 &middot; ESP-KVM is not affiliated with Espressif, Waveshare
+          or Geekworm. Board photos &copy; their makers, from the product pages
+          linked above &mdash;
+          <a href="https://www.waveshare.com/esp32-p4-eth.htm">ESP32-P4-ETH by Waveshare</a>,
+          <a href="https://wiki.geekworm.com/C790">C790 by Geekworm</a> &mdash; used
+          only to identify the hardware.
+        </p>
+      </div>
+    </footer>
   </body>
 </html>
