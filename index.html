@@ -615,7 +615,7 @@
         </p>
 
         <div class="actions">
-          <a class="btn btn-primary" href="flash.html">Flash from the browser</a>
+          <a class="btn btn-primary" href="flash/">Flash from the browser</a>
           <a class="btn" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
           <a class="btn" href="https://github.com/espkvm/espkvm/releases">Download firmware</a>
         </div>
@@ -947,8 +947,10 @@
               <p>
                 ESP32-P4 with 100M Ethernet, a Raspberry-Pi-compatible CSI
                 connector, USB-C OTG and a microSD slot. Another ESP32-P4 board
-                with Ethernet and the same CSI connector can run it too, after
-                remapping the pins in the firmware.
+                with Ethernet and the same CSI connector can run it too &mdash;
+                the pins are set in
+                <a href="https://github.com/espkvm/espkvm/blob/main/docs/PORTING.md">menuconfig</a>,
+                not the code.
               </p>
               <a href="https://www.waveshare.com/esp32-p4-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
@@ -985,7 +987,7 @@
         <div class="prose">
           <p>
             The easiest way is
-            <a href="flash.html">flashing straight from the browser</a> &mdash;
+            <a href="flash/">flashing straight from the browser</a> &mdash;
             Chrome and Edge can talk to the board over USB, and nothing needs
             installing. If you would rather use the command line, take the
             full-flash archive from the
@@ -1047,7 +1049,7 @@
         <div class="foot-links">
           <a href="https://github.com/espkvm/espkvm">Source</a>
           <a href="https://github.com/espkvm/espkvm/releases">Releases</a>
-          <a href="flash.html">Flasher</a>
+          <a href="flash/">Flasher</a>
           <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">Hardware notes</a>
           <a href="https://github.com/espkvm/espkvm/blob/main/LICENSE">License</a>
         </div>
