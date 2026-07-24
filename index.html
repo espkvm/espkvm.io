@@ -761,9 +761,9 @@
             </span>
             <h3>Boot from a disk image</h3>
             <p>
-              A rescue or live image on a microSD card, handed to the target as
-              a USB drive it can boot from. Read-only, with the limits noted
-              below.
+              A rescue or live image, handed to the target as a USB drive it can
+              boot from &mdash; from a microSD card, or a small one kept in the
+              device&rsquo;s own flash with no card at all.
             </p>
           </div>
 
@@ -796,7 +796,11 @@
           go on the card in a reader, formatted FAT32, up to 4&nbsp;GB each.
           Reads run around 1.5&nbsp;MB/s: quick for a rescue or minimal image,
           several minutes for a heavy graphical one. It is a known ESP32-P4 SD
-          limitation, and the console tells you so.
+          limitation, and the console tells you so. For the rescue case there is
+          another option that sidesteps the card entirely: a small image (iPXE,
+          memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served fast
+          from memory and &mdash; because flash writes <em>are</em> reliable here
+          &mdash; writable from the browser.
         </p>
       </section>
 
@@ -903,7 +907,11 @@
               </tr>
               <tr>
                 <td>Virtual media &mdash; boot the target from a disk image</td>
-                <td class="yes">works, read-only</td>
+                <td class="yes">works (card or on-flash)</td>
+              </tr>
+              <tr>
+                <td>Guessing the target&rsquo;s OS from how it enumerates USB</td>
+                <td class="yes">works</td>
               </tr>
               <tr>
                 <td>ATX power control</td>

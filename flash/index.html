@@ -388,8 +388,20 @@
 
         <div class="note">
           <strong>If your board is already running ESP-KVM,</strong> you do not
-          need this page or a cable: the console updates itself over the network,
-          into a spare slot, and rolls back if the new image fails to start.
+          need this page or a cable. In the console, Settings &rarr; System
+          either checks for a newer build and installs it in one click, or takes
+          a <code>.bin</code> you downloaded from the
+          <a href="https://github.com/espkvm/espkvm/releases">releases page</a>.
+          Either way it writes a spare slot and rolls back if the new image fails
+          to start.
+        </div>
+
+        <div class="note">
+          <strong>A full flash from this page erases everything,</strong>
+          including any rescue image you put in the device&rsquo;s flash. That is
+          fine for a first install; on a board you are only updating, the console
+          route above keeps the rescue image (and your settings). Re-upload the
+          rescue image afterwards if you use this page instead.
         </div>
       </section>
 
