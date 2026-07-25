@@ -602,8 +602,8 @@
       <!-- hero -->
       <header class="hero">
         <a class="pill" href="https://github.com/espkvm/espkvm/releases">
-          <span class="tag">v0.2.0</span>
-          <span>Virtual media &mdash; boot from a disk image. <b>What&rsquo;s new &rarr;</b></span>
+          <span class="tag" id="latest-version">latest</span>
+          <span>Open source firmware. <b>What&rsquo;s new &rarr;</b></span>
         </a>
 
         <h1>The machine, in a browser tab.</h1>
@@ -1083,5 +1083,17 @@
         </p>
       </div>
     </footer>
+
+    <script>
+      /* Show the newest published version in the hero badge, read from the same
+         manifest the console's update check uses (served with CORS, no API rate
+         limit). Falls back to "latest" if it cannot be reached. */
+      fetch("https://espkvm.github.io/espkvm/firmware/manifest.json", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((m) => {
+          if (m && m.version) document.getElementById("latest-version").textContent = m.version;
+        })
+        .catch(() => {});
+    </script>
   </body>
 </html>
