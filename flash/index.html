@@ -195,6 +195,42 @@
         text-align: center;
       }
 
+      .board-pick {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .board-pick[hidden] {
+        display: none;
+      }
+      .board-pick select {
+        font: inherit;
+        font-size: 14px;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-raised);
+        color: var(--text);
+      }
+      .board-note {
+        margin: 0;
+        font-size: 13px;
+        color: var(--faint);
+      }
+      .board-img {
+        width: 200px;
+        max-width: 60%;
+        height: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-raised);
+      }
+      .board-img[hidden] {
+        display: none;
+      }
+
       .btn {
         display: inline-flex;
         align-items: center;
@@ -336,7 +372,13 @@
       </header>
 
       <div class="install">
+        <img class="board-img" id="board-img" width="200" height="200" alt="" hidden />
+        <div class="board-pick" hidden>
+          <label for="board-select">Board</label>
+          <select id="board-select"></select>
+        </div>
         <esp-web-install-button
+          id="install"
           manifest="https://espkvm.github.io/espkvm/flash/manifest.json"
         >
           <button slot="activate" class="btn">Install ESP-KVM</button>
@@ -349,6 +391,7 @@
             Serial access needs a secure page. Open this over https.
           </span>
         </esp-web-install-button>
+        <p class="board-note" id="board-note"></p>
       </div>
 
       <section>
@@ -447,5 +490,66 @@
     </footer>
 
     <script type="module" src="../flash.js"></script>
+    <script>
+      // Boards offered by the flasher. To add a board once it is verified on
+      // hardware and its first release has published flash/<board>/manifest.json,
+      // set released:true here - the picker turns into a dropdown on its own.
+      const BOARDS = [
+        {
+          id: "waveshare",
+          label: "Waveshare ESP32-P4-ETH",
+          image: "../board-p4.webp",
+          // The root manifest mirrors the Waveshare build, so this works both
+          // before and after the per-board layout lands. Switch to
+          // flash/waveshare/manifest.json once every published release has it.
+          manifest: "https://espkvm.github.io/espkvm/flash/manifest.json",
+          released: true,
+        },
+        {
+          id: "funcev",
+          label: "Espressif ESP32-P4 Function EV Board",
+          image: "../board-funcev.webp",
+          manifest: "https://espkvm.github.io/espkvm/flash/funcev/manifest.json",
+          released: false,
+        },
+      ];
+
+      const shown = BOARDS.filter((b) => b.released);
+      const btn = document.getElementById("install");
+      const pick = document.querySelector(".board-pick");
+      const sel = document.getElementById("board-select");
+      const note = document.getElementById("board-note");
+      const img = document.getElementById("board-img");
+      const apply = (b) => {
+        btn.setAttribute("manifest", b.manifest);
+        if (b.image) {
+          img.src = b.image;
+          img.alt = b.label;
+          img.hidden = false;
+        } else {
+          img.hidden = true;
+          img.removeAttribute("src");
+        }
+      };
+
+      if (shown.length > 1) {
+        // More than one board: a real chooser that swaps the install manifest.
+        for (const b of shown) {
+          const o = document.createElement("option");
+          o.value = b.id;
+          o.textContent = b.label;
+          sel.appendChild(o);
+        }
+        sel.addEventListener("change", () =>
+          apply(shown.find((b) => b.id === sel.value)),
+        );
+        pick.hidden = false;
+        apply(shown[0]);
+      } else if (shown.length === 1) {
+        // Only one board: name it, no dropdown; keep the default manifest.
+        note.textContent = "Board: " + shown[0].label;
+        apply(shown[0]);
+      }
+    </script>
   </body>
 </html>
