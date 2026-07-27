@@ -1,0 +1,75 @@
+# Build the site and deploy it to GitHub Pages. The static files are served as
+# they are; the interactive demo at /demo/ is built from the espkvm/console
+# submodule (its latest main, so the demo always matches the current console).
+#
+# Requires the repository's Pages source to be set to "GitHub Actions"
+# (Settings -> Pages -> Build and deployment -> Source).
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push supersedes an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Build against the console's latest main rather than the pinned commit,
+      # so the demo tracks the console without bumping a submodule pointer here.
+      - name: Update console to latest main
+        run: git submodule update --remote --init console
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: console/package-lock.json
+
+      - name: Build the demo
+        working-directory: console
+        run: |
+          npm ci
+          npm run build:demo
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          # Everything at the repo root is a static asset (CNAME, .nojekyll,
+          # index.html, flash/, images, robots/sitemap/llms, ...); ship it as-is.
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='console' \
+            --exclude='_site' \
+            ./ _site/
+          mkdir -p _site/demo
+          cp console/dist/index.html _site/demo/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

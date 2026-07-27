@@ -1,0 +1,4 @@
+[submodule "console"]
+	path = console
+	url = https://github.com/espkvm/console.git
+	branch = main

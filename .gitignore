@@ -2,3 +2,6 @@
 # it, so flash.html can be exercised before CI has published anything.
 _preview/
 _preview_flash.html
+
+# Pages build output
+_site/
