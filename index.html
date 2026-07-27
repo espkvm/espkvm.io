@@ -1358,15 +1358,34 @@
     </script>
 
     <script>
-      /* Live data pulled from GitHub's public API. Unauthenticated (60 req/hr,
-         but per visitor IP, and this is 3 calls per load), CORS-enabled, no
-         token. Every block enhances progressively: if a call fails or is rate
-         limited, the page just keeps its static content. */
+      /* Live data pulled from GitHub's public API. Unauthenticated (60 req/hr
+         per visitor IP), CORS-enabled, no token. Results are cached in
+         localStorage so reloads do not spend the quota, and a stale cache is
+         reused if a request is rate-limited. Every block enhances progressively:
+         if there is nothing to show, the page keeps its static content. */
       var GH = "https://api.github.com/repos/espkvm/espkvm";
+      var GH_TTL = 30 * 60 * 1000;
+      function ghJson(key, url) {
+        var ck = "espkvm:gh:" + key;
+        var cached = null;
+        try {
+          cached = JSON.parse(localStorage.getItem(ck) || "null");
+        } catch (e) {}
+        if (cached && Date.now() - cached.t < GH_TTL)
+          return Promise.resolve(cached.data);
+        return fetch(url)
+          .then((r) => (r.ok ? r.json() : Promise.reject()))
+          .then((data) => {
+            try {
+              localStorage.setItem(ck, JSON.stringify({ t: Date.now(), data: data }));
+            } catch (e) {}
+            return data;
+          })
+          .catch(() => (cached ? cached.data : Promise.reject()));
+      }
 
       // Star count on the nav GitHub link.
-      fetch(GH)
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
+      ghJson("repo", GH)
         .then((repo) => {
           if (typeof repo.stargazers_count !== "number") return;
           var el = document.getElementById("gh-stars");
@@ -1376,8 +1395,7 @@
         .catch(() => {});
 
       // Latest release: version, date, notes link, and per-board downloads.
-      fetch(GH + "/releases/latest")
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
+      ghJson("release", GH + "/releases/latest")
         .then((rel) => {
           if (rel.tag_name) document.getElementById("dl-version").textContent = rel.tag_name;
           if (rel.published_at) {
@@ -1419,8 +1437,7 @@
       }
 
       // Contributor avatars.
-      fetch(GH + "/contributors?per_page=24")
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
+      ghJson("contributors", GH + "/contributors?per_page=24")
         .then((people) => {
           if (!Array.isArray(people) || !people.length) return;
           var wrap = document.getElementById("contrib-list");
