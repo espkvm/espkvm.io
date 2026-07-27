@@ -1,0 +1,5 @@
+# ESP-KVM - all crawlers welcome, including search engines and AI bots.
+User-agent: *
+Allow: /
+
+Sitemap: https://espkvm.io/sitemap.xml

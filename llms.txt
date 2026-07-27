@@ -1,0 +1,33 @@
+# ESP-KVM
+
+> An open-source IP-KVM: firmware that turns a ~$40 ESP32-P4 board and a TC358743
+> HDMI bridge into a KVM-over-IP. It captures a target machine's HDMI, presents
+> itself to that machine as a USB keyboard and mouse, and serves both to a browser
+> over HTTPS - enough to reach a machine with no working OS (a BIOS screen, a boot
+> menu, a kernel that will not come up). Free and open source, Apache-2.0.
+
+Key facts:
+
+- Hardware: an ESP32-P4 plus a TC358743 HDMI-to-MIPI-CSI-2 bridge. Reference build
+  is a Waveshare ESP32-P4-ETH with a Geekworm C790; it also builds for the
+  Espressif ESP32-P4 Function EV Board.
+- Video: follows the target's resolution automatically (a 640x480 BIOS through a
+  1080p desktop); MJPEG or hardware H.264.
+- Input: a composite USB HID device - keyboard, absolute and relative pointer,
+  media keys.
+- Virtual media: boot the target from a disk image on a microSD card or from a
+  small image in the device's own flash.
+- Security: HTTPS with a certificate the device issues itself, plus a login. It is
+  not meant for the public internet - keep it on a trusted network or behind a VPN.
+- Updates install over the network into a spare slot, with rollback. The device
+  never reaches the internet on its own.
+- It builds on jrowny/p4kvm, which brought up the TC358743 on the ESP32-P4 first.
+
+## Links
+
+- [Website](https://espkvm.io/)
+- [Flash from the browser](https://espkvm.io/flash/)
+- [Source code on GitHub](https://github.com/espkvm/espkvm)
+- [README](https://github.com/espkvm/espkvm/blob/main/README.md)
+- [Releases](https://github.com/espkvm/espkvm/releases)
+- [Discussions](https://github.com/espkvm/espkvm/discussions)
