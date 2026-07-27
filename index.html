@@ -684,6 +684,37 @@
         border: 1px solid var(--border);
         display: block;
       }
+
+      .faq-item {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-soft);
+        padding: 0 18px;
+      }
+      .faq-item + .faq-item {
+        margin-top: 12px;
+      }
+      .faq-item summary {
+        cursor: pointer;
+        padding: 16px 0;
+        font-weight: 600;
+        list-style: none;
+      }
+      .faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+      .faq-item summary::after {
+        content: "+";
+        float: right;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .faq-item[open] summary::after {
+        content: "\2212";
+      }
+      .faq-item .prose {
+        padding-bottom: 6px;
+      }
     </style>
 
     <script type="application/ld+json">
@@ -716,7 +747,7 @@
     <nav class="nav">
       <div class="nav-inner">
         <a class="brand" href="#top" aria-label="ESP-KVM home">
-          <svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="36" height="36" aria-hidden="true">
             <rect width="64" height="64" rx="12" fill="#0e1116" />
             <g fill="#e6edf3">
               <rect x="6" y="15" width="3" height="3" /><rect x="9" y="15" width="3" height="3" /><rect x="12" y="15" width="3" height="3" /><rect x="15" y="15" width="3" height="3" /><rect x="18" y="15" width="3" height="3" /><rect x="6" y="18" width="3" height="3" /><rect x="6" y="21" width="3" height="3" /><rect x="9" y="21" width="3" height="3" /><rect x="12" y="21" width="3" height="3" /><rect x="15" y="21" width="3" height="3" /><rect x="6" y="24" width="3" height="3" /><rect x="6" y="27" width="3" height="3" /><rect x="9" y="27" width="3" height="3" /><rect x="12" y="27" width="3" height="3" /><rect x="15" y="27" width="3" height="3" /><rect x="18" y="27" width="3" height="3" />
@@ -727,15 +758,12 @@
               <rect x="42" y="33" width="3" height="3" /><rect x="54" y="33" width="3" height="3" /><rect x="42" y="36" width="3" height="3" /><rect x="45" y="36" width="3" height="3" /><rect x="51" y="36" width="3" height="3" /><rect x="54" y="36" width="3" height="3" /><rect x="42" y="39" width="3" height="3" /><rect x="48" y="39" width="3" height="3" /><rect x="54" y="39" width="3" height="3" /><rect x="42" y="42" width="3" height="3" /><rect x="54" y="42" width="3" height="3" /><rect x="42" y="45" width="3" height="3" /><rect x="54" y="45" width="3" height="3" />
             </g>
           </svg>
-          ESP-KVM
         </a>
         <div class="nav-links">
           <a class="nav-hide" href="#features">Features</a>
-          <a class="nav-hide" href="#specs">Numbers</a>
           <a class="nav-hide" href="#hardware">Hardware</a>
           <a class="nav-hide" href="#start">Get started</a>
           <a href="flash/">Flash</a>
-          <a class="nav-hide" href="https://github.com/espkvm/espkvm/discussions">Discuss</a>
           <a href="https://github.com/espkvm/espkvm/releases">Releases</a>
           <a class="nav-gh" href="https://github.com/espkvm/espkvm">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -953,6 +981,35 @@
           from memory and &mdash; because flash writes <em>are</em> reliable here
           &mdash; writable from the browser.
         </p>
+      </section>
+
+      <!-- faq -->
+      <section id="faq">
+        <h2>FAQ</h2>
+        <details class="faq-item">
+          <summary>How is this different from IPMI?</summary>
+          <div class="prose">
+            <p>
+              IPMI, the BMC chip built into server motherboards, manages a machine
+              from the inside: real power control, internal sensors, POST codes,
+              over a standard protocol. But it lives only on server-class hardware,
+              and the full remote console is often behind a license.
+            </p>
+            <p>
+              ESP-KVM is external. It clips onto <em>any</em> machine with an HDMI
+              output and a USB port, captures the physical video, and acts as its
+              keyboard and mouse &mdash; bringing the remote console, virtual media
+              and wake-on-LAN part of what a BMC does to hardware that has no BMC
+              and never will: a desktop, a laptop, a mini-PC, an SBC, for about
+              $40. It does not read the host&rsquo;s internal sensors or switch its
+              power rails electrically (ATX power control is on the
+              <a href="https://github.com/espkvm/espkvm/blob/main/ROADMAP.md">roadmap</a>).
+              Think of it as closer to PiKVM than to IPMI: not a replacement for a
+              BMC on a server, but the useful slice of one for everything that
+              never had a BMC.
+            </p>
+          </div>
+        </details>
       </section>
 
       <!-- numbers -->
@@ -1254,6 +1311,7 @@
         </div>
         <div class="foot-links">
           <a href="https://github.com/espkvm/espkvm">Source</a>
+          <a href="https://github.com/espkvm/espkvm/blob/main/ROADMAP.md">Roadmap</a>
           <a href="https://github.com/espkvm/espkvm/releases">Releases</a>
           <a href="flash/">Flasher</a>
           <a href="https://buymeacoffee.com/dexif" rel="noopener">Support</a>
