@@ -1016,9 +1016,9 @@
               keyboard and mouse &mdash; bringing the remote console, virtual media
               and wake-on-LAN part of what a BMC does to hardware that has no BMC
               and never will: a desktop, a laptop, a mini-PC, an SBC, for about
-              $40. It does not read the host&rsquo;s internal sensors or switch its
-              power rails electrically (ATX power control is on the
-              <a href="https://github.com/espkvm/espkvm/blob/main/ROADMAP.md">roadmap</a>).
+              $40. It can press the machine&rsquo;s power and reset buttons and read
+              its power LED through optocouplers (ATX power control), though it does
+              not read the host&rsquo;s internal sensors the way a BMC does.
               Think of it as closer to PiKVM than to IPMI: not a replacement for a
               BMC on a server, but the useful slice of one for everything that
               never had a BMC.
@@ -1149,8 +1149,8 @@
                 <td class="yes">works</td>
               </tr>
               <tr>
-                <td>ATX power control</td>
-                <td class="no">not yet</td>
+                <td>ATX power control (power/reset buttons, power-LED sensing)</td>
+                <td class="yes">works</td>
               </tr>
               <tr>
                 <td>HDMI audio</td>
