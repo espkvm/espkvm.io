@@ -1049,7 +1049,7 @@
               <tr>
                 <td>Frame rate</td>
                 <td class="num">20 fps</td>
-                <td class="num">5&ndash;7 fps</td>
+                <td class="num">~7 fps</td>
               </tr>
               <tr>
                 <td>Idle screen</td>
@@ -1083,9 +1083,9 @@
             revision forces on us. Below silicon revision 3.0 the CSI receiver
             cannot hand over YUV420 and the encoder will not accept RGB, so every
             frame takes a detour through the pixel accelerator to change colour
-            space &mdash; 76&nbsp;ms of the 145&nbsp;ms a 1080p frame costs. On
-            revision 3.0 and later that detour does not exist: the camera path can
-            deliver what the encoder wants directly.
+            space &mdash; measured at ~104&nbsp;ms of the ~150&nbsp;ms a 1080p frame
+            costs. On revision 3.0 and later that detour does not exist: the
+            encoder accepts RGB directly, so the conversion pass disappears.
           </p>
           <p>
             We have not run that, because we do not have that silicon. But the
@@ -1093,9 +1093,10 @@
             Espressif&rsquo;s own driver, quoted in
             <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">the hardware notes</a>
             &mdash; so a newer board should move H.264 from a bandwidth trade to a
-            straight win. There is room on our side too: the conversion and the
-            encode currently run one after the other in the same task when they
-            could overlap.
+            straight win. We did overlap the conversion and the encode on two tasks
+            here, but it only nudged the rate: measurement showed the wall is PSRAM
+            bandwidth, not serialised compute, so the conversion stays the limit
+            until the silicon removes it.
           </p>
         </div>
       </section>
@@ -1273,6 +1274,14 @@
             about the certificate once &mdash; the device signed it itself, and
             nothing else vouches for it. Sign in as <code>admin / admin</code>;
             the console will not go any further until that password is changed.
+          </p>
+          <p>
+            Accepting the warning is enough to watch the screen. For H.264 and for
+            the keyboard and mouse the browser needs a trusted connection, so
+            download the device&rsquo;s CA (Settings &rarr; Security) and add it to
+            your trusted authorities once &mdash; the
+            <a href="https://github.com/espkvm/espkvm#quick-start">README</a>
+            has the steps.
           </p>
         </div>
 
