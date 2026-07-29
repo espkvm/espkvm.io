@@ -14,7 +14,7 @@ A project whose point is working on a network with no way out should not
 describe itself through a CDN.
 
 `flash.js` is the one piece of code that came from elsewhere, and it is
-vendored rather than linked - see [vendor.md](vendor.md) for what it is and how
+vendored rather than linked - see [vendor.md](docs/vendor.md) for what it is and how
 to rebuild it.
 
 The firmware images the flasher writes are not stored here. They are published

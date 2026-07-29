@@ -19,7 +19,7 @@
       content="Install the ESP-KVM firmware onto an ESP32-P4 board over USB, from this page, with no toolchain."
     />
     <link rel="icon" href="../favicon.ico" sizes="any" />
-    <link rel="icon" href="../icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="../assets/icon.svg" type="image/svg+xml" />
     <link rel="canonical" href="https://espkvm.io/flash/" />
     <meta name="theme-color" content="#0e1116" />
 
@@ -31,9 +31,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ESP-KVM" />
     <meta property="og:url" content="https://espkvm.io/flash/" />
-    <meta property="og:image" content="https://espkvm.io/og-image.png" />
+    <meta property="og:image" content="https://espkvm.io/assets/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://espkvm.io/og-image.png" />
+    <meta name="twitter:image" content="https://espkvm.io/assets/og-image.png" />
 
     <!--
       The flashing itself happens in the browser: Web Serial talks to the board
@@ -42,7 +42,7 @@
       straight to the board.
 
       flash.js is esp-web-tools, bundled and committed here rather than pulled
-      from a CDN; see vendor.md. It is ~500 KB, which is why it lives on this
+      from a CDN; see ../docs/vendor.md. It is ~500 KB, which is why it lives on this
       page and not on the lean front page.
     -->
     <style>
@@ -515,7 +515,7 @@
       </div>
     </footer>
 
-    <script type="module" src="../flash.js"></script>
+    <script type="module" src="flash.js"></script>
     <script>
       // Boards offered by the flasher. To add a board once it is verified on
       // hardware and its first release has published flash/<board>/manifest.json,
@@ -524,7 +524,7 @@
         {
           id: "waveshare",
           label: "Waveshare ESP32-P4-ETH",
-          image: "../board-p4.webp",
+          image: "../assets/board-p4.webp",
           // The root manifest mirrors the Waveshare build, so this works both
           // before and after the per-board layout lands. Switch to
           // flash/waveshare/manifest.json once every published release has it.
@@ -534,7 +534,7 @@
         {
           id: "funcev",
           label: "Espressif ESP32-P4 Function EV Board",
-          image: "../board-funcev.webp",
+          image: "../assets/board-funcev.webp",
           manifest: "https://espkvm.github.io/espkvm/flash/funcev/manifest.json",
           released: false,
         },

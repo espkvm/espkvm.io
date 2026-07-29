@@ -49,13 +49,18 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir -p _site
-          # Everything at the repo root is a static asset (CNAME, .nojekyll,
-          # index.html, flash/, images, robots/sitemap/llms, ...); ship it as-is.
+          # Ship the static site as-is: index.html and the root-served files
+          # (CNAME, .nojekyll, robots/sitemap/llms, favicon), the flasher in
+          # flash/, and assets/. Repo docs (README, docs/) are not site content.
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='console' \
             --exclude='_site' \
+            --exclude='README.md' \
+            --exclude='docs' \
+            --exclude='.gitmodules' \
+            --exclude='.gitignore' \
             ./ _site/
           mkdir -p _site/demo
           cp console/dist/index.html _site/demo/index.html
