@@ -1005,6 +1005,20 @@
               off by default.
             </p>
           </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <h3>Reach it over WireGuard</h3>
+            <p>
+              A built-in WireGuard client, so the device stays reachable across
+              the internet without being exposed on it. Split-tunnel over the
+              existing link &mdash; the LAN keeps working &mdash; and it generates
+              its own key, showing the public one to add to your peer. Off by
+              default.
+            </p>
+          </div>
         </div>
 
         <figure class="shot shot-phone" style="margin-top: 28px">
@@ -1203,6 +1217,10 @@
                 <td class="yes">works</td>
               </tr>
               <tr>
+                <td>WireGuard VPN client (split-tunnel, on-device key generation)</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
                 <td>HDMI audio</td>
                 <td class="no">not yet</td>
               </tr>
@@ -1215,7 +1233,7 @@
           there is TLS, but nothing here has been through a security review, and
           a device holding a keyboard on someone else&rsquo;s machine is worth
           more to an attacker than most things on a network. Keep it on a network
-          you trust, or behind a VPN.
+          you trust, or reach it over the built-in WireGuard client.
         </p>
       </section>
 
