@@ -314,6 +314,14 @@
         font-size: 14px;
         text-align: center;
       }
+      /* A tall phone screenshot: constrained and centred, not full width. */
+      .shot-phone img {
+        width: auto;
+        max-width: 300px;
+        max-height: 600px;
+        margin: 0 auto;
+        border-radius: 18px;
+      }
 
       /* ---- sections ------------------------------------------------------ */
 
@@ -996,6 +1004,20 @@
             </p>
           </div>
         </div>
+
+        <figure class="shot shot-phone" style="margin-top: 28px">
+          <img
+            src="assets/ha.png"
+            width="1008"
+            height="2244"
+            loading="lazy"
+            alt="The ESP-KVM device in the Home Assistant app: firmware version, and sensors for frame rate, HDMI signal, resolution, target USB, temperature and viewers, plus diagnostic entities."
+          />
+          <figcaption>
+            The same device in Home Assistant &mdash; every value here is reported
+            live by the KVM over MQTT, discovered automatically.
+          </figcaption>
+        </figure>
 
         <p class="note" style="margin-top: 20px">
           <strong>Virtual media, honestly.</strong> The microSD is served
