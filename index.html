@@ -982,6 +982,19 @@
               password you can clear with the board button if you forget it.
             </p>
           </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
+            </span>
+            <h3>Lives in Home Assistant</h3>
+            <p>
+              Turn on MQTT and the device is auto-discovered as one Home Assistant
+              device: temperature, viewers, video mode and target power as
+              sensors, with power, reset and Wake-on-LAN buttons. TLS optional,
+              off by default.
+            </p>
+          </div>
         </div>
 
         <p class="note" style="margin-top: 20px">
@@ -1159,6 +1172,10 @@
               </tr>
               <tr>
                 <td>ATX power control (power/reset buttons, power-LED sensing)</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Home Assistant over MQTT (auto-discovered sensors and buttons)</td>
                 <td class="yes">works</td>
               </tr>
               <tr>
