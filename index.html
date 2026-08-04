@@ -1010,13 +1010,14 @@
             <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
             </span>
-            <h3>Reach it over WireGuard</h3>
+            <h3>Reach it over WireGuard or Tailscale</h3>
             <p>
-              A built-in WireGuard client, so the device stays reachable across
-              the internet without being exposed on it. Split-tunnel over the
-              existing link &mdash; the LAN keeps working &mdash; and it generates
-              its own key, showing the public one to add to your peer. Off by
-              default.
+              Two ways to reach the device across the internet without exposing
+              it &mdash; pick one. A built-in WireGuard client (split-tunnel over
+              the existing link, generates its own key) for a classic hub. Or
+              native Tailscale: join your tailnet directly &mdash; no gateway, no
+              VPS, no port-forwarding &mdash; reachable at its 100.x address from
+              anywhere, with NAT traversal handled for you. Off by default.
             </p>
           </div>
         </div>
@@ -1073,6 +1074,32 @@
               Think of it as closer to PiKVM than to IPMI: not a replacement for a
               BMC on a server, but the useful slice of one for everything that
               never had a BMC.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>What USB cable connects the device to the target (Waveshare ESP32-P4-ETH)?</summary>
+          <div class="prose">
+            <p>
+              ESP-KVM presents the keyboard and mouse to the target over the
+              ESP32-P4&rsquo;s high-speed USB OTG (OTG_HS). It has to be a proper
+              USB <em>data</em> cable, not a charge-only one &mdash; the data
+              lines are what carry the keyboard and mouse.
+            </p>
+            <p>
+              <strong>On the Waveshare ESP32-P4-ETH specifically</strong>, OTG_HS
+              is not on a USB port at all &mdash; it is brought out on a small
+              <strong>MX1.25</strong> header (the board&rsquo;s single USB-C is the
+              CH343 flashing/console port). So you need an
+              <strong>MX1.25-to-USB</strong> cable ending in a <strong>male
+              Type-A</strong> plug &mdash; ESP-KVM is the USB <em>device</em>, so
+              it plugs into the target&rsquo;s USB port. A link to one that fits is
+              in
+              <a href="https://github.com/orgs/espkvm/discussions/7">this discussion</a>.
+            </p>
+            <p>
+              On other ESP32-P4 boards the OTG_HS may be routed to a USB-C port
+              instead &mdash; check your board&rsquo;s pinout.
             </p>
           </div>
         </details>
@@ -1221,7 +1248,7 @@
                 <td class="yes">works</td>
               </tr>
               <tr>
-                <td>WireGuard VPN client (split-tunnel, on-device key generation)</td>
+                <td>VPN &mdash; WireGuard or native Tailscale (pick one; Tailscale needs no gateway or port-forward)</td>
                 <td class="yes">works</td>
               </tr>
               <tr>
@@ -1237,7 +1264,7 @@
           there is TLS, but nothing here has been through a security review, and
           a device holding a keyboard on someone else&rsquo;s machine is worth
           more to an attacker than most things on a network. Keep it on a network
-          you trust, or reach it over the built-in WireGuard client.
+          you trust, or reach it over the built-in WireGuard client or native Tailscale.
         </p>
       </section>
 
