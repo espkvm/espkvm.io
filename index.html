@@ -1351,14 +1351,21 @@
             The easiest way is
             <a href="flash/">flashing straight from the browser</a> &mdash;
             Chrome and Edge can talk to the board over USB, and nothing needs
-            installing. If you would rather use the command line, take the
-            full-flash archive from the
-            <a href="https://github.com/espkvm/espkvm/releases">releases page</a>,
-            unpack it, and write it with
-            <a href="https://github.com/espressif/esptool">esptool</a>:
+            installing. If you would rather use the command line, download the
+            merged firmware image for your board from the
+            <a href="https://github.com/espkvm/espkvm/releases">releases page</a>
+            and write it at offset 0 with
+            <a href="https://github.com/espressif/esptool">esptool</a> &mdash; one
+            file, no unpacking:
           </p>
 
-          <pre><code>esptool --chip esp32p4 -b 921600 write-flash @flash_args</code></pre>
+          <pre><code>esptool --chip esp32p4 -b 921600 write-flash 0x0 espkvm-&lt;version&gt;-&lt;board&gt;-merged.bin</code></pre>
+
+          <p>
+            Installing esptool, finding the serial port and the driver notes for
+            Linux, macOS and Windows are all in the
+            <a href="https://github.com/espkvm/espkvm/blob/main/docs/FLASHING.md">flashing guide</a>.
+          </p>
 
           <p>
             Then plug in Ethernet, HDMI from the target and USB to the target,
@@ -1537,7 +1544,7 @@
           var any = false;
           Object.keys(boards).forEach(function (id) {
             var zip = assets.find(function (a) { return a.name.endsWith("-" + id + "-full-flash.zip"); });
-            var bin = assets.find(function (a) { return a.name.endsWith("-" + id + ".bin"); });
+            var bin = assets.find(function (a) { return a.name.endsWith("-" + id + "-merged.bin"); });
             if (!zip && !bin) return;
             any = true;
             var card = document.createElement("div");
