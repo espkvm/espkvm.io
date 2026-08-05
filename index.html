@@ -1014,10 +1014,12 @@
             <p>
               Two ways to reach the device across the internet without exposing
               it &mdash; pick one. A built-in WireGuard client (split-tunnel over
-              the existing link, generates its own key) for a classic hub. Or
-              native Tailscale: join your tailnet directly &mdash; no gateway, no
-              VPS, no port-forwarding &mdash; reachable at its 100.x address from
-              anywhere, with NAT traversal handled for you. Off by default.
+              the existing link, generates its own key and shows the matching
+              public key to register on your hub) for a classic hub. Or native
+              Tailscale: join your tailnet directly &mdash; no gateway, no VPS, no
+              port-forwarding &mdash; reachable at its 100.x address from anywhere,
+              with NAT traversal handled and traffic relayed through the region
+              nearest to it. Off by default.
             </p>
           </div>
         </div>
