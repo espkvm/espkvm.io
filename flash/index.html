@@ -522,12 +522,12 @@
       // set released:true here - the picker turns into a dropdown on its own.
       const BOARDS = [
         {
-          id: "waveshare",
+          id: "p4-eth",
           label: "Waveshare ESP32-P4-ETH",
           image: "../assets/board-p4.webp",
-          // The root manifest mirrors the Waveshare build, so this works both
-          // before and after the per-board layout lands. Switch to
-          // flash/waveshare/manifest.json once every published release has it.
+          // The root manifest mirrors the default board (p4-eth), so this works
+          // both before and after the per-board layout lands. Switch to
+          // flash/p4-eth/manifest.json once every published release has it.
           manifest: "https://espkvm.github.io/espkvm/flash/manifest.json",
           released: true,
         },
@@ -536,6 +536,24 @@
           label: "Espressif ESP32-P4 Function EV Board",
           image: "../assets/board-funcev.webp",
           manifest: "https://espkvm.github.io/espkvm/flash/funcev/manifest.json",
+          released: true,
+        },
+        {
+          // Configured from the datasheet, not yet verified on hardware - in
+          // theory it should work. Its manifest is published once a release builds
+          // it (it is in the firmware matrix); shown so people with the board can help.
+          id: "p4-nano",
+          label: "Waveshare ESP32-P4-NANO (configured, untested)",
+          image: "../assets/board-nano.jpg",
+          manifest: "https://espkvm.github.io/espkvm/flash/p4-nano/manifest.json",
+          released: true,
+        },
+        {
+          // Configured from the datasheet, not yet verified on hardware.
+          id: "p4-guition",
+          label: "Guition ESP32-P4-M3-Dev (configured, untested)",
+          image: "../assets/board-guition.webp",
+          manifest: "https://espkvm.github.io/espkvm/flash/p4-guition/manifest.json",
           released: true,
         },
       ];
