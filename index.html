@@ -1022,6 +1022,19 @@
               nearest to it. Off by default.
             </p>
           </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+            </span>
+            <h3>WiFi, with a rescue hotspot</h3>
+            <p>
+              On boards with an ESP32-C6 (the ESP32-P4 Function EV) &mdash; join a
+              network, or be your own access point. If the network is out of range,
+              a rescue hotspot keeps the device reachable, and a captive portal
+              opens the console on your phone the moment you connect.
+            </p>
+          </div>
         </div>
 
         <figure class="shot shot-phone" style="margin-top: 28px">
@@ -1239,6 +1252,10 @@
               </tr>
               <tr>
                 <td>Static IP addressing, or DHCP</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>WiFi &mdash; station or access point, with a rescue hotspot and captive portal (boards with an ESP32-C6)</td>
                 <td class="yes">works</td>
               </tr>
               <tr>
