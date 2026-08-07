@@ -219,40 +219,64 @@
         text-align: center;
       }
 
-      .board-pick {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: var(--muted);
+      .board-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        width: 100%;
+        max-width: 620px;
       }
-      .board-pick[hidden] {
+      .board-grid[hidden] {
         display: none;
       }
-      .board-pick select {
-        font: inherit;
-        font-size: 14px;
-        padding: 6px 10px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
+      .board-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 10px 14px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
         background: var(--bg-raised);
         color: var(--text);
+        font: inherit;
+        cursor: pointer;
+        text-align: center;
+        transition: border-color 0.15s ease, transform 0.1s ease;
+      }
+      .board-card:hover {
+        border-color: var(--muted);
+      }
+      .board-card[aria-pressed="true"] {
+        border-color: var(--accent);
+      }
+      .board-card:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .board-card img {
+        width: 100%;
+        max-width: 130px;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        border-radius: 8px;
+        /* A white backing so boards shot on transparent/dark backgrounds (e.g. the
+           Function EV render) match the white-background photos. */
+        background: #fff;
+        padding: 6px;
+      }
+      .board-card .name {
+        font-size: 13px;
+        line-height: 1.3;
+      }
+      .board-card .tag {
+        font-size: 11px;
+        color: var(--faint);
       }
       .board-note {
         margin: 0;
         font-size: 13px;
         color: var(--faint);
-      }
-      .board-img {
-        width: 200px;
-        max-width: 60%;
-        height: auto;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: var(--bg-raised);
-      }
-      .board-img[hidden] {
-        display: none;
       }
 
       .btn {
@@ -395,11 +419,7 @@
       </header>
 
       <div class="install">
-        <img class="board-img" id="board-img" width="200" height="200" alt="" hidden />
-        <div class="board-pick" hidden>
-          <label for="board-select">Board</label>
-          <select id="board-select"></select>
-        </div>
+        <div class="board-grid" id="board-grid" hidden role="group" aria-label="Choose your board"></div>
         <esp-web-install-button
           id="install"
           manifest="https://espkvm.github.io/espkvm/flash/manifest.json"
@@ -517,41 +537,36 @@
 
     <script type="module" src="flash.js"></script>
     <script>
-      // Boards offered by the flasher. To add a board once it is verified on
-      // hardware and its first release has published flash/<board>/manifest.json,
-      // set released:true here - the picker turns into a dropdown on its own.
+      // Boards offered by the flasher, shown as a grid of clickable cards. To add
+      // a board once its first release has published flash/<board>/manifest.json,
+      // add an entry with released:true (untested:true flags a datasheet-only port).
       const BOARDS = [
         {
           id: "p4-eth",
           label: "Waveshare ESP32-P4-ETH",
           image: "../assets/board-p4.webp",
           // The root manifest mirrors the default board (p4-eth), so this works
-          // both before and after the per-board layout lands. Switch to
-          // flash/p4-eth/manifest.json once every published release has it.
+          // both before and after the per-board layout lands.
           manifest: "https://espkvm.github.io/espkvm/flash/manifest.json",
           released: true,
         },
         {
           id: "funcev",
-          label: "Espressif ESP32-P4 Function EV Board",
+          label: "Espressif ESP32-P4 Function EV",
           image: "../assets/board-funcev.webp",
           manifest: "https://espkvm.github.io/espkvm/flash/funcev/manifest.json",
           released: true,
         },
         {
-          // Configured from the datasheet, not yet verified on hardware - in
-          // theory it should work. Its manifest is published once a release builds
-          // it (it is in the firmware matrix); shown so people with the board can help.
           id: "p4-nano",
-          label: "Waveshare ESP32-P4-NANO (configured, untested)",
+          label: "Waveshare ESP32-P4-NANO",
           image: "../assets/board-nano.jpg",
           manifest: "https://espkvm.github.io/espkvm/flash/p4-nano/manifest.json",
           released: true,
         },
         {
-          // Configured from the datasheet, not yet verified on hardware.
           id: "p4-guition",
-          label: "Guition ESP32-P4-M3-Dev (configured, untested)",
+          label: "Guition ESP32-P4-M3-Dev",
           image: "../assets/board-guition.webp",
           manifest: "https://espkvm.github.io/espkvm/flash/p4-guition/manifest.json",
           released: true,
@@ -560,39 +575,54 @@
 
       const shown = BOARDS.filter((b) => b.released);
       const btn = document.getElementById("install");
-      const pick = document.querySelector(".board-pick");
-      const sel = document.getElementById("board-select");
+      const grid = document.getElementById("board-grid");
       const note = document.getElementById("board-note");
-      const img = document.getElementById("board-img");
-      const apply = (b) => {
+
+      const select = (b, card) => {
         btn.setAttribute("manifest", b.manifest);
-        if (b.image) {
-          img.src = b.image;
-          img.alt = b.label;
-          img.hidden = false;
-        } else {
-          img.hidden = true;
-          img.removeAttribute("src");
+        for (const c of grid.children) {
+          c.setAttribute("aria-pressed", String(c === card));
         }
+        note.textContent = b.untested
+          ? "Configured from the datasheet, not yet verified on hardware - it should work, but reports are welcome."
+          : "";
       };
 
       if (shown.length > 1) {
-        // More than one board: a real chooser that swaps the install manifest.
-        for (const b of shown) {
-          const o = document.createElement("option");
-          o.value = b.id;
-          o.textContent = b.label;
-          sel.appendChild(o);
-        }
-        sel.addEventListener("change", () =>
-          apply(shown.find((b) => b.id === sel.value)),
-        );
-        pick.hidden = false;
-        apply(shown[0]);
+        // A card per board; clicking one swaps the install manifest.
+        shown.forEach((b, i) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "board-card";
+          card.setAttribute("aria-pressed", "false");
+
+          if (b.image) {
+            const im = document.createElement("img");
+            im.src = b.image;
+            im.alt = "";
+            im.loading = "lazy";
+            card.appendChild(im);
+          }
+          const name = document.createElement("span");
+          name.className = "name";
+          name.textContent = b.label;
+          card.appendChild(name);
+          if (b.untested) {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = "configured · untested";
+            card.appendChild(tag);
+          }
+
+          card.addEventListener("click", () => select(b, card));
+          grid.appendChild(card);
+          if (i === 0) select(b, card);
+        });
+        grid.hidden = false;
       } else if (shown.length === 1) {
-        // Only one board: name it, no dropdown; keep the default manifest.
+        // Only one board: name it, no picker; keep the default manifest.
         note.textContent = "Board: " + shown[0].label;
-        apply(shown[0]);
+        btn.setAttribute("manifest", shown[0].manifest);
       }
     </script>
   </body>

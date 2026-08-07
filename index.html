@@ -1140,9 +1140,14 @@
             </thead>
             <tbody>
               <tr>
-                <td>Frame rate</td>
+                <td>Frame rate &mdash; Waveshare ESP32-P4-ETH (rev&nbsp;v1.3)</td>
                 <td class="num">20 fps</td>
                 <td class="num">~7 fps</td>
+              </tr>
+              <tr>
+                <td>Frame rate &mdash; Function EV (rev&nbsp;v3.2)</td>
+                <td class="num">23 fps</td>
+                <td class="num">22&ndash;24 fps</td>
               </tr>
               <tr>
                 <td>Idle screen</td>
@@ -1155,8 +1160,12 @@
                 <td class="num">~500 kbit/s</td>
               </tr>
               <tr>
-                <td>Chip temperature, full load</td>
+                <td>Chip temperature, full load &mdash; rev&nbsp;v1.3</td>
                 <td class="num" colspan="2">46 &deg;C in open air</td>
+              </tr>
+              <tr>
+                <td>Chip temperature, full load &mdash; rev&nbsp;v3.2</td>
+                <td class="num" colspan="2">34 &deg;C in open air</td>
               </tr>
             </tbody>
           </table>
@@ -1164,32 +1173,33 @@
 
         <div class="prose">
           <p style="margin-top: 18px">
-            So H.264 is not the faster option &mdash; it is the one that fits down a
-            narrow link. Browsers decode it through WebCodecs, which they only
-            offer on secure pages, which is one reason the device serves HTTPS.
+            H.264 costs a fraction of MJPEG&rsquo;s bandwidth either way &mdash; an
+            idle screen is 170&nbsp;kbit/s against MJPEG&rsquo;s 8.5&nbsp;Mbit/s in
+            motion &mdash; and browsers decode it through WebCodecs, which they only
+            offer on secure pages (one reason the device serves HTTPS). What differs
+            between the two boards is the frame rate.
           </p>
 
-          <h3>These are this board&rsquo;s numbers, not the ceiling</h3>
+          <h3>The revision-3.x win we predicted actually landed</h3>
           <p>
-            The frame rates above come from one particular ESP32-P4, revision
-            v1.3, and the biggest cost in the H.264 path is something that
-            revision forces on us. Below silicon revision 3.0 the CSI receiver
-            cannot hand over YUV420 and the encoder will not accept RGB, so every
-            frame takes a detour through the pixel accelerator to change colour
-            space &mdash; measured at ~104&nbsp;ms of the ~150&nbsp;ms a 1080p frame
-            costs. On revision 3.0 and later that detour does not exist: the
-            encoder accepts RGB directly, so the conversion pass disappears.
+            The Waveshare figures come from an ESP32-P4 revision v1.3, and the
+            biggest cost in its H.264 path is something that revision forces on us.
+            Below silicon revision 3.0 the CSI receiver cannot hand over YUV420 and
+            the encoder will not accept RGB, so every frame takes a detour through
+            the pixel accelerator to change colour space &mdash; measured at
+            ~104&nbsp;ms of the ~150&nbsp;ms a 1080p frame costs.
           </p>
           <p>
-            We have not run that, because we do not have that silicon. But the
-            reason is specific and checkable &mdash; it is a revision test in
+            On the Espressif Function EV board (revision v3.2) that detour is gone:
+            the capture feeds YUV422 straight into the encoder, no conversion pass.
+            H.264 goes from ~7&nbsp;fps to <strong>22&ndash;24&nbsp;fps</strong> at
+            1080p (and 28&nbsp;fps at 720p) &mdash; as fast as MJPEG (23&nbsp;fps) but
+            at a fraction of the bandwidth &mdash; and the chip runs
+            <strong>cooler</strong> doing it,
+            34&nbsp;&deg;C against 46&nbsp;&deg;C. The revision test was in
             Espressif&rsquo;s own driver, quoted in
-            <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">the hardware notes</a>
-            &mdash; so a newer board should move H.264 from a bandwidth trade to a
-            straight win. We did overlap the conversion and the encode on two tasks
-            here, but it only nudged the rate: measurement showed the wall is PSRAM
-            bandwidth, not serialised compute, so the conversion stays the limit
-            until the silicon removes it.
+            <a href="https://github.com/espkvm/espkvm/blob/main/docs/HARDWARE-NOTES.md">the hardware notes</a>;
+            the prediction held.
           </p>
         </div>
       </section>
@@ -1342,14 +1352,13 @@
                    alt="Waveshare ESP32-P4-NANO board" />
             </div>
             <div class="hw-body">
-              <div class="role">The device &mdash; configured, untested</div>
+              <div class="role">The device &mdash; community-tested</div>
               <h3>Waveshare ESP32-P4-NANO</h3>
               <p>
                 Same IP101 Ethernet and onboard ESP32-C6 as the boards above, with
-                32&nbsp;MB PSRAM and 16&nbsp;MB flash. A build target is configured
-                from the datasheet, so in theory it should work &mdash; but nobody
-                has run ESP-KVM on one yet, and a few pins still need confirming on
-                hardware.
+                32&nbsp;MB PSRAM and 16&nbsp;MB flash. A contributor confirmed capture,
+                USB and Ethernet; the units tested were pre-3.0 silicon, so it runs the
+                slower H.264 path (a rev-3.x unit can be built for the fast one).
               </p>
               <a href="https://www.waveshare.com/esp32-p4-nano.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
@@ -1361,14 +1370,13 @@
                    alt="Guition ESP32-P4-M3-Dev (JC-ESP32P4-M3) board" />
             </div>
             <div class="hw-body">
-              <div class="role">The device &mdash; configured, untested</div>
+              <div class="role">The device &mdash; community-tested</div>
               <h3>Guition ESP32-P4-M3-Dev</h3>
               <p>
                 A display board (4.3&Prime; MIPI-DSI touch, unused by the KVM) that
                 also carries Ethernet and an ESP32-C6; 32&nbsp;MB PSRAM, 16&nbsp;MB
-                flash. Two USB-C ports &mdash; the target goes on the OTG-HS one.
-                Configured from the datasheet, in theory working, not yet verified
-                on hardware.
+                flash. Two USB-C ports &mdash; the target goes on the OTG-HS one. A
+                contributor confirmed capture, USB and Ethernet (on pre-3.0 silicon).
               </p>
             </div>
           </div>
@@ -1633,7 +1641,12 @@
           }
           if (rel.html_url) document.getElementById("dl-notes").href = rel.html_url;
 
-          var boards = { waveshare: "Waveshare ESP32-P4-ETH", funcev: "ESP32-P4 Function EV Board" };
+          var boards = {
+            "p4-eth": "Waveshare ESP32-P4-ETH",
+            "funcev": "Espressif ESP32-P4 Function EV",
+            "p4-nano": "Waveshare ESP32-P4-NANO",
+            "p4-guition": "Guition ESP32-P4-M3-Dev",
+          };
           var assets = rel.assets || [];
           var list = document.getElementById("dl-list");
           var any = false;
