@@ -1118,6 +1118,32 @@
             </p>
           </div>
         </details>
+        <details class="faq-item">
+          <summary>Can I use a different ESP32 chip (S3, S31, &hellip;) instead of the P4?</summary>
+          <div class="prose">
+            <p>
+              No &mdash; this design needs two things that, across Espressif&rsquo;s
+              line-up, only the <strong>ESP32-P4</strong> has together: a
+              <strong>MIPI-CSI-2</strong> receiver and a <strong>hardware H.264
+              encoder</strong>.
+            </p>
+            <p>
+              The capture board (a Toshiba TC358743) outputs MIPI-CSI-2, so the host
+              chip needs a CSI-2 receiver to read it. The other ESP32 parts &mdash;
+              including the newer <strong>ESP32-S31</strong> &mdash; have a
+              <strong>DVP (parallel) camera interface</strong>, not CSI-2, so they
+              can&rsquo;t take the bridge at all. And moving 1080p leans on the P4&rsquo;s
+              hardware H.264 encoder; the S-series has a JPEG codec but no H.264, so
+              software encoding on the cores wouldn&rsquo;t keep up.
+            </p>
+            <p>
+              The S31 does have things the P4 lacks (WiFi&nbsp;6 on-die, no
+              co-processor), so if Espressif ever ships a P-series successor with the
+              radio built in, that would be the dream chip for this &mdash; but for now
+              the P4 is the one with the CSI-2 + H.264 combination it needs.
+            </p>
+          </div>
+        </details>
       </section>
 
       <!-- numbers -->
