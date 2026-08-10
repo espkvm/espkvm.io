@@ -1347,9 +1347,9 @@
       <section id="hardware">
         <h2>What you need</h2>
         <p class="lead">
-          Two boards and three cables, plus one optional module for power
-          control. Everything is off-the-shelf; any equivalent works, these are
-          the ones this project is built and tested on.
+          Two boards and three cables, plus optional modules &mdash; power control
+          and a little status display. Everything is off-the-shelf; any equivalent
+          works, these are the ones this project is built and tested on.
         </p>
 
         <div class="hw">
@@ -1458,6 +1458,39 @@
                 electrically isolated from the machine. Skip it and everything
                 else still works. Wiring is in
                 <a href="https://github.com/espkvm/espkvm/blob/main/docs/wiring.md">docs/wiring.md</a>.
+              </p>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/SSD1306.jpg" width="700" height="700" loading="lazy"
+                   alt="SSD1306/SH1106 128x64 I2C OLED module" />
+            </div>
+            <div class="hw-body">
+              <div class="role">Status display (optional)</div>
+              <h3>I2C OLED &mdash; SSD1306 / SH1106</h3>
+              <p>
+                A 0.96&Prime; 128&times;64 mono OLED on four wires. It shares the
+                capture chip&rsquo;s I2C bus, so it needs no pins of its own and is
+                auto-detected &mdash; the device draws its IP, link, capture status
+                and health across a few pages.
+              </p>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/GC9A01.webp" width="1500" height="1500" loading="lazy"
+                   alt="GC9A01 240x240 round colour SPI LCD module" />
+            </div>
+            <div class="hw-body">
+              <div class="role">Status display (optional)</div>
+              <h3>Round LCD &mdash; GC9A01</h3>
+              <p>
+                A 1.28&Prime; 240&times;240 round colour SPI LCD, e.g. the Waveshare
+                module. Wire its SPI pins to any free GPIOs and choose them in the
+                console; the same status pages, in colour.
               </p>
             </div>
           </div>
