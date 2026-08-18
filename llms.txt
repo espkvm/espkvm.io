@@ -22,6 +22,10 @@ Key facts:
   a captive portal keep a device reachable, and set up from a phone, when its network
   is out of range. mDNS (espkvm.local), DHCP or static addressing, and IPv6
   alongside IPv4 (autoconfigured from the router, nothing to fill in).
+- An optional status screen on the device (I2C OLED, or a round SPI LCD) shows the
+  link, address, capture state and health with no browser. The round one also shows
+  a code a phone scans to join the rescue hotspot, and fills a ring while the
+  recovery button is held.
 - Security: HTTPS with a certificate the device issues itself, plus a login. It is
   not meant for the public internet - keep it on a trusted network, or reach it over
   the built-in WireGuard client (split-tunnel, generates its own key).
