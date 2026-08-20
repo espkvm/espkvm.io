@@ -1,6 +1,8 @@
 # Build the site and deploy it to GitHub Pages. The static files are served as
 # they are; the interactive demo at /demo/ is built from the espkvm/console
 # submodule (its latest main, so the demo always matches the current console).
+# Every other page - the front page, the flasher, the blog - is assembled from
+# the shared pieces in _partials/ by tools/build-site.py.
 #
 # Requires the repository's Pages source to be set to "GitHub Actions"
 # (Settings -> Pages -> Build and deployment -> Source).
@@ -46,12 +48,18 @@ jobs:
           npm ci
           npm run build:demo
 
+      # No dependencies and no toolchain: every page is assembled from
+      # _partials/ with the Python that is already on the runner.
+      - name: Build the site
+        run: python3 tools/build-site.py
+
       - name: Assemble the site
         run: |
           mkdir -p _site
-          # Ship the static site as-is: index.html and the root-served files
-          # (CNAME, .nojekyll, robots/sitemap/llms, favicon), the flasher in
-          # flash/, and assets/. Repo docs (README, docs/) are not site content.
+          # Ship what the step above rendered (index.html, flash/, blog/,
+          # sitemap.xml) together with the files that are committed as they
+          # are: CNAME, .nojekyll, robots/llms, the favicon, flash/flash.js and
+          # assets/. Repo docs and the page sources are not site content.
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
@@ -59,6 +67,11 @@ jobs:
             --exclude='_site' \
             --exclude='README.md' \
             --exclude='docs' \
+            --exclude='_posts' \
+            --exclude='_pages' \
+            --exclude='_partials' \
+            --exclude='_templates' \
+            --exclude='tools' \
             --exclude='.gitmodules' \
             --exclude='.gitignore' \
             ./ _site/

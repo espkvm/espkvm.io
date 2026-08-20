@@ -1,0 +1,488 @@
+---
+title: Flash ESP-KVM from the browser
+description: Install the ESP-KVM firmware onto an ESP32-P4 board over USB, from this page, with no toolchain.
+canonical: https://espkvm.io/flash/
+og_type: website
+output: flash/index.html
+---
+<!--
+  The flashing itself happens in the browser: Web Serial talks to the board
+  over USB and esptool-js writes the flash. Nothing is uploaded anywhere - the
+  firmware is fetched from the project's own release page and goes straight to
+  the board.
+
+  flash.js is esp-web-tools, bundled and committed rather than pulled from a
+  CDN; see docs/vendor.md. It is ~500 KB, which is why it lives on this page
+  and not on the lean front page.
+-->
+<style>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      /* ---- content ------------------------------------------------------- */
+
+      .hero {
+        text-align: center;
+        padding: 60px 0 8px;
+      }
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(30px, 5vw, 42px);
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+      }
+      .tagline {
+        margin: 0 auto;
+        max-width: 34em;
+        color: var(--muted);
+        font-size: clamp(16px, 2.2vw, 18px);
+      }
+
+      section {
+        padding: 26px 0;
+      }
+      
+      h2 {
+        margin: 0 0 10px;
+        font-size: clamp(20px, 3vw, 24px);
+        letter-spacing: -0.015em;
+      }
+      p {
+        margin: 0 0 14px;
+      }
+
+      .install {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin: 28px 0 8px;
+        padding: 32px 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--bg-soft);
+        text-align: center;
+      }
+
+      .board-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        width: 100%;
+        max-width: 620px;
+      }
+      .board-grid[hidden] {
+        display: none;
+      }
+      .board-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 10px 14px;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-raised);
+        color: var(--text);
+        font: inherit;
+        cursor: pointer;
+        text-align: center;
+        transition: border-color 0.15s ease, transform 0.1s ease;
+      }
+      .board-card:hover {
+        border-color: var(--muted);
+      }
+      .board-card[aria-pressed="true"] {
+        border-color: var(--accent);
+      }
+      .board-card:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .board-card img {
+        width: 100%;
+        max-width: 130px;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        border-radius: 8px;
+        /* A white backing so boards shot on transparent/dark backgrounds (e.g. the
+           Function EV render) match the white-background photos. */
+        background: #fff;
+        padding: 6px;
+      }
+      .board-card .name {
+        font-size: 13px;
+        line-height: 1.3;
+      }
+      .board-card .tag {
+        font-size: 11px;
+        color: var(--faint);
+      }
+      .board-note {
+        margin: 0;
+        font-size: 13px;
+        color: var(--faint);
+      }
+
+      .rev-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .rev-row[hidden] {
+        display: none;
+      }
+      .rev-row .rev-label {
+        font-size: 13px;
+        color: var(--faint);
+      }
+      .rev-btn {
+        padding: 6px 14px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: var(--bg-raised);
+        color: var(--text);
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        transition: border-color 0.15s ease;
+      }
+      .rev-btn:hover {
+        border-color: var(--muted);
+      }
+      .rev-btn[aria-pressed="true"] {
+        border-color: var(--accent);
+      }
+      .rev-btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        background: var(--accent);
+        color: var(--accent-text);
+        font: inherit;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
+      }
+
+      /* Shown by esp-web-tools when the browser cannot do this at all. */
+      .unsupported {
+        color: var(--warn);
+        max-width: 40em;
+      }
+
+      ol {
+        margin: 0 0 14px;
+        padding-left: 22px;
+      }
+      li {
+        margin-bottom: 6px;
+      }
+      
+      
+
+      .note {
+        border-left: 3px solid var(--warn);
+        padding: 12px 16px;
+        margin-bottom: 14px;
+        background: var(--bg-raised);
+        border-radius: 0 8px 8px 0;
+        color: var(--muted);
+      }
+
+      
+      
+      
+      
+      
+      
+    
+</style>
+
+    
+
+    <div class="wrap">
+      <header class="hero">
+        <h1>Flash it from here</h1>
+        <p class="tagline">
+          Connect the board over USB and install the firmware from this page.
+          No toolchain, no download, nothing uploaded anywhere &mdash; the image
+          goes from the project&rsquo;s release page straight to your board.
+        </p>
+      </header>
+
+      <div class="install">
+        <div class="board-grid" id="board-grid" hidden role="group" aria-label="Choose your board"></div>
+        <div
+          class="rev-row"
+          id="rev-row"
+          hidden
+          role="group"
+          aria-label="Choose your chip revision"
+        >
+          <span class="rev-label">Chip revision:</span>
+          <button type="button" class="rev-btn" data-rev="1" aria-pressed="true">
+            rev 1.x
+          </button>
+          <button type="button" class="rev-btn" data-rev="3" aria-pressed="false">
+            rev 3.x
+          </button>
+        </div>
+        <esp-web-install-button
+          id="install"
+          manifest="https://espkvm.github.io/espkvm/flash/manifest.json"
+        >
+          <button slot="activate" class="btn">Install ESP-KVM</button>
+          <span slot="unsupported" class="unsupported">
+            This browser cannot talk to serial devices. Chrome or Edge on a
+            desktop can; Firefox and Safari cannot, and neither can any browser
+            on iOS.
+          </span>
+          <span slot="not-allowed" class="unsupported">
+            Serial access needs a secure page. Open this over https.
+          </span>
+        </esp-web-install-button>
+        <p class="board-note" id="board-note"></p>
+      </div>
+
+      <section>
+        <h2>What to expect</h2>
+        <ol>
+          <li>Connect the board to this computer with a USB-C cable.</li>
+          <li>
+            Press <strong>Install</strong> and pick the board&rsquo;s serial port
+            from the list the browser shows. On Linux it is usually
+            <code>/dev/ttyACM0</code>, on Windows a <code>COM</code> port.
+          </li>
+          <li>
+            Wait about a minute. The whole flash is written &mdash; bootloader,
+            partition table and firmware &mdash; so this also works on a board
+            that has never run anything.
+          </li>
+          <li>
+            Plug in Ethernet and open <code>https://espkvm.local/</code>. Accept
+            the certificate warning, sign in as <code>admin</code> /
+            <code>admin</code>, and set a password.
+          </li>
+        </ol>
+
+        <div class="note">
+          <strong>Two USB ports, one of them right.</strong> These boards have a
+          USB-serial port and a USB-OTG port. Flashing goes through the serial
+          one &mdash; the OTG port is what the target machine sees as a keyboard.
+          If the port list is empty, try the other socket.
+        </div>
+
+        <div class="note">
+          <strong>If Install fails to connect,</strong> hold the board&rsquo;s
+          BOOT button, press Install, and keep holding until it starts writing.
+          That forces the chip into its bootloader when the automatic reset
+          does not take.
+        </div>
+
+        <div class="note">
+          <strong>If your board is already running ESP-KVM,</strong> you do not
+          need this page or a cable. In the console, Settings &rarr; System
+          either checks for a newer build and installs it in one click, or takes
+          a <code>.bin</code> you downloaded from the
+          <a href="https://github.com/espkvm/espkvm/releases">releases page</a>.
+          Either way it writes a spare slot and rolls back if the new image fails
+          to start.
+        </div>
+
+        <div class="note">
+          <strong>A full flash from this page erases everything,</strong>
+          including any rescue image you put in the device&rsquo;s flash. That is
+          fine for a first install; on a board you are only updating, the console
+          route above keeps the rescue image (and your settings). Re-upload the
+          rescue image afterwards if you use this page instead.
+        </div>
+      </section>
+
+      <section>
+        <h2>If the browser will not do it</h2>
+        <p>
+          Web Serial exists in Chrome and Edge on desktop, and nowhere else.
+          Every other browser has to fall back to the command line, which does
+          the same thing:
+        </p>
+        <pre><code>esptool --chip esp32p4 -b 921600 write-flash @flash_args</code></pre>
+        <p>
+          Take the full-flash archive from the
+          <a href="https://github.com/espkvm/espkvm/releases">releases page</a>,
+          unpack it, and run that inside the unpacked folder.
+        </p>
+        <p class="board-note">
+          The installer on this page is
+          <a href="https://github.com/esphome/esp-web-tools" rel="noopener">esp-web-tools</a>,
+          bundled here rather than loaded from anywhere.
+        </p>
+      </section>
+    </div>
+
+    
+
+    <script type="module" src="flash.js"></script>
+    <script>
+      // Boards offered by the flasher, shown as a grid of clickable cards. To add
+      // a board once its first release has published flash/<board>/manifest.json,
+      // add an entry with released:true (untested:true flags a datasheet-only port).
+      // manifestRev3 gives a board its rev 3.x twin: the ESP32-P4 ships in two
+      // silicon families and an image built for one refuses to start on the other,
+      // so those boards get a revision switch instead of a second card.
+      const RELEASES = "https://espkvm.github.io/espkvm/flash/";
+      const BOARDS = [
+        {
+          id: "p4-eth",
+          label: "Waveshare ESP32-P4-ETH",
+          image: "../assets/board-p4.webp",
+          // The root manifest mirrors the default board (p4-eth), so this works
+          // both before and after the per-board layout lands.
+          manifest: RELEASES + "manifest.json",
+          manifestRev3: RELEASES + "p4-eth-rev3/manifest.json",
+          released: true,
+        },
+        {
+          id: "funcev",
+          label: "Espressif ESP32-P4 Function EV",
+          image: "../assets/board-funcev.webp",
+          manifest: RELEASES + "funcev/manifest.json",
+          released: true,
+        },
+        {
+          id: "p4-poe",
+          label: "Waveshare ESP32-P4-WIFI6-POE-ETH",
+          image: "../assets/board-poe.jpg",
+          manifest: RELEASES + "p4-poe/manifest.json",
+          manifestRev3: RELEASES + "p4-poe-rev3/manifest.json",
+          released: true,
+          untested: true,
+        },
+        {
+          id: "p4-nano",
+          label: "Waveshare ESP32-P4-NANO",
+          image: "../assets/board-nano.jpg",
+          manifest: RELEASES + "p4-nano/manifest.json",
+          released: true,
+        },
+        {
+          id: "p4-guition",
+          label: "Guition ESP32-P4-M3-Dev",
+          image: "../assets/board-guition.webp",
+          manifest: RELEASES + "p4-guition/manifest.json",
+          released: true,
+        },
+      ];
+
+      const UNTESTED_NOTE =
+        "Configured from the datasheet, not yet verified on hardware - it should work, but reports are welcome.";
+      const REV_NOTE =
+        "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. Almost every board on sale today is rev 1.x - pick rev 3.x only if you know yours is. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
+
+      const shown = BOARDS.filter((b) => b.released);
+      const btn = document.getElementById("install");
+      const grid = document.getElementById("board-grid");
+      const note = document.getElementById("board-note");
+      const revRow = document.getElementById("rev-row");
+      const revBtns = [...revRow.querySelectorAll(".rev-btn")];
+
+      let board = null;
+      let rev = "1";
+
+      // The install button reads its manifest when it is pressed, so swapping the
+      // attribute is all a board or revision change has to do.
+      const apply = () => {
+        const pair = !!board.manifestRev3;
+        btn.setAttribute(
+          "manifest",
+          pair && rev === "3" ? board.manifestRev3 : board.manifest,
+        );
+        revRow.hidden = !pair;
+        for (const r of revBtns) {
+          r.setAttribute("aria-pressed", String(pair && r.dataset.rev === rev));
+        }
+        note.textContent = [board.untested ? UNTESTED_NOTE : "", pair ? REV_NOTE : ""]
+          .filter(Boolean)
+          .join(" ");
+      };
+
+      const select = (b, card) => {
+        board = b;
+        // A board is always offered on the older silicon first: that is what
+        // people have, and it is the safer guess if they have not checked.
+        rev = "1";
+        for (const c of grid.children) {
+          c.setAttribute("aria-pressed", String(c === card));
+        }
+        apply();
+      };
+
+      for (const r of revBtns) {
+        r.addEventListener("click", () => {
+          rev = r.dataset.rev;
+          apply();
+        });
+      }
+
+      if (shown.length > 1) {
+        // A card per board; clicking one swaps the install manifest.
+        shown.forEach((b, i) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "board-card";
+          card.setAttribute("aria-pressed", "false");
+
+          if (b.image) {
+            const im = document.createElement("img");
+            im.src = b.image;
+            im.alt = "";
+            im.loading = "lazy";
+            card.appendChild(im);
+          }
+          const name = document.createElement("span");
+          name.className = "name";
+          name.textContent = b.label;
+          card.appendChild(name);
+          if (b.untested) {
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = "configured \u00b7 untested";
+            card.appendChild(tag);
+          }
+
+          card.addEventListener("click", () => select(b, card));
+          grid.appendChild(card);
+          if (i === 0) select(b, card);
+        });
+        grid.hidden = false;
+      } else if (shown.length === 1) {
+        // Only one board: name it, no picker, but the revision switch still
+        // applies if that board has a rev 3.x twin.
+        board = shown[0];
+        apply();
+        note.textContent = ("Board: " + board.label + " " + note.textContent).trim();
+      }
+    </script>
+  

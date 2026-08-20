@@ -42,3 +42,5 @@ Key facts:
 - [README](https://github.com/espkvm/espkvm/blob/main/README.md)
 - [Releases](https://github.com/espkvm/espkvm/releases)
 - [Discussions](https://github.com/espkvm/espkvm/discussions)
+- [Telegram channel](https://t.me/espkvm)
+- [X / Twitter](https://x.com/espkvm)

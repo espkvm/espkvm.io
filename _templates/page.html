@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GMCW6ZNY7D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-GMCW6ZNY7D');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}" />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png" />
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+
+    <link rel="canonical" href="{{canonical}}" />
+    <meta name="theme-color" content="#0e1116" />
+
+    <meta property="og:title" content="{{og_title}}" />
+    <meta property="og:description" content="{{og_description}}" />
+    <meta property="og:type" content="{{og_type}}" />
+    <meta property="og:site_name" content="ESP-KVM" />
+    <meta property="og:url" content="{{canonical}}" />
+    <meta property="og:image" content="{{image}}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{image_alt}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@espkvm" />
+    <meta name="twitter:title" content="{{og_title}}" />
+    <meta name="twitter:description" content="{{og_description}}" />
+    <meta name="twitter:image" content="{{image}}" />
+
+    <!--
+      This page was assembled by tools/build-site.py from _pages/ or _posts/
+      plus the shared pieces in _partials/. Everything a reader needs is in the
+      file: no fonts, no CDN, no framework. The project exists to work on
+      networks with no way out, and a page describing it should not need one.
+    -->
+    <style>{{style}}
+    </style>
+{{page_head}}
+  </head>
+
+  <body>
+{{nav}}
+
+{{content}}
+
+{{footer}}
+  </body>
+</html>
