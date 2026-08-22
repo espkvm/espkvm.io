@@ -15,6 +15,17 @@ Key facts:
   1080p desktop); MJPEG or hardware H.264.
 - Input: a composite USB HID device - keyboard, absolute and relative pointer,
   media keys.
+- Text screens can be read back as characters: a BIOS, a boot loader or a console
+  can be selected with the mouse and copied, or copied whole. Not OCR - the
+  characters are read from the character grid the firmware draws them on, so a
+  reading is either exact or refused. Graphical UEFI setups have no grid and are
+  not read.
+- The device can watch a text screen while nobody is connected: give it phrases
+  (`no boot device`, `kernel panic`) and it raises an alert, in its log and in
+  Home Assistant, when one appears. Off by default.
+- Pasting text types it out as keystrokes, so it follows the target's keyboard
+  layout: US English, Russian, Czech, Ukrainian and Lithuanian. A character the
+  layout cannot type is reported rather than guessed at.
 - Virtual media: boot the target from a disk image on a microSD card or from a
   small image in the device's own flash.
 - Networking: Ethernet, or WiFi on boards with an ESP32-C6 (the Function EV Board) -
