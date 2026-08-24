@@ -346,9 +346,13 @@ output: flash/index.html
 
     <script type="module" src="flash.js"></script>
     <script>
-      // Boards offered by the flasher, shown as a grid of clickable cards. To add
-      // a board once its first release has published flash/<board>/manifest.json,
-      // add an entry with released:true (untested:true flags a datasheet-only port).
+      // Boards offered by the flasher, shown as a grid of clickable cards.
+      //
+      // The live list comes from the firmware repo - flash/boards.json, written by
+      // the release that published the images - so a new board appears here on its
+      // own. What is below is the fallback for when that fetch fails, and the
+      // source of the board photos, which live in this repo.
+      //
       // manifestRev3 gives a board its rev 3.x twin: the ESP32-P4 ships in two
       // silicon families and an image built for one refuses to start on the other,
       // so those boards get a revision switch instead of a second card.
@@ -403,7 +407,9 @@ output: flash/index.html
       const REV_NOTE =
         "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. Almost every board on sale today is rev 1.x - pick rev 3.x only if you know yours is. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
 
-      const shown = BOARDS.filter((b) => b.released);
+      const IMAGES = Object.fromEntries(BOARDS.map((b) => [b.id, b.image]));
+
+      let shown = BOARDS.filter((b) => b.released);
       const btn = document.getElementById("install");
       const grid = document.getElementById("board-grid");
       const note = document.getElementById("board-note");
@@ -448,6 +454,7 @@ output: flash/index.html
         });
       }
 
+      const render = () => {
       if (shown.length > 1) {
         // A card per board; clicking one swaps the install manifest.
         shown.forEach((b, i) => {
@@ -486,5 +493,28 @@ output: flash/index.html
         apply();
         note.textContent = ("Board: " + board.label + " " + note.textContent).trim();
       }
+      };
+
+      // Take the published list when it answers, and keep the built-in one when
+      // it does not: a flasher that shows nothing because a fetch failed would be
+      // worse than one board short.
+      fetch(RELEASES + "boards.json", { cache: "no-cache" })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+        .then((list) => {
+          if (!Array.isArray(list) || !list.length) throw new Error("empty");
+          shown = list.map((b) => ({
+            id: b.id,
+            label: b.label || b.id,
+            // This site's own copy where it has one, the photo the release
+            // published otherwise - that is what makes a new board complete here
+            // without a commit.
+            image: IMAGES[b.id] || (b.image ? RELEASES + b.image : undefined),
+            untested: !!b.untested,
+            manifest: RELEASES + b.manifest,
+            manifestRev3: b.manifestRev3 ? RELEASES + b.manifestRev3 : undefined,
+          }));
+        })
+        .catch(() => {})
+        .finally(render);
     </script>
   

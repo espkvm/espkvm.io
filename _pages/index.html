@@ -968,16 +968,6 @@ output: index.html
           .catch(() => (cached ? cached.data : Promise.reject()));
       }
 
-      // Star count on the nav GitHub link.
-      ghJson("repo", GH)
-        .then((repo) => {
-          if (typeof repo.stargazers_count !== "number") return;
-          var el = document.getElementById("gh-stars");
-          el.textContent = repo.stargazers_count;
-          el.hidden = false;
-        })
-        .catch(() => {});
-
       // Latest release: version, date, notes link, and per-board downloads.
       ghJson("release", GH + "/releases/latest")
         .then((rel) => {

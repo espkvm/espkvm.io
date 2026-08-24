@@ -34,3 +34,38 @@
         </div>
       </div>
     </nav>
+
+<script>
+  /* The star count on the GitHub link. It lives with the nav because the nav is
+     on every page - it used to be filled by a script on the home page only, so
+     everywhere else the number simply never appeared. Shares the home page's
+     cache entry, so the two do not spend a visitor's API quota twice. */
+  (function () {
+    var ck = "espkvm:gh:repo",
+      ttl = 30 * 60 * 1000,
+      cached = null;
+    var show = function (n) {
+      var el = document.getElementById("gh-stars");
+      if (el && typeof n === "number") {
+        el.textContent = n;
+        el.hidden = false;
+      }
+    };
+    try {
+      cached = JSON.parse(localStorage.getItem(ck) || "null");
+    } catch (e) {}
+    if (cached && cached.data) show(cached.data.stargazers_count);
+    if (cached && Date.now() - cached.t < ttl) return;
+    fetch("https://api.github.com/repos/espkvm/espkvm")
+      .then(function (r) {
+        return r.ok ? r.json() : Promise.reject();
+      })
+      .then(function (d) {
+        try {
+          localStorage.setItem(ck, JSON.stringify({ t: Date.now(), data: d }));
+        } catch (e) {}
+        show(d.stargazers_count);
+      })
+      .catch(function () {});
+  })();
+</script>
