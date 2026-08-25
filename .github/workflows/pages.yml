@@ -77,6 +77,9 @@ jobs:
             ./ _site/
           mkdir -p _site/demo
           cp console/dist/index.html _site/demo/index.html
+          # The console build carries no tracker - the device ships that code.
+          # The copy served from this site counts like every other page.
+          python3 tools/add-analytics.py _site/demo/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
