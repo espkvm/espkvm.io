@@ -396,6 +396,44 @@ output: index.html
           </div>
         </details>
         <details class="faq-item">
+          <summary>The mouse pointer lands in the wrong place on the target &mdash; why?</summary>
+          <div class="prose">
+            <p>
+              Almost always because the target has <strong>more than one
+              display</strong>. ESP-KVM presents itself as an <em>absolute</em>
+              pointing device by default, the way a graphics tablet does: it sends
+              &ldquo;the pointer is at this position&rdquo; rather than &ldquo;move
+              this far&rdquo;. That is what lets the cursor land exactly where you
+              aim it, with nothing to capture and nothing to run away.
+            </p>
+            <p>
+              The catch is that an absolute device addresses the target&rsquo;s
+              <strong>whole desktop</strong>, not the one output you are watching.
+              With a second monitor attached, that desktop is wider than the screen
+              ESP-KVM captures, so your side of the picture is stretched across
+              both. With two equally wide screens the pointer travels twice as far
+              as the mouse, and half of the picture aims at the display you cannot
+              see &mdash; move into it and the cursor simply disappears onto the
+              other monitor.
+            </p>
+            <p>
+              Two ways out. Unplug or disable the target&rsquo;s second display
+              while you are working through ESP-KVM &mdash; then the desktop and the
+              captured screen are the same thing again. Or switch
+              <strong>Settings &rarr; Input &rarr; mouse mode</strong> to
+              <strong>relative</strong>, which sends movement instead of position
+              and so does not depend on the desktop&rsquo;s size or layout; click
+              the picture to take control, and use <em>Relative sensitivity</em> if
+              the speed does not suit you.
+            </p>
+            <p>
+              A pointer that drifts only near the <em>edges</em> while it is
+              accurate in the middle is a different thing entirely, and one that
+              affected macOS targets &mdash; that one is fixed.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item">
           <summary>Can I use a different ESP32 chip (S3, S31, &hellip;) instead of the P4?</summary>
           <div class="prose">
             <p>
