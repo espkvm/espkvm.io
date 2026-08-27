@@ -49,6 +49,8 @@ Key facts:
 
 - [Website](https://espkvm.io/)
 - [Flash from the browser](https://espkvm.io/flash/)
+- [Interactive demo, no hardware needed](https://demo.espkvm.io/)
+- [Blog: what each release changed, and how](https://espkvm.io/blog/)
 - [Source code on GitHub](https://github.com/espkvm/espkvm)
 - [README](https://github.com/espkvm/espkvm/blob/main/README.md)
 - [Releases](https://github.com/espkvm/espkvm/releases)

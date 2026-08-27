@@ -431,6 +431,17 @@
         object-fit: contain;
         mix-blend-mode: multiply;
       }
+      /* a real photo, not a product shot on white */
+      .hw-photo.is-photo {
+        background: var(--bg-raised);
+        padding: 0;
+      }
+      .hw-photo.is-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        mix-blend-mode: normal;
+      }
       .hw-body {
         padding: 16px 18px 18px;
       }
@@ -843,6 +854,44 @@
         margin: 0 0 10px;
       }
 
+      /* ---- tags ------------------------------------------------------------ */
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 10px 0 0;
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 2px 9px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-raised);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+        text-decoration: none;
+      }
+      .tag:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+      /* The tag you are looking at, on its own page. */
+      .tag-on {
+        color: var(--text);
+        border-color: var(--accent);
+      }
+      .tag span {
+        color: var(--faint);
+        font-variant-numeric: tabular-nums;
+      }
+      .tag-cloud {
+        margin-top: 14px;
+      }
+
       /* ---- blog index ---------------------------------------------------- */
 
       .post-list {
@@ -853,6 +902,37 @@
       .post-item {
         padding: 22px 0;
         border-top: 1px solid var(--border-soft);
+      }
+      /* A post with a picture puts it beside the text; one without simply fills
+         the row, so the two kinds sit in the same list without a ragged edge. */
+      .post-item.has-thumb {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+      .post-thumb {
+        display: block;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-raised);
+        aspect-ratio: 16 / 10;
+      }
+      .post-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .post-item.has-thumb:hover .post-thumb {
+        border-color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        .post-item.has-thumb {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
       }
       .post-item h2 {
         margin: 6px 0 8px;

@@ -1,8 +1,8 @@
 # Build the site and deploy it to GitHub Pages. The static files are served as
-# they are; the interactive demo at /demo/ is built from the espkvm/console
-# submodule (its latest main, so the demo always matches the current console).
-# Every other page - the front page, the flasher, the blog - is assembled from
-# the shared pieces in _partials/ by tools/build-site.py.
+# they are; every page - the front page, the flasher, the blog - is assembled
+# from the shared pieces in _partials/ by tools/build-site.py. The interactive
+# demo is not built here at all: the console repository publishes it to
+# demo.espkvm.io, and /demo/ is a committed redirect to that domain.
 #
 # Requires the repository's Pages source to be set to "GitHub Actions"
 # (Settings -> Pages -> Build and deployment -> Source).
@@ -28,25 +28,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      # Build against the console's latest main rather than the pinned commit,
-      # so the demo tracks the console without bumping a submodule pointer here.
-      - name: Update console to latest main
-        run: git submodule update --remote --init console
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: console/package-lock.json
-
-      - name: Build the demo
-        working-directory: console
-        run: |
-          npm ci
-          npm run build:demo
 
       # No dependencies and no toolchain: every page is assembled from
       # _partials/ with the Python that is already on the runner.
@@ -58,12 +39,12 @@ jobs:
           mkdir -p _site
           # Ship what the step above rendered (index.html, flash/, blog/,
           # sitemap.xml) together with the files that are committed as they
-          # are: CNAME, .nojekyll, robots/llms, the favicon, flash/flash.js and
-          # assets/. Repo docs and the page sources are not site content.
+          # are: CNAME, .nojekyll, robots/llms, the favicon, flash/flash.js,
+          # demo/ (the redirect) and assets/. Repo docs and the page sources
+          # are not site content.
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
-            --exclude='console' \
             --exclude='_site' \
             --exclude='README.md' \
             --exclude='docs' \
@@ -72,14 +53,8 @@ jobs:
             --exclude='_partials' \
             --exclude='_templates' \
             --exclude='tools' \
-            --exclude='.gitmodules' \
             --exclude='.gitignore' \
             ./ _site/
-          mkdir -p _site/demo
-          cp console/dist/index.html _site/demo/index.html
-          # The console build carries no tracker - the device ships that code.
-          # The copy served from this site counts like every other page.
-          python3 tools/add-analytics.py _site/demo/index.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

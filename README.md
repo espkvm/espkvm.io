@@ -41,7 +41,10 @@ it is vendored code, committed as it is, and only copied.
 python3 tools/build-site.py     # add --drafts to include unfinished posts
 ```
 
-`/demo/` is not built here at all: CI builds it from the `console` submodule.
+The interactive demo is not built here at all. The console repository
+publishes it to [demo.espkvm.io](https://demo.espkvm.io/), and `demo/` in
+this repo is a small redirect page kept because older articles link to
+`espkvm.io/demo/`.
 
 `flash.js` is the one piece of code that came from elsewhere, and it is
 vendored rather than linked - see [vendor.md](docs/vendor.md) for what it is and how

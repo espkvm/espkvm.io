@@ -12,9 +12,9 @@ that fetches nothing.
 
     python3 tools/build-site.py [--drafts]
 
-Writes index.html, flash/index.html, blog/index.html, blog/<slug>/index.html
-and blog/feed.xml, and rewrites sitemap.xml. All of those are generated and
-none of them are committed.
+Writes index.html, flash/index.html, blog/index.html, blog/<slug>/index.html,
+blog/tags/<tag>/index.html and blog/feed.xml, and rewrites sitemap.xml. All of
+those are generated and none of them are committed.
 """
 
 import argparse
@@ -81,6 +81,28 @@ def read_posts(include_drafts):
             if required not in meta:
                 sys.exit("%s: front matter needs a %s" % (path, required))
 
+        # Tags are a comma-separated line. They are lower-cased and de-duped
+        # here so "Video, video" cannot become two tags with one meaning, and
+        # kept in the order they were written - a post's first tag is the one
+        # it is mostly about.
+        tags = []
+        for raw in meta.get("tags", "").split(","):
+            tag = raw.strip().lower()
+            if tag and tag not in tags:
+                if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", tag):
+                    sys.exit("%s: a tag must be lowercase letters, digits and "
+                             "dashes: %s" % (path, tag))
+                tags.append(tag)
+
+        # The listing wants a picture whether or not the post opens with one, so
+        # a post with no hero lends the listing its first inline figure. The
+        # hero itself stays exactly what the front matter says.
+        thumb = meta.get("image", "")
+        if not thumb:
+            first = re.search(r"^!\[([^\]]*)\]\(([^)\s]+)\)$", body, re.M)
+            if first:
+                thumb = first.group(2)
+
         slug = meta.get("slug") or re.sub(r"^\d{4}-\d{2}-\d{2}-", "", name[:-3])
         try:
             date = datetime.strptime(meta["date"], "%Y-%m-%d")
@@ -93,6 +115,8 @@ def read_posts(include_drafts):
             "description": meta["description"],
             "date": date,
             "image": meta.get("image", ""),
+            "thumb": thumb,
+            "tags": tags,
             "body": body,
             "path": path,
         })
@@ -356,6 +380,24 @@ def rss_date(date):
     return stamped.strftime("%a, %d %b %Y %H:%M:%S +0000")
 
 
+def tag_links(tags):
+    """The tags of one post, as a row of links to their pages."""
+    if not tags:
+        return ""
+    items = "".join('<a class="tag" href="/blog/tags/%s/">%s</a>'
+                    % (html.escape(t), html.escape(t)) for t in tags)
+    return '<p class="tag-row">%s</p>' % items
+
+
+def tags_index(posts):
+    """Every tag with the posts carrying it, most-used first then alphabetical."""
+    index = {}
+    for post in posts:
+        for tag in post["tags"]:
+            index.setdefault(tag, []).append(post)
+    return dict(sorted(index.items(), key=lambda kv: (-len(kv[1]), kv[0])))
+
+
 def post_page(shell, post):
     hero = ""
     if post["image"]:
@@ -368,6 +410,7 @@ def post_page(shell, post):
         <p class="post-back"><a href="/blog/">&larr; All posts</a></p>
         <h1>{title}</h1>
         <p class="post-meta"><time datetime="{iso}">{human}</time></p>
+        {tags}
       </header>
       {hero}
       <div class="post-body">
@@ -378,7 +421,7 @@ def post_page(shell, post):
           ESP-KVM is an open-source IP-KVM on the ESP32-P4 &mdash;
           <a href="https://github.com/espkvm/espkvm">the code is on GitHub</a>,
           and you can <a href="/flash/">install it from the browser</a> or
-          <a href="/demo/">try the console</a> without any hardware.
+          <a href="https://demo.espkvm.io/">try the console</a> without any hardware.
         </p>
         <p class="post-meta">
           New posts go out on <a href="https://t.me/espkvm" rel="noopener">Telegram</a>,
@@ -392,6 +435,7 @@ def post_page(shell, post):
         iso=post["date"].strftime("%Y-%m-%d"),
         human=human_date(post["date"]),
         hero=hero,
+        tags=tag_links(post["tags"]),
         body=render_markdown(post["body"], post["path"]),
     )
 
@@ -400,24 +444,36 @@ def post_page(shell, post):
         "og_title": post["title"],
         "description": post["description"],
         "canonical": "%s/blog/%s/" % (SITE, post["slug"]),
-        "image": SITE + post["image"] if post["image"].startswith("/") else "",
+        "image": SITE + post["thumb"] if post["thumb"].startswith("/") else "",
         "og_type": "article",
     }, content)
 
 
-def index_page(shell, posts):
+def index_page(shell, posts, tag=None, all_tags=None):
+    """The blog index, or one tag's slice of it when `tag` is given."""
     if posts:
         items = "\n".join(
-            """        <li class="post-item">
-          <p class="post-meta"><time datetime="{iso}">{human}</time></p>
-          <h2><a href="/blog/{slug}/">{title}</a></h2>
-          <p>{description}</p>
+            """        <li class="post-item{thumb_class}">
+{thumb}          <div class="post-item-text">
+            <p class="post-meta"><time datetime="{iso}">{human}</time></p>
+            <h2><a href="/blog/{slug}/">{title}</a></h2>
+            <p>{description}</p>
+            {tags}
+          </div>
         </li>""".format(
                 iso=p["date"].strftime("%Y-%m-%d"),
                 human=human_date(p["date"]),
                 slug=p["slug"],
                 title=html.escape(p["title"]),
                 description=html.escape(p["description"]),
+                tags=tag_links(p["tags"]),
+                # A post with a picture shows it here as well. The alt is empty
+                # on purpose: the heading right next to it already says what the
+                # post is, and a screen reader repeating that helps nobody.
+                thumb_class=" has-thumb" if p["thumb"] else "",
+                thumb=('          <a class="post-thumb" href="/blog/%s/" tabindex="-1" '
+                       'aria-hidden="true"><img src="%s" alt="" loading="lazy" /></a>\n'
+                       % (p["slug"], html.escape(p["thumb"])) if p["thumb"] else ""),
             )
             for p in posts
         )
@@ -425,27 +481,59 @@ def index_page(shell, posts):
     else:
         listing = "<p>Nothing here yet.</p>"
 
+    # The whole tag list, on every index, so one tag's page is not a dead end.
+    cloud = ""
+    if all_tags:
+        links = "".join(
+            '<a class="tag%s" href="/blog/tags/%s/">%s <span>%d</span></a>'
+            % (" tag-on" if t == tag else "", html.escape(t), html.escape(t), len(ps))
+            for t, ps in all_tags.items()
+        )
+        cloud = '<p class="tag-row tag-cloud">%s%s</p>' % (
+            '<a class="tag%s" href="/blog/">all <span>%d</span></a>'
+            % ("" if tag else " tag-on",
+               len({p["slug"] for ps in all_tags.values() for p in ps}) if tag else len(posts)),
+            links)
+
+    if tag:
+        heading = "Tagged %s" % html.escape(tag)
+        blurb = ("%d post%s tagged %s. <a href=\"/blog/\">All posts</a>."
+                 % (len(posts), "" if len(posts) == 1 else "s", html.escape(tag)))
+    else:
+        heading = "Blog"
+        blurb = ("What broke, what the number was, and what the chip turned out "
+                 "to be doing. <a href=\"/blog/feed.xml\">RSS</a>.")
+
     content = """
     <div class="post">
       <header class="post-head">
-        <h1>Blog</h1>
-        <p class="post-meta">
-          What broke, what the number was, and what the chip turned out to be
-          doing. <a href="/blog/feed.xml">RSS</a>.
-        </p>
+        <h1>{heading}</h1>
+        <p class="post-meta">{blurb}</p>
+        {cloud}
       </header>
-      %s
+      {listing}
     </div>
-""" % listing
+""".format(heading=heading, blurb=blurb, cloud=cloud, listing=listing)
 
-    return render_page(shell, {
-        "title": "Blog - ESP-KVM",
-        "og_title": "The ESP-KVM blog",
-        "description": "Engineering notes from building an open-source IP-KVM "
-                       "on the ESP32-P4: the bugs, the measurements and the fixes.",
-        "canonical": SITE + "/blog/",
-        "og_type": "website",
-    }, content)
+    if tag:
+        meta = {
+            "title": "Posts tagged %s - ESP-KVM" % tag,
+            "og_title": "ESP-KVM posts tagged %s" % tag,
+            "description": "Every ESP-KVM release note and engineering write-up "
+                           "tagged %s." % tag,
+            "canonical": "%s/blog/tags/%s/" % (SITE, tag),
+            "og_type": "website",
+        }
+    else:
+        meta = {
+            "title": "Blog - ESP-KVM",
+            "og_title": "The ESP-KVM blog",
+            "description": "Engineering notes from building an open-source IP-KVM "
+                           "on the ESP32-P4: the bugs, the measurements and the fixes.",
+            "canonical": SITE + "/blog/",
+            "og_type": "website",
+        }
+    return render_page(shell, meta, content)
 
 
 def feed(posts):
@@ -481,7 +569,7 @@ def feed(posts):
 """.format(site=SITE, built=built, items=items)
 
 
-def sitemap(posts):
+def sitemap(posts, tags=None):
     entries = "".join(
         "  <url>\n    <loc>%s%s</loc>\n    <priority>%s</priority>\n  </url>\n"
         % (SITE, path, priority)
@@ -492,6 +580,13 @@ def sitemap(posts):
         "    <priority>0.6</priority>\n  </url>\n"
         % (SITE, p["slug"], p["date"].strftime("%Y-%m-%d"))
         for p in posts
+    )
+    # A tag page is a real listing of real posts, so it belongs in the sitemap -
+    # below the posts themselves, which are what a reader actually wants.
+    entries += "".join(
+        "  <url>\n    <loc>%s/blog/tags/%s/</loc>\n    <priority>0.4</priority>\n  </url>\n"
+        % (SITE, tag)
+        for tag in (tags or {})
     )
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -521,16 +616,27 @@ def main():
         write(os.path.join(OUT_DIR, post["slug"], "index.html"),
               post_page(shell, post))
 
-    write(os.path.join(OUT_DIR, "index.html"), index_page(shell, posts))
+    tags = tags_index(posts)
+    for tag, tagged in tags.items():
+        write(os.path.join(OUT_DIR, "tags", tag, "index.html"),
+              index_page(shell, tagged, tag=tag, all_tags=tags))
+
+    write(os.path.join(OUT_DIR, "index.html"),
+          index_page(shell, posts, all_tags=tags))
     write(os.path.join(OUT_DIR, "feed.xml"), feed(posts))
-    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts))
+    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags))
 
     print("pages:")
     for output in pages:
         print("  /%s" % output)
-    print("blog: %d post%s" % (len(posts), "" if len(posts) == 1 else "s"))
+    print("blog: %d post%s, %d tag%s"
+          % (len(posts), "" if len(posts) == 1 else "s",
+             len(tags), "" if len(tags) == 1 else "s"))
     for post in posts:
         print("  /blog/%s/  %s" % (post["slug"], post["title"]))
+    for tag, tagged in tags.items():
+        print("  /blog/tags/%s/  %d post%s"
+              % (tag, len(tagged), "" if len(tagged) == 1 else "s"))
 
 
 if __name__ == "__main__":
