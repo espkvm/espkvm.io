@@ -780,10 +780,11 @@ output: index.html
               <p>
                 The PoE board without the wired port, contributed by someone who
                 has one: capture and the USB keyboard and mouse are confirmed on
-                hardware. 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash. Its WiFi is
-                not dependable yet, though &mdash; the link to the co-processor
-                can stall &mdash; and WiFi is the only way in on this board, so
-                treat it as experimental.
+                hardware. 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash. Its WiFi link
+                used to stall; since 0.41.1 the chip's own pull-ups are switched
+                on for this board and it holds. That is one board and one
+                tester, and WiFi is the only way in here, so tell us if yours
+                behaves differently.
               </p>
               <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
@@ -974,6 +975,9 @@ output: index.html
             <li><a href="https://learningbot.tech/newsletter/every-ai-output-in-europe-needs-a-receipt-starting-today/" rel="noopener">LearningBot</a> &mdash; &ldquo;Build of the Week&rdquo;</li>
             <li><a href="http://edige.xyz/news/esp32-p4-hdmi-ip-kvm" rel="noopener">EdigE</a> &mdash; &ldquo;An ESP32-P4 turned into a real IP-KVM with HDMI, H.264, USB HID and boot images&rdquo; (in Russian)</li>
             <li><a href="https://youtu.be/nw-8a1GmJLE?t=342" rel="noopener">Wels</a> &mdash; &ldquo;5 Minutos de Miercoles #22&rdquo;, from 5:42 (on video, in Spanish)</li>
+            <li><a href="https://jinbel.cn/post/1487.html" rel="noopener">私人定制 Blog</a> &mdash; &ldquo;GitHub 开源 ESP-KVM：$45 把 ESP32-P4 变成 IP 远程控制卡——HDMI 采集 + 浏览器键鼠 + 虚拟光驱，替代 $300 商业方案&rdquo; (in Chinese)</li>
+            <li><a href="https://log8.kr/library/esp32-ip-kvm-out-of-band-recovery-2026/" rel="noopener">log8.kr</a> &mdash; &ldquo;ESP32 IP-KVM 홈랩 원격 복구 설계&rdquo;, a recovery-and-security checklist built around the device (in Korean)</li>
+            <li><a href="https://bearblogtech.ca/espkvm.html" rel="noopener">BearBlogtech</a> &mdash; &ldquo;ESPKVM an Open Source Kvm with IP and an ESp32&rdquo;, a build log written after the author&rsquo;s $800 datacentre KVM died</li>
           </ul>
           <p>
             Also picked up and translated internationally &mdash; French, Greek,
