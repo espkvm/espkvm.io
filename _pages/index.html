@@ -801,7 +801,12 @@ output: index.html
               <p>
                 A TC358743 HDMI&nbsp;&rarr;&nbsp;MIPI CSI-2 bridge that turns the
                 target&rsquo;s HDMI into a camera stream the ESP32-P4 can read.
-                Any other TC358743 capture board should do just as well.
+                Any other TC358743 capture board should do just as well &mdash;
+                the firmware talks to that chip, not to the board around it. The
+                <a href="https://wiki.geekworm.com/C792" rel="noopener">C792</a>
+                is the same bridge with a splitter in front and should work too,
+                though nobody here has run one; use its 15-pin connector, and see
+                the README on what its EDID may do to a 1080p60 source.
               </p>
               <a href="https://wiki.geekworm.com/C790" rel="noopener">Geekworm wiki page &rarr;</a>
             </div>
