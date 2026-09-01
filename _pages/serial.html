@@ -1,0 +1,424 @@
+---
+title: Serial monitor in the browser
+description: Read an ESP-KVM board's serial log from this page - no terminal, nothing installed - and save it to a file to attach to a bug report.
+canonical: https://espkvm.io/serial/
+og_type: website
+output: serial/index.html
+---
+<!--
+  A passive serial monitor over Web Serial. It only reads: nothing is ever
+  written to the port, and DTR/RTS are cleared the moment it opens, because
+  asserting them is how a board ends up held in reset or in the ROM loader.
+
+  Nothing leaves the browser. There is no upload, no analytics on the log, and
+  no dependency - the whole tool is the script at the bottom of this file.
+-->
+<style>
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .toolbar select {
+    background: var(--bg-raised);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font: inherit;
+  }
+
+  .status {
+    color: var(--muted);
+    font-size: 0.95em;
+    margin: 0 0 14px;
+  }
+
+  .status.live {
+    color: var(--ok);
+  }
+
+  #log {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 0 0 14px;
+    height: 60vh;
+    min-height: 260px;
+    overflow: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  #log:empty::before {
+    content: "Nothing yet. Press Connect, pick the board's port, and the log appears here as it arrives.";
+    color: var(--faint);
+  }
+
+  /* The three lines worth finding in a wall of log. */
+  .l-bad {
+    color: #ff8f8f;
+  }
+  .l-warn {
+    color: var(--warn);
+  }
+  .l-boot {
+    color: var(--accent);
+  }
+
+  .status .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--faint);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .status.live .dot {
+    background: var(--ok);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent);
+  }
+
+  details.paste {
+    margin-bottom: 14px;
+  }
+
+  details.paste summary {
+    cursor: pointer;
+    color: var(--muted);
+  }
+
+  details.paste textarea {
+    width: 100%;
+    min-height: 140px;
+    margin-top: 10px;
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    resize: vertical;
+  }
+
+  .unsupported {
+    color: var(--warn);
+    max-width: 42em;
+  }
+
+  ol {
+    margin: 0 0 14px;
+    padding-left: 22px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  .note {
+    border-left: 3px solid var(--warn);
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    background: var(--bg-raised);
+    border-radius: 0 8px 8px 0;
+    color: var(--muted);
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Serial monitor</h1>
+    <p class="tagline">
+      Read the board&rsquo;s log from this page and save it to a file. No
+      terminal to install, no drivers to find, and nothing leaves your browser
+      &mdash; the log is never uploaded anywhere.
+    </p>
+  </header>
+
+  <div class="toolbar">
+    <button type="button" class="btn" id="connect">Connect</button>
+    <button type="button" class="btn btn-sm" id="disconnect" hidden>Disconnect</button>
+    <select id="baud" aria-label="Speed">
+      <option value="115200" selected>115200 baud</option>
+      <option value="74880">74880 baud</option>
+      <option value="921600">921600 baud</option>
+    </select>
+    <button type="button" class="btn btn-sm" id="save">Save to file</button>
+    <button type="button" class="btn btn-sm" id="copy">Copy</button>
+    <button type="button" class="btn btn-sm" id="clear">Clear</button>
+  </div>
+
+  <p class="status" id="status"><span class="dot"></span>Not connected.</p>
+  <p class="unsupported" id="unsupported" hidden>
+    This browser cannot talk to serial devices. Chrome or Edge on a desktop can;
+    Firefox and Safari cannot, and neither can any browser on iOS.
+  </p>
+
+  <details class="paste">
+    <summary>Not at the board? Paste a log instead</summary>
+    <p class="hint">
+      A log somebody sent you, or one downloaded from the device
+      (<code>Settings &rarr; System &rarr; Download log</code>). It gets the same
+      colouring and the same Save button.
+    </p>
+    <textarea id="paste-in" placeholder="Paste a log here."></textarea>
+    <div class="toolbar">
+      <button type="button" class="btn btn-sm" id="paste-go">Show it</button>
+    </div>
+  </details>
+
+  <pre id="log" aria-live="polite" aria-label="Serial output"></pre>
+
+  <section>
+    <h2>What to expect</h2>
+    <ol>
+      <li>Connect the board to this computer with a USB cable.</li>
+      <li>
+        Press <strong>Connect</strong> and pick the board&rsquo;s port. On Linux
+        it is usually <code>/dev/ttyACM0</code> or <code>/dev/ttyUSB0</code>; on
+        Windows a COM port; on macOS a <code>usbmodem</code> or
+        <code>usbserial</code> entry.
+      </li>
+      <li>
+        The log appears as it arrives. Panics, warnings and the boot banner are
+        coloured so they are findable in a long capture.
+      </li>
+      <li>
+        Press <strong>Save to file</strong> and attach the file to your issue or
+        discussion. That single file usually answers a question that would
+        otherwise take a week of messages.
+      </li>
+    </ol>
+
+    <p class="note">
+      This page only listens. It never writes to the port, and it clears DTR and
+      RTS as soon as the port opens &mdash; asserting those is what holds a board
+      in reset or drops it into the ROM loader, and a monitor that did it would
+      change the very thing you are trying to watch.
+    </p>
+
+    <h2>If the log is empty</h2>
+    <ul>
+      <li>
+        <strong>The board resets when the port opens.</strong> On boards whose
+        USB goes straight to the ESP32-P4 (the Function EV, for example) opening
+        the port restarts the chip, so what you see starts at the boot banner.
+        That is normal. On the Waveshare ESP32-P4-ETH the USB-C is a CH343
+        bridge and the board keeps running.
+      </li>
+      <li>
+        <strong>Nothing at all, at any speed.</strong> Check the cable: some USB-C
+        cables carry power only. And make sure nothing else has the port open -
+        a terminal, an IDE monitor, or a flashing tool still running.
+      </li>
+      <li>
+        <strong>Garbage characters.</strong> Wrong speed. ESP-KVM logs at 115200.
+      </li>
+      <li>
+        <strong>The port is not in the list.</strong> On Linux your user may not
+        be in the <code>dialout</code> group; on Windows and macOS a CH34x board
+        needs its driver. The
+        <a href="/flash/">flashing page</a> has the same notes in more detail.
+      </li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  (function () {
+    var logEl = document.getElementById("log");
+    var statusEl = document.getElementById("status");
+    var connectBtn = document.getElementById("connect");
+    var disconnectBtn = document.getElementById("disconnect");
+    var baudEl = document.getElementById("baud");
+    var port = null;
+    var reader = null;
+    var keepReading = false;
+    var carry = "";
+    /* A long capture is worth keeping, but not without a ceiling: a board left
+       talking overnight would otherwise take the tab down with it. */
+    var MAX_LINES = 20000;
+
+    if (!("serial" in navigator)) {
+      document.getElementById("unsupported").hidden = false;
+      connectBtn.disabled = true;
+    }
+
+    function setStatus(text, live) {
+      statusEl.textContent = "";
+      var dot = document.createElement("span");
+      dot.className = "dot";
+      statusEl.appendChild(dot);
+      statusEl.appendChild(document.createTextNode(text));
+      statusEl.classList.toggle("live", Boolean(live));
+    }
+
+    function classFor(line) {
+      if (/Guru Meditation|assert failed|CORRUPT HEAP|Stack canary|abort\(\)|Backtrace/.test(line)) {
+        return "l-bad";
+      }
+      if (/^E \(|^ets |rst:0x|boot: after/.test(line)) {
+        return "l-boot";
+      }
+      if (/^W \(/.test(line)) {
+        return "l-warn";
+      }
+      return null;
+    }
+
+    function append(text) {
+      /* Stick to the bottom unless the reader has scrolled up to look at
+         something - moving the view under them is how a log becomes unusable. */
+      var atBottom = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 40;
+      carry += text;
+      var lines = carry.split("\n");
+      carry = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].replace(/\r$/, "");
+        var cls = classFor(line);
+        if (cls) {
+          var span = document.createElement("span");
+          span.className = cls;
+          span.textContent = line + "\n";
+          logEl.appendChild(span);
+        } else {
+          logEl.appendChild(document.createTextNode(line + "\n"));
+        }
+      }
+      while (logEl.childNodes.length > MAX_LINES) {
+        logEl.removeChild(logEl.firstChild);
+      }
+      if (atBottom) logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    async function readLoop() {
+      var decoder = new TextDecoderStream();
+      var closed = port.readable.pipeTo(decoder.writable).catch(function () {});
+      reader = decoder.readable.getReader();
+      try {
+        while (keepReading) {
+          var r = await reader.read();
+          if (r.done) break;
+          if (r.value) append(r.value);
+        }
+      } catch (err) {
+        append("\n--- the port stopped: " + err.message + " ---\n");
+      } finally {
+        try {
+          reader.releaseLock();
+        } catch (e) {}
+        await closed;
+      }
+    }
+
+    async function connect() {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: Number(baudEl.value) });
+        /* Listen only. See the note on the page. */
+        try {
+          await port.setSignals({ dataTerminalReady: false, requestToSend: false });
+        } catch (e) {}
+        keepReading = true;
+        connectBtn.hidden = true;
+        disconnectBtn.hidden = false;
+        baudEl.disabled = true;
+        setStatus("Connected at " + baudEl.value + " baud. Listening.", true);
+        await readLoop();
+      } catch (err) {
+        if (err && err.name === "NotFoundError") return; /* the picker was dismissed */
+        setStatus("Could not open the port: " + (err && err.message ? err.message : err));
+        await disconnect(true);
+        return;
+      }
+      await disconnect();
+    }
+
+    /* keepStatus: leave an error message on screen instead of replacing it with
+       the bland "not connected". */
+    async function disconnect(keepStatus) {
+      keepReading = false;
+      if (reader) {
+        try {
+          await reader.cancel();
+        } catch (e) {}
+        reader = null;
+      }
+      if (port) {
+        try {
+          await port.close();
+        } catch (e) {}
+        port = null;
+      }
+      if (carry) {
+        append("\n");
+      }
+      connectBtn.hidden = false;
+      disconnectBtn.hidden = true;
+      baudEl.disabled = false;
+      if (!keepStatus) setStatus("Not connected.");
+    }
+
+    connectBtn.addEventListener("click", connect);
+    disconnectBtn.addEventListener("click", disconnect);
+
+    document.getElementById("paste-go").addEventListener("click", function () {
+      var text = document.getElementById("paste-in").value;
+      if (!text) return;
+      logEl.textContent = "";
+      carry = "";
+      append(text.endsWith("\n") ? text : text + "\n");
+      setStatus("Showing a pasted log, " + text.split("\n").length + " lines.");
+      logEl.scrollTop = 0;
+    });
+
+    document.getElementById("clear").addEventListener("click", function () {
+      logEl.textContent = "";
+      carry = "";
+    });
+
+    document.getElementById("copy").addEventListener("click", function () {
+      navigator.clipboard.writeText(logEl.textContent).then(
+        function () {
+          setStatus("Copied " + logEl.textContent.length + " characters.");
+        },
+        function () {
+          setStatus("The browser would not let the page copy. Select the text instead.");
+        },
+      );
+    });
+
+    document.getElementById("save").addEventListener("click", function () {
+      var stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+      var blob = new Blob([logEl.textContent], { type: "text/plain" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "espkvm-" + stamp + ".log";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () {
+        URL.revokeObjectURL(a.href);
+      }, 1000);
+    });
+
+    if ("serial" in navigator) {
+      navigator.serial.addEventListener("disconnect", function () {
+        if (port) {
+          append("\n--- the board was unplugged ---\n");
+          disconnect();
+        }
+      });
+    }
+  })();
+</script>

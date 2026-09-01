@@ -8,7 +8,7 @@ image:
 
 Home Assistant now shows which firmware is installed, which one the project has
 published, and a button that installs it. To do that the device had to start
-reading the update manifest itself, at most once every six hours - until now
+reading the update manifest itself, at most once every six hours. Until now
 only the console did, from the browser, which is no use to a dashboard. It
 appears only where the device is allowed to fetch releases; with that switched
 off there is no entity at all, because one that can never answer is worse than
@@ -17,8 +17,8 @@ none.
 There is also a camera holding a still of the target's screen. A button takes
 one, and a setting takes one by itself when the screen watch matches a phrase,
 so the notification that says `kernel panic` arrives with the screen attached.
-It needs the MJPEG codec - while H.264 runs there is no still to take - and it
-is off by default, because a 1080p frame is a few hundred kilobytes through your
+It needs the MJPEG codec, because while H.264 runs there is no still to take.
+It is off by default too: a 1080p frame is a few hundred kilobytes through your
 broker.
 
 The mouse jiggler is a switch now, with its interval beside it. The case for it

@@ -10,9 +10,14 @@ _site/
 # The published site is assembled by CI, so none of this is committed.
 /index.html
 /flash/index.html
+/serial/index.html
+/tools/index.html
 /blog/
 /sitemap.xml
 
 # Posts that are written but not published yet. Move one back into _posts/ to
 # put it on the site.
 _drafts/
+
+# Editor leftovers
+*.kate-swp

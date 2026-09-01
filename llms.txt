@@ -49,6 +49,8 @@ Key facts:
 
 - [Website](https://espkvm.io/)
 - [Flash from the browser](https://espkvm.io/flash/)
+- [Serial monitor in the browser](https://espkvm.io/serial/)
+- [Tools: read a firmware image, decode a panic, inspect an EDID](https://espkvm.io/tools/)
 - [Interactive demo, no hardware needed](https://demo.espkvm.io/)
 - [Blog: what each release changed, and how](https://espkvm.io/blog/)
 - [Source code on GitHub](https://github.com/espkvm/espkvm)

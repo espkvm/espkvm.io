@@ -1,0 +1,983 @@
+---
+title: Tools for ESP-KVM
+description: Read a firmware image, decode a panic dump against a release's symbols, and inspect an EDID - in the browser, with nothing uploaded anywhere.
+canonical: https://espkvm.io/tools/
+og_type: website
+output: tools/index.html
+---
+<!--
+  Three small analysers that answer the questions this project's bug reports
+  keep asking. Everything runs in the page: files are read with FileReader and
+  never leave the browser, and the only network request is the optional fetch
+  of a release's symbol file.
+
+  The parsers are deliberately plain functions on one object (window.espkvmTools)
+  so they can be exercised outside a browser.
+-->
+<style>
+  .tool {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    background: var(--bg-raised);
+  }
+
+  .tool h2 {
+    margin-top: 0;
+  }
+
+  .drop {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+  .drop.over {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .drop input[type="file"] {
+    display: none;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    resize: vertical;
+  }
+
+  .out {
+    font-family: var(--mono);
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 12px 0 0;
+  }
+
+  .out:empty {
+    display: none;
+  }
+
+  .kv {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+
+  .kv th,
+  .kv td {
+    text-align: left;
+    padding: 6px 10px 6px 0;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+
+  .kv th {
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+    width: 15em;
+  }
+
+  .kv td.mono {
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  .bad {
+    color: #ff8f8f;
+  }
+
+  .ok {
+    color: var(--ok);
+  }
+
+  .warn {
+    color: var(--warn);
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.95em;
+  }
+
+  /* The head of a tool: an icon, a title, and nothing else competing. */
+  .tool-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .tool-head svg {
+    flex: none;
+    color: var(--accent);
+  }
+
+  .tool-head h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .drop-icon {
+    display: block;
+    margin: 0 auto 8px;
+    color: var(--faint);
+  }
+
+  .drop strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .drop.loaded {
+    border-style: solid;
+    border-color: var(--border);
+    background: var(--bg-soft);
+    color: var(--text);
+  }
+
+  .drop.loaded .drop-icon {
+    color: var(--ok);
+  }
+
+  /* The answer, before the detail that supports it. */
+  .verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border-soft);
+  }
+
+  .verdict .big {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+  }
+
+  .badge-ok {
+    color: var(--ok);
+    border-color: color-mix(in srgb, var(--ok) 40%, transparent);
+    background: color-mix(in srgb, var(--ok) 12%, transparent);
+  }
+
+  .badge-bad {
+    color: #ff8f8f;
+    border-color: color-mix(in srgb, #ff8f8f 40%, transparent);
+    background: color-mix(in srgb, #ff8f8f 12%, transparent);
+  }
+
+  .drop-file {
+    margin-top: 8px;
+  }
+
+  .badge-info {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: var(--accent-soft);
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Tools</h1>
+    <p class="tagline">
+      Three things this project&rsquo;s bug reports keep needing. Everything runs
+      in this page &mdash; the files you drop are read in the browser and are
+      never uploaded anywhere.
+    </p>
+    <p class="hint">
+      Looking for the live log of a board on your desk? That is the
+      <a href="/serial/">serial monitor</a>.
+    </p>
+  </header>
+
+  <section class="tool">
+    <div class="tool-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <rect x="7" y="7" width="10" height="10" rx="1.5" />
+        <path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4" stroke-linecap="round" />
+      </svg>
+      <h2>What is in this firmware image?</h2>
+    </div>
+    <p>
+      Drop an <code>espkvm-*.bin</code> &mdash; the plain image or the merged one
+      &mdash; and it will tell you the version it really is, when it was built,
+      and <strong>which silicon it will boot on</strong>. The two ESP32-P4
+      families refuse each other&rsquo;s images, so that last line is usually the
+      answer to &ldquo;why does this board sit in the loader&rdquo;.
+    </p>
+    <label class="drop" id="img-drop">
+      <svg class="drop-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 15V3M8 7l4-4 4 4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke-linecap="round" />
+      </svg>
+      <strong>Drop a firmware image here</strong><br />
+      or click to choose one - <code>espkvm-*.bin</code>, plain or merged
+      <input type="file" id="img-file" accept=".bin,application/octet-stream" />
+    </label>
+    <div id="img-out"></div>
+  </section>
+
+  <section class="tool">
+    <div class="tool-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <path d="M12 3v6M12 21v-4M5.6 5.6l3 3M18.4 18.4l-2.8-2.8M3 12h5M21 12h-5M5.6 18.4l3-3M18.4 5.6l-2.8 2.8" stroke-linecap="round" />
+        <circle cx="12" cy="12" r="2.6" />
+      </svg>
+      <h2>Decode a panic</h2>
+    </div>
+    <p>
+      Paste a <code>Guru Meditation</code> dump - registers, the stack, whatever
+      the board printed - and give it the symbols for the firmware that was
+      running. Every address that lands in a known function is named, so a reboot
+      becomes a stack.
+    </p>
+    <p class="hint">
+      Symbols come from the release the board was running:
+      <a href="https://github.com/espkvm/espkvm/releases" rel="noopener">the releases page</a>
+      has <code>espkvm-&lt;version&gt;-symbols.zip</code>. Drop the zip here and
+      pick your board, or drop a single <code>.sym</code> from it. Both stay in
+      the browser.
+    </p>
+    <label class="drop" id="sym-drop">
+      <svg class="drop-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 15V3M8 7l4-4 4 4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke-linecap="round" />
+      </svg>
+      <strong>Drop the symbols here</strong><br />
+      the release's <code>-symbols.zip</code>, or one <code>.sym</code> from it
+      <input type="file" id="sym-file" accept=".zip,.sym,text/plain,application/zip" />
+    </label>
+    <div class="row" id="sym-pick-row" hidden>
+      <label for="sym-pick" class="hint">Board:</label>
+      <select id="sym-pick"></select>
+    </div>
+    <p class="hint" id="sym-status">No symbols loaded.</p>
+    <textarea id="panic-in" placeholder="Paste the panic here, registers and all."></textarea>
+    <div class="row">
+      <button type="button" class="btn btn-sm" id="panic-go">Decode</button>
+      <button type="button" class="btn btn-sm" id="panic-clear">Clear</button>
+    </div>
+    <div id="panic-out"></div>
+  </section>
+
+  <section class="tool">
+    <div class="tool-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="12" rx="2" />
+        <path d="M9 20h6M12 16v4" stroke-linecap="round" />
+      </svg>
+      <h2>Read an EDID</h2>
+    </div>
+    <p>
+      Drop an EDID blob (128 or 256 bytes) or paste it as hex. It lists the modes
+      the block advertises with the pixel clock of each, and marks anything the
+      capture path cannot carry: two MIPI lanes at 972 Mbit/s carrying RGB888
+      stop at about <strong>81 Mpixel/s</strong>, and a mode above that gives a
+      black screen rather than a slower one.
+    </p>
+    <label class="drop" id="edid-drop">
+      <svg class="drop-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M12 15V3M8 7l4-4 4 4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" stroke-linecap="round" />
+      </svg>
+      <strong>Drop an EDID here</strong><br />
+      or click to choose a file - 128 or 256 bytes
+      <input type="file" id="edid-file" accept=".bin,.edid,application/octet-stream" />
+    </label>
+    <textarea id="edid-hex" placeholder="...or paste hex: 00 FF FF FF FF FF FF 00 ..."></textarea>
+    <div class="row">
+      <button type="button" class="btn btn-sm" id="edid-go">Read the hex</button>
+    </div>
+    <div id="edid-out"></div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    /* ---- firmware image ---------------------------------------------------- */
+
+    var CHIPS = {
+      0: "ESP32",
+      2: "ESP32-S2",
+      5: "ESP32-C3",
+      9: "ESP32-S3",
+      12: "ESP32-C2",
+      13: "ESP32-C6",
+      16: "ESP32-H2",
+      18: "ESP32-P4",
+      20: "ESP32-C61",
+      23: "ESP32-C5",
+      25: "ESP32-H21",
+      28: "ESP32-H4",
+      32: "ESP32-S31",
+    };
+    var FLASH_SIZE = ["1MB", "2MB", "4MB", "8MB", "16MB", "32MB", "64MB", "128MB"];
+    var APP_DESC_MAGIC = 0xabcd5432;
+
+    function str(bytes, off, len) {
+      var out = "";
+      for (var i = off; i < off + len && i < bytes.length; i++) {
+        if (bytes[i] === 0) break;
+        out += String.fromCharCode(bytes[i]);
+      }
+      return out;
+    }
+
+    function hex(bytes, off, len) {
+      var out = "";
+      for (var i = off; i < off + len && i < bytes.length; i++) {
+        out += (bytes[i] < 16 ? "0" : "") + bytes[i].toString(16);
+      }
+      return out;
+    }
+
+    function rev(v) {
+      return Math.floor(v / 100) + "." + (v % 100);
+    }
+
+    /*
+     * Find the application. A plain app image starts with the 0xE9 header and
+     * carries its descriptor at 0x20; a merged image is the whole flash layout,
+     * so the app sits at whatever offset the partition table gave it. Rather
+     * than hard-code 0x20000, look for the descriptor's magic on a 0x1000 grid.
+     */
+    function findApp(bytes) {
+      for (var off = 0; off + 0x120 < bytes.length; off += 0x1000) {
+        if (bytes[off] !== 0xe9) continue;
+        var dv = new DataView(bytes.buffer, bytes.byteOffset + off + 0x20, 4);
+        if (dv.getUint32(0, true) === APP_DESC_MAGIC) return off;
+      }
+      return -1;
+    }
+
+    function parseImage(bytes) {
+      var off = findApp(bytes);
+      if (off < 0) {
+        return { error: "No ESP-IDF application found in this file." };
+      }
+      var dv = new DataView(bytes.buffer, bytes.byteOffset);
+      var h = {
+        segments: bytes[off + 1],
+        flashSize: FLASH_SIZE[bytes[off + 3] >> 4] || "?",
+        entry: dv.getUint32(off + 4, true) >>> 0,
+        chipId: dv.getUint16(off + 12, true),
+        minRev: dv.getUint16(off + 15, true),
+        maxRev: dv.getUint16(off + 17, true),
+      };
+      var a = off + 0x20;
+      var app = {
+        secureVersion: dv.getUint32(a + 4, true),
+        version: str(bytes, a + 16, 32),
+        project: str(bytes, a + 48, 32),
+        time: str(bytes, a + 80, 16),
+        date: str(bytes, a + 96, 16),
+        idf: str(bytes, a + 112, 32),
+        elfSha: hex(bytes, a + 144, 32),
+      };
+      return { offset: off, merged: off !== 0, header: h, app: app };
+    }
+
+    /* ---- symbols and panics ------------------------------------------------ */
+
+    /* `nm -n` output: address, type, name. Sorted, so a lookup is a bisect. */
+    function parseSym(text) {
+      var out = [];
+      var lines = text.split("\n");
+      for (var i = 0; i < lines.length; i++) {
+        var m = /^([0-9a-fA-F]{8})\s+(\w)\s+(.+?)\s*$/.exec(lines[i]);
+        if (m) out.push([parseInt(m[1], 16), m[3]]);
+      }
+      out.sort(function (a, b) {
+        return a[0] - b[0];
+      });
+      return out;
+    }
+
+    /*
+     * The P4 runs code out of flash mapped at 0x4000_0000; 0x4FF0_0000 and up is
+     * SRAM. Without that upper bound a stack pointer resolves to whatever symbol
+     * sits below it - "A0 0x0 -> errno" is not a finding, it is noise with a
+     * function name on it.
+     */
+    function isCode(addr) {
+      return addr >= 0x40000000 && addr < 0x4ff00000;
+    }
+
+    function resolve(syms, addr) {
+      if (!isCode(addr)) return null;
+      var lo = 0,
+        hi = syms.length - 1,
+        best = -1;
+      while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        if (syms[mid][0] <= addr) {
+          best = mid;
+          lo = mid + 1;
+        } else {
+          hi = mid - 1;
+        }
+      }
+      if (best < 0) return null;
+      /* Nothing useful comes of naming an address a megabyte past its symbol -
+         that is a stack value that happens to look like code. */
+      var delta = addr - syms[best][0];
+      if (delta > 0x8000) return null;
+      return { name: syms[best][1], delta: delta };
+    }
+
+    /* Addresses worth resolving: the P4's instruction bus. Everything else in a
+       dump is data, and naming it would be noise dressed as a finding. */
+    function codeAddresses(text) {
+      var seen = {},
+        out = [];
+      var re = /0x(4[0-9a-fA-F]{7})/g,
+        m;
+      while ((m = re.exec(text))) {
+        var v = parseInt(m[1], 16);
+        if (isCode(v) && !seen[v]) {
+          seen[v] = true;
+          out.push(v);
+        }
+      }
+      return out;
+    }
+
+    function labelled(text) {
+      var out = {};
+      var re = /\b(MEPC|RA|SP|MTVAL|A0|A1|EPC)\s*:?\s*0x([0-9a-fA-F]{8})/g,
+        m;
+      while ((m = re.exec(text))) out[m[1]] = parseInt(m[2], 16);
+      return out;
+    }
+
+    /* ---- a zip, without a library ------------------------------------------ */
+
+    /* Only what a symbols zip needs: the central directory, and stored or
+       deflated entries. DecompressionStream does the inflating. */
+    function zipEntries(bytes) {
+      var dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.length);
+      var eocd = -1;
+      for (var i = bytes.length - 22; i >= 0 && i > bytes.length - 66000; i--) {
+        if (dv.getUint32(i, true) === 0x06054b50) {
+          eocd = i;
+          break;
+        }
+      }
+      if (eocd < 0) return [];
+      var count = dv.getUint16(eocd + 10, true);
+      var p = dv.getUint32(eocd + 16, true);
+      var out = [];
+      for (var n = 0; n < count && p + 46 <= bytes.length; n++) {
+        if (dv.getUint32(p, true) !== 0x02014b50) break;
+        var method = dv.getUint16(p + 10, true);
+        var csize = dv.getUint32(p + 20, true);
+        var nameLen = dv.getUint16(p + 28, true);
+        var extraLen = dv.getUint16(p + 30, true);
+        var cmtLen = dv.getUint16(p + 32, true);
+        var local = dv.getUint32(p + 42, true);
+        out.push({
+          name: str(bytes, p + 46, nameLen),
+          method: method,
+          csize: csize,
+          local: local,
+        });
+        p += 46 + nameLen + extraLen + cmtLen;
+      }
+      return out;
+    }
+
+    async function zipRead(bytes, entry) {
+      var dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.length);
+      var p = entry.local;
+      if (dv.getUint32(p, true) !== 0x04034b50) throw new Error("bad entry");
+      var start = p + 30 + dv.getUint16(p + 26, true) + dv.getUint16(p + 28, true);
+      var data = bytes.subarray(start, start + entry.csize);
+      if (entry.method === 0) return new TextDecoder().decode(data);
+      var ds = new DecompressionStream("deflate-raw");
+      var stream = new Blob([data]).stream().pipeThrough(ds);
+      return await new Response(stream).text();
+    }
+
+    /* ---- EDID -------------------------------------------------------------- */
+
+    var LANE_LIMIT_MHZ = 81;
+
+    function edidModes(bytes) {
+      var modes = [];
+      function detailed(b, o, where) {
+        var clock = (b[o] | (b[o + 1] << 8)) * 10; /* kHz */
+        if (clock === 0) return;
+        var hact = b[o + 2] | ((b[o + 4] & 0xf0) << 4);
+        var hblank = b[o + 3] | ((b[o + 4] & 0x0f) << 8);
+        var vact = b[o + 5] | ((b[o + 7] & 0xf0) << 4);
+        var vblank = b[o + 6] | ((b[o + 7] & 0x0f) << 8);
+        var interlaced = (b[o + 17] & 0x80) !== 0;
+        var htotal = hact + hblank,
+          vtotal = vact + vblank;
+        var hz = htotal && vtotal ? (clock * 1000) / (htotal * vtotal) : 0;
+        modes.push({
+          w: hact,
+          h: vact,
+          hz: hz,
+          mhz: clock / 1000,
+          interlaced: interlaced,
+          where: where,
+        });
+      }
+      for (var i = 0; i < 4; i++) detailed(bytes, 54 + i * 18, "base");
+      /* The established bitmap: the old VGA modes, one bit each. */
+      var EST = [
+        [35, 0x80, 720, 400, 70], [35, 0x40, 720, 400, 88],
+        [35, 0x20, 640, 480, 60], [35, 0x10, 640, 480, 67],
+        [35, 0x08, 640, 480, 72], [35, 0x04, 640, 480, 75],
+        [35, 0x02, 800, 600, 56], [35, 0x01, 800, 600, 60],
+        [36, 0x80, 800, 600, 72], [36, 0x40, 800, 600, 75],
+        [36, 0x20, 832, 624, 75], [36, 0x10, 1024, 768, 87],
+        [36, 0x08, 1024, 768, 60], [36, 0x04, 1024, 768, 70],
+        [36, 0x02, 1024, 768, 75], [36, 0x01, 1280, 1024, 75],
+        [37, 0x80, 1152, 870, 75],
+      ];
+      for (var e = 0; e < EST.length; e++) {
+        if (bytes[EST[e][0]] & EST[e][1]) {
+          modes.push({
+            w: EST[e][2], h: EST[e][3], hz: EST[e][4], mhz: null, where: "established",
+          });
+        }
+      }
+      /* Standard timings: a size and a refresh, no clock of their own. */
+      for (var s = 0; s < 8; s++) {
+        var o = 38 + s * 2;
+        if (bytes[o] === 0x01 && bytes[o + 1] === 0x01) continue;
+        var w = (bytes[o] + 31) * 8;
+        var ratio = [[16, 10], [4, 3], [5, 4], [16, 9]][bytes[o + 1] >> 6];
+        modes.push({
+          w: w,
+          h: Math.round((w * ratio[1]) / ratio[0]),
+          hz: (bytes[o + 1] & 0x3f) + 60,
+          mhz: null,
+          where: "standard",
+        });
+      }
+      /*
+       * A CTA-861 extension keeps its detailed timings after the data blocks.
+       * Byte 2 of the extension is where they start, counted from the start of
+       * that block - not from the start of the file, which reads the data
+       * blocks as timings and invents modes that were never there.
+       */
+      if (bytes.length >= 256 && bytes[128] === 0x02 && bytes[130] >= 4) {
+        var d = 128 + bytes[130];
+        for (var o2 = d; o2 + 18 <= 128 + 127; o2 += 18) {
+          if (bytes[o2] === 0 && bytes[o2 + 1] === 0) break;
+          detailed(bytes, o2, "extension");
+        }
+      }
+      /* The same mode often appears twice - a preferred descriptor and its copy
+         in the extension. Say it once. */
+      var seen = {},
+        unique = [];
+      for (var k = 0; k < modes.length; k++) {
+        var key = modes[k].w + "x" + modes[k].h + "@" + Math.round(modes[k].hz) + ":" + modes[k].mhz;
+        if (seen[key]) continue;
+        seen[key] = true;
+        unique.push(modes[k]);
+      }
+      return unique;
+    }
+
+    function edidInfo(bytes) {
+      var head = [0, 255, 255, 255, 255, 255, 255, 0];
+      for (var i = 0; i < 8; i++) {
+        if (bytes[i] !== head[i]) return { error: "This does not start like an EDID." };
+      }
+      var sum = 0;
+      for (var j = 0; j < 128; j++) sum = (sum + bytes[j]) & 0xff;
+      var mid = (bytes[8] << 8) | bytes[9];
+      var letters =
+        String.fromCharCode(64 + ((mid >> 10) & 31)) +
+        String.fromCharCode(64 + ((mid >> 5) & 31)) +
+        String.fromCharCode(64 + (mid & 31));
+      return {
+        vendor: letters,
+        product: bytes[10] | (bytes[11] << 8),
+        year: bytes[17] ? 1990 + bytes[17] : null,
+        version: bytes[18] + "." + bytes[19],
+        extensions: bytes[126],
+        checksumOk: sum === 0,
+        modes: edidModes(bytes),
+      };
+    }
+
+    /* Exposed so the parsers can be exercised outside a browser. */
+    window.espkvmTools = {
+      parseImage: parseImage,
+      parseSym: parseSym,
+      resolve: resolve,
+      isCode: isCode,
+      codeAddresses: codeAddresses,
+      labelled: labelled,
+      zipEntries: zipEntries,
+      zipRead: zipRead,
+      edidInfo: edidInfo,
+      LANE_LIMIT_MHZ: LANE_LIMIT_MHZ,
+    };
+
+    if (typeof document === "undefined") return;
+
+    /* ---- wiring ------------------------------------------------------------ */
+
+    function el(id) {
+      return document.getElementById(id);
+    }
+
+    function rowsTable(rows) {
+      var t = document.createElement("table");
+      t.className = "kv";
+      for (var i = 0; i < rows.length; i++) {
+        var tr = document.createElement("tr");
+        var th = document.createElement("th");
+        th.textContent = rows[i][0];
+        var td = document.createElement("td");
+        td.className = "mono";
+        if (rows[i][2]) td.classList.add(rows[i][2]);
+        td.textContent = rows[i][1];
+        tr.appendChild(th);
+        tr.appendChild(td);
+        t.appendChild(tr);
+      }
+      return t;
+    }
+
+    function kb(n) {
+      return n < 1024 ? n + " bytes" : Math.round(n / 1024) + " KB";
+    }
+
+    function dropZone(zoneId, inputId, handler) {
+      var zone = el(zoneId),
+        input = el(inputId);
+      /* Once a file is in, the zone stops inviting and starts reporting. */
+      function loaded(file) {
+        zone.classList.add("loaded");
+        var line = zone.querySelector(".drop-file");
+        if (!line) {
+          line = document.createElement("div");
+          line.className = "drop-file hint";
+          zone.appendChild(line);
+        }
+        line.textContent = file.name + " - " + kb(file.size) + ". Drop another to replace it.";
+      }
+      var pass = handler;
+      handler = function (file) {
+        loaded(file);
+        return pass(file);
+      };
+      zone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        zone.classList.add("over");
+      });
+      zone.addEventListener("dragleave", function () {
+        zone.classList.remove("over");
+      });
+      zone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        zone.classList.remove("over");
+        if (e.dataTransfer.files[0]) handler(e.dataTransfer.files[0]);
+      });
+      input.addEventListener("change", function () {
+        if (input.files[0]) handler(input.files[0]);
+      });
+    }
+
+    async function fileBytes(file) {
+      return new Uint8Array(await file.arrayBuffer());
+    }
+
+    /* image */
+    dropZone("img-drop", "img-file", async function (file) {
+      var out = el("img-out");
+      out.textContent = "";
+      var r = parseImage(await fileBytes(file));
+      if (r.error) {
+        out.innerHTML = '<p class="out bad"></p>';
+        out.querySelector("p").textContent = r.error;
+        return;
+      }
+      var chip = CHIPS[r.header.chipId] || "chip id " + r.header.chipId;
+      var rows = [
+        ["Version", r.app.version || "(none)"],
+        ["Project", r.app.project],
+        ["Built", r.app.date + " " + r.app.time],
+        ["ESP-IDF", r.app.idf],
+        ["ELF SHA256", r.app.elfSha.slice(0, 16) + "..."],
+        ["Chip", chip],
+        [
+          "Boots on silicon",
+          "rev " + rev(r.header.minRev) + " to rev " + rev(r.header.maxRev),
+        ],
+        ["Flash size in the header", r.header.flashSize],
+        [
+          "Kind of file",
+          r.merged
+            ? "merged image; the application starts at 0x" + r.offset.toString(16)
+            : "a plain application image",
+        ],
+      ];
+      var verdict = document.createElement("div");
+      verdict.className = "verdict";
+      var big = document.createElement("span");
+      big.className = "big";
+      big.textContent = (r.app.version || "unversioned") + "  -  " + chip;
+      var badge = document.createElement("span");
+      badge.className = "badge badge-info";
+      badge.textContent = "boots on rev " + rev(r.header.minRev) + " - " + rev(r.header.maxRev);
+      verdict.appendChild(big);
+      verdict.appendChild(badge);
+      out.appendChild(verdict);
+      out.appendChild(rowsTable(rows));
+      var note = document.createElement("p");
+      note.className = "out hint";
+      note.textContent =
+        "The build date is the compile time of the app descriptor, which an " +
+        "incremental build does not always refresh. The ELF SHA is the honest " +
+        "identity: it matches the boot banner line by line.";
+      out.appendChild(note);
+    });
+
+    /* symbols */
+    var syms = null;
+    var zipBytes = null;
+    var zipList = [];
+
+    function symStatus(text, cls) {
+      var s = el("sym-status");
+      s.textContent = text;
+      s.className = "hint" + (cls ? " " + cls : "");
+    }
+
+    async function useEntry(entry) {
+      symStatus("Reading " + entry.name + "...");
+      try {
+        syms = parseSym(await zipRead(zipBytes, entry));
+        symStatus(entry.name + ": " + syms.length + " symbols.", "ok");
+      } catch (err) {
+        syms = null;
+        symStatus("Could not read that entry: " + err.message, "bad");
+      }
+    }
+
+    dropZone("sym-drop", "sym-file", async function (file) {
+      var bytes = await fileBytes(file);
+      if (bytes[0] === 0x50 && bytes[1] === 0x4b) {
+        zipBytes = bytes;
+        zipList = zipEntries(bytes).filter(function (e) {
+          return /\.sym$/.test(e.name);
+        });
+        if (!zipList.length) {
+          symStatus("No .sym files in that zip.", "bad");
+          return;
+        }
+        var pick = el("sym-pick");
+        pick.innerHTML = "";
+        for (var i = 0; i < zipList.length; i++) {
+          var o = document.createElement("option");
+          o.value = String(i);
+          o.textContent = zipList[i].name;
+          pick.appendChild(o);
+        }
+        el("sym-pick-row").hidden = false;
+        await useEntry(zipList[0]);
+      } else {
+        syms = parseSym(new TextDecoder().decode(bytes));
+        el("sym-pick-row").hidden = true;
+        symStatus(
+          syms.length
+            ? file.name + ": " + syms.length + " symbols."
+            : "No symbols found in that file.",
+          syms.length ? "ok" : "bad",
+        );
+      }
+    });
+
+    el("sym-pick").addEventListener("change", function (e) {
+      useEntry(zipList[Number(e.target.value)]);
+    });
+
+    el("panic-go").addEventListener("click", function () {
+      var out = el("panic-out");
+      out.textContent = "";
+      var text = el("panic-in").value;
+      if (!syms) {
+        out.appendChild(rowsTable([["", "Load the symbols first.", "warn"]]));
+        return;
+      }
+      var named = labelled(text);
+      var rows = [];
+      Object.keys(named).forEach(function (k) {
+        var r = resolve(syms, named[k]);
+        rows.push([
+          k + "  0x" + named[k].toString(16),
+          r ? r.name + " +0x" + r.delta.toString(16) : "not in any function",
+          r ? null : "warn",
+        ]);
+      });
+      var addrs = codeAddresses(text);
+      var frames = [];
+      for (var i = 0; i < addrs.length; i++) {
+        var r2 = resolve(syms, addrs[i]);
+        if (r2) frames.push(["0x" + addrs[i].toString(16), r2.name + " +0x" + r2.delta.toString(16)]);
+      }
+      if (!rows.length && !frames.length) {
+        out.appendChild(rowsTable([["", "No addresses found in that text.", "warn"]]));
+        return;
+      }
+      /* The crashing instruction is the answer; everything else is support. */
+      var head = named.MEPC !== undefined ? resolve(syms, named.MEPC) : null;
+      if (head) {
+        var v = document.createElement("div");
+        v.className = "verdict";
+        var b = document.createElement("span");
+        b.className = "big";
+        b.textContent = "It crashed in  " + head.name + " +0x" + head.delta.toString(16);
+        var tag = document.createElement("span");
+        tag.className = "badge badge-bad";
+        tag.textContent = "MEPC 0x" + named.MEPC.toString(16);
+        v.appendChild(b);
+        v.appendChild(tag);
+        out.appendChild(v);
+      }
+      if (rows.length) out.appendChild(rowsTable(rows));
+      if (frames.length) {
+        var h = document.createElement("p");
+        h.className = "out hint";
+        h.textContent =
+          "Every other address in the dump that lands inside a function, in the " +
+          "order it appears. The stack is read from the bottom up, and some of " +
+          "these are values that only look like code.";
+        out.appendChild(h);
+        out.appendChild(rowsTable(frames));
+      }
+    });
+
+    el("panic-clear").addEventListener("click", function () {
+      el("panic-in").value = "";
+      el("panic-out").textContent = "";
+    });
+
+    /* EDID */
+    function showEdid(bytes) {
+      var out = el("edid-out");
+      out.textContent = "";
+      var info = edidInfo(bytes);
+      if (info.error) {
+        var p = document.createElement("p");
+        p.className = "out bad";
+        p.textContent = info.error;
+        out.appendChild(p);
+        return;
+      }
+      out.appendChild(
+        rowsTable([
+          ["Made by", info.vendor + ", product 0x" + info.product.toString(16)],
+          ["EDID version", info.version + (info.year ? ", " + info.year : "")],
+          ["Extension blocks", String(info.extensions)],
+          [
+            "Checksum",
+            info.checksumOk ? "correct" : "wrong - the block is damaged",
+            info.checksumOk ? "ok" : "bad",
+          ],
+        ]),
+      );
+      var rows = info.modes.map(function (m) {
+        var name =
+          m.w + "x" + m.h + (m.interlaced ? "i" : "") + " @ " + Math.round(m.hz) + " Hz";
+        if (m.mhz === null) return [name, "(no clock given - a standard timing)"];
+        var over = m.mhz > LANE_LIMIT_MHZ;
+        return [
+          name,
+          m.mhz.toFixed(2) + " MHz" + (over ? "  - over what two lanes carry" : ""),
+          over ? "bad" : "ok",
+        ];
+      });
+      var over = info.modes.filter(function (m) {
+        return m.mhz !== null && m.mhz > LANE_LIMIT_MHZ;
+      }).length;
+      var v2 = document.createElement("div");
+      v2.className = "verdict";
+      var b2 = document.createElement("span");
+      b2.className = "big";
+      b2.textContent = info.modes.length + " modes advertised";
+      var tag2 = document.createElement("span");
+      tag2.className = "badge " + (over ? "badge-bad" : "badge-ok");
+      tag2.textContent = over
+        ? over + " above what two lanes carry"
+        : "all within what two lanes carry";
+      v2.appendChild(b2);
+      v2.appendChild(tag2);
+      out.appendChild(v2);
+      var h2 = document.createElement("p");
+      h2.className = "out hint";
+      h2.textContent = "Modes this block advertises:";
+      out.appendChild(h2);
+      out.appendChild(rowsTable(rows));
+    }
+
+    dropZone("edid-drop", "edid-file", async function (file) {
+      showEdid(await fileBytes(file));
+    });
+
+    el("edid-go").addEventListener("click", function () {
+      var text = el("edid-hex").value.replace(/0x/g, "").replace(/[^0-9a-fA-F]/g, "");
+      if (text.length < 256) {
+        el("edid-out").textContent = "";
+        var p = document.createElement("p");
+        p.className = "out bad";
+        p.textContent = "That is not enough bytes for an EDID block (128 needed).";
+        el("edid-out").appendChild(p);
+        return;
+      }
+      var bytes = new Uint8Array(text.length >> 1);
+      for (var i = 0; i < bytes.length; i++) {
+        bytes[i] = parseInt(text.substr(i * 2, 2), 16);
+      }
+      showEdid(bytes);
+    });
+  })();
+</script>
