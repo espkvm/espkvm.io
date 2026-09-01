@@ -16,7 +16,7 @@ selected with the mouse while the menu is walked up and down at the same time -
 which is the part that proves this is the live screen and not a screenshot
 somebody pasted.
 
-[Watch it on YouTube](https://youtu.be/0yUuZSLZSz0) - no sound, nothing installed
+[Watch it on YouTube](https://youtu.be/QGABqgAR5H0) - no sound, nothing installed
 on the target, and the machine has not booted yet.
 
 **It is not OCR.** A text screen is drawn by a character

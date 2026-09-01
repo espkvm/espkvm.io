@@ -27,7 +27,7 @@ A short silent clip of the round one running:
 
 ![A frame from the clip: the round LCD on the bench, cycling its status pages.](/assets/blog/0-21-0-a-little-screen-on-the-box/video.webp)
 
-[Watch it on YouTube](https://www.youtube.com/watch?v=-snDjOOjbSA) - about a
+[Watch it on YouTube](https://youtu.be/WU9WUWKaP9g) - about a
 minute, no sound.
 
 **Pins from the console.** Wiring a display means choosing GPIOs, so pin

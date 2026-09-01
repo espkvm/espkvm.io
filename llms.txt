@@ -57,3 +57,4 @@ Key facts:
 - [Discussions](https://github.com/espkvm/espkvm/discussions)
 - [Telegram channel](https://t.me/espkvm)
 - [X / Twitter](https://x.com/espkvm)
+- [YouTube channel](https://youtube.com/@espkvm)
