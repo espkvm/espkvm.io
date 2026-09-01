@@ -34,7 +34,9 @@ TEMPLATE = os.path.join(ROOT, "_templates", "page.html")
 OG_IMAGE = SITE + "/assets/og-image.png"
 
 # Pages that exist by hand rather than being generated, for the sitemap.
-STATIC_URLS = [("/", "1.0"), ("/flash/", "0.8")]
+# The pages in the sitemap are whatever _pages/ rendered. This used to be a
+# hand-written list, and it went stale the first time a page was added: /serial/
+# and /tools/ were missing from the sitemap on the day they were written.
 
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -569,11 +571,20 @@ def feed(posts):
 """.format(site=SITE, built=built, items=items)
 
 
-def sitemap(posts, tags=None):
+def page_urls(pages):
+    """Rendered output paths as URLs: "flash/index.html" -> "/flash/"."""
+    urls = []
+    for out in pages or []:
+        url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
+        urls.append((url, "1.0" if url == "/" else "0.8"))
+    return urls
+
+
+def sitemap(posts, tags=None, pages=None):
     entries = "".join(
         "  <url>\n    <loc>%s%s</loc>\n    <priority>%s</priority>\n  </url>\n"
         % (SITE, path, priority)
-        for path, priority in STATIC_URLS
+        for path, priority in page_urls(pages)
     )
     entries += "".join(
         "  <url>\n    <loc>%s/blog/%s/</loc>\n    <lastmod>%s</lastmod>\n"
@@ -624,7 +635,7 @@ def main():
     write(os.path.join(OUT_DIR, "index.html"),
           index_page(shell, posts, all_tags=tags))
     write(os.path.join(OUT_DIR, "feed.xml"), feed(posts))
-    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags))
+    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags, pages))
 
     print("pages:")
     for output in pages:

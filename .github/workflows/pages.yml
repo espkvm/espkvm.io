@@ -37,11 +37,16 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir -p _site
-          # Ship what the step above rendered (index.html, flash/, blog/,
-          # sitemap.xml) together with the files that are committed as they
-          # are: CNAME, .nojekyll, robots/llms, the favicon, flash/flash.js,
-          # demo/ (the redirect) and assets/. Repo docs and the page sources
-          # are not site content.
+          # Ship what the step above rendered (index.html, flash/, serial/,
+          # tools/, blog/, sitemap.xml) together with the files that are
+          # committed as they are: CNAME, .nojekyll, robots/llms, the favicon,
+          # flash/flash.js, demo/ (the redirect) and assets/. Repo docs and the
+          # page sources are not site content.
+          #
+          # tools/ holds two different things: build-site.py, which is not site
+          # content, and the rendered /tools/ page, which is. Excluding the
+          # whole directory dropped that page from the deploy without a word,
+          # so only the scripts are excluded.
           rsync -a \
             --exclude='.git' \
             --exclude='.github' \
@@ -52,7 +57,7 @@ jobs:
             --exclude='_pages' \
             --exclude='_partials' \
             --exclude='_templates' \
-            --exclude='tools' \
+            --exclude='tools/*.py' \
             --exclude='.gitignore' \
             ./ _site/
 
