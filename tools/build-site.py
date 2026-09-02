@@ -121,6 +121,7 @@ def read_posts(include_drafts):
             "tags": tags,
             "body": body,
             "path": path,
+            "redirect_from": meta.get("redirect_from", ""),
         })
 
     slugs = [p["slug"] for p in posts]
@@ -217,7 +218,10 @@ def build_pages(shell):
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
-        written.append(meta["output"])
+        out = meta["output"]
+        url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
+        write_redirects(meta.get("redirect_from", ""), url)
+        written.append(out)
     return written
 
 
@@ -571,6 +575,64 @@ def feed(posts):
 """.format(site=SITE, built=built, items=items)
 
 
+REDIRECT_HTML = """<!doctype html>
+<!-- Written by tools/build-site.py: this address moved, and something out
+     there still points at it. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>This page has moved</title>
+    <link rel="canonical" href="%(url)s" />
+    <meta http-equiv="refresh" content="0; url=%(url)s" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <style>
+      html { color-scheme: dark; }
+      body {
+        margin: 0; min-height: 100vh; display: flex; align-items: center;
+        justify-content: center; background: #0b0d10; color: #c8cdd4;
+        font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        text-align: center; padding: 24px;
+      }
+      a { color: #7cc4ff; }
+    </style>
+  </head>
+  <body>
+    <p>
+      This page has moved to <a href="%(url)s">%(pretty)s</a>.
+      <br />You are being taken there now.
+    </p>
+    <script>
+      location.replace("%(url)s");
+    </script>
+  </body>
+</html>
+"""
+
+
+def write_redirects(redirect_from, target):
+    """
+    Old addresses that should still land somewhere.
+
+    GitHub Pages serves files, so there is no 301 to be had: a stub with a
+    canonical link, a refresh and a location.replace is what a static host can
+    do, and it is what search engines read. Put the old site-root path in the
+    front matter as `redirect_from` (several, comma-separated) whenever a page
+    or a post is renamed.
+    """
+    for raw in (redirect_from or "").split(","):
+        old = raw.strip().strip("/")
+        if not old:
+            continue
+        if old == target.strip("/"):
+            sys.exit("redirect_from points at the page itself: /%s/" % old)
+        url = SITE + target
+        write(os.path.join(ROOT, old, "index.html"),
+              REDIRECT_HTML % {"url": url, "pretty": target})
+
+
 def page_urls(pages):
     """Rendered output paths as URLs: "flash/index.html" -> "/flash/"."""
     urls = []
@@ -626,6 +688,7 @@ def main():
     for post in posts:
         write(os.path.join(OUT_DIR, post["slug"], "index.html"),
               post_page(shell, post))
+        write_redirects(post["redirect_from"], "/blog/%s/" % post["slug"])
 
     tags = tags_index(posts)
     for tag, tagged in tags.items():

@@ -18,7 +18,7 @@ _partials/style.css    one stylesheet, inlined into every page
 _partials/nav.html     one navigation
 _partials/footer.html  one footer
 _templates/page.html   the shell all of them sit in
-_pages/*.html          the front page and the flasher
+_pages/*.html          the front page, the flasher, the tools
 _posts/*.md            blog posts
 ```
 
@@ -31,6 +31,22 @@ that genuinely belong to one page live in that page's own `<style>` in
 A file in `_pages/` is front matter and then the markup that goes between the
 navigation and the footer. Its `<style>` and JSON-LD blocks are lifted into
 `<head>` for it.
+
+## Renaming a page or a post
+
+Changing a file name in `_posts/` changes the URL, and something out there may
+still point at the old one. Put it in the front matter and the build leaves a
+stub behind:
+
+```
+redirect_from: /blog/the-old-slug/
+```
+
+Several are comma-separated, and it works for `_pages/` too. GitHub Pages serves
+files and has no 301 to offer, so the stub is what a static host can do: a
+canonical link, a meta refresh and a `location.replace`, in the same shape as the
+committed `/demo/` redirect. A stub written outside `blog/` needs a line in
+`.gitignore`, the way `flash/index.html` has one.
 
 Building writes `index.html`, `flash/index.html`, `blog/` and `sitemap.xml`.
 None of those are committed - the published site is assembled by CI, so the
