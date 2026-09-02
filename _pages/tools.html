@@ -141,6 +141,15 @@ output: tools/index.html
     font-size: 1.25rem;
   }
 
+  .tool-head h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .tool-head h2 a:hover {
+    color: var(--accent);
+  }
+
   .drop-icon {
     display: block;
     margin: 0 auto 8px;
@@ -219,15 +228,29 @@ output: tools/index.html
   <header class="hero">
     <h1>Tools</h1>
     <p class="tagline">
-      Three things this project&rsquo;s bug reports keep needing. Everything runs
-      in this page &mdash; the files you drop are read in the browser and are
+      The things this project&rsquo;s bug reports keep needing. Everything runs
+      in the browser &mdash; the files you drop are read in the page and are
       never uploaded anywhere.
     </p>
-    <p class="hint">
-      Looking for the live log of a board on your desk? That is the
-      <a href="/serial/">serial monitor</a>.
-    </p>
   </header>
+
+  <section class="tool">
+    <div class="tool-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <rect x="2.5" y="4.5" width="19" height="15" rx="2" />
+        <path d="M6 9l3 2.5L6 14M11 15h6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <h2><a href="/serial/">Serial monitor</a></h2>
+    </div>
+    <p>
+      Read a board&rsquo;s log over USB with no terminal installed, and save it to
+      a file worth attaching to an issue. It only listens, so it cannot disturb
+      the board it is watching, and it takes a pasted log too.
+    </p>
+    <p>
+      <a class="btn btn-sm" href="/serial/">Open the serial monitor</a>
+    </p>
+  </section>
 
   <section class="tool">
     <div class="tool-head">
