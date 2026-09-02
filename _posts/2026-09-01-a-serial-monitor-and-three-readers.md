@@ -1,5 +1,5 @@
 ---
-title: Two pages that answer the questions I keep asking
+title: A serial monitor, and readers for firmware images, panics and EDIDs
 description: A serial monitor that needs no terminal, and three readers: a firmware image, a panic dump, an EDID. All in the browser, nothing uploaded.
 tags: diagnostics, console, update
 date: 2026-09-01

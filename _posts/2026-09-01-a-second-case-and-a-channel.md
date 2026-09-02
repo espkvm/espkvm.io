@@ -1,5 +1,5 @@
 ---
-title: A second case, and somewhere to put the clips
+title: A second printed case, and a YouTube channel
 description: Someone asked for a printed box, someone else made one, and now there are two. Plus a channel for the short recordings that were scattered across posts.
 tags: hardware, community
 date: 2026-09-01
