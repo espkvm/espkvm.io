@@ -94,6 +94,24 @@ output: index.html
         </p>
       </section>
 
+
+      <!-- What you actually build: two boards, one ribbon, and an optional
+           screen. Drawn in the same line-art as the card icons rather than
+           photographed, so it stays legible small and in either theme. -->
+      <!-- The drawing lives in the firmware repo, next to the boards it draws.
+           One copy, so it cannot fall behind: this page loads it from there. -->
+      <figure class="build-shot">
+        <img
+          src="https://raw.githubusercontent.com/espkvm/espkvm/main/docs/overview.svg"
+          alt="What the whole thing is: the ESP32-P4 board and the capture board joined by a ribbon, an optional status screen on the pins, and the three things it plugs into - the network, the target machine, and a supply of its own."
+          loading="lazy"
+        />
+        <figcaption>
+          The whole build: two boards and the ribbon that comes with them. The
+          screen is optional, and so is the case.
+        </figcaption>
+      </figure>
+
       <!-- how it connects -->
       <section>
         <h2>How it connects</h2>
@@ -172,12 +190,23 @@ output: index.html
         <div class="grid">
           <div class="card">
             <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="14" height="10" rx="2"/><rect x="17" y="9" width="5" height="11" rx="1"/><path d="M6 18h6"/></svg>
+            </span>
+            <h3>Any device you have to hand</h3>
+            <p>
+              Laptop, phone or tablet. Nothing to install on either end, and
+              touch gets a trackpad and a keyboard of its own.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
             </span>
             <h3>Follows the target</h3>
             <p>
-              A machine switching from an 800&times;600 firmware screen to a
-              1080p desktop is followed without intervention.
+              800&times;600 firmware screen to 1080p desktop, followed without
+              being told.
             </p>
           </div>
 
@@ -187,8 +216,8 @@ output: index.html
             </span>
             <h3>Clicks land where aimed</h3>
             <p>
-              An absolute USB pointer, so the target&rsquo;s mouse acceleration
-              cannot drift the cursor away from the button you meant.
+              An absolute pointer: the target&rsquo;s mouse acceleration cannot
+              drift the cursor off the button you meant.
             </p>
           </div>
 
@@ -257,10 +286,8 @@ output: index.html
             </span>
             <h3>Lives in Home Assistant</h3>
             <p>
-              Turn on MQTT and the device is auto-discovered as one Home Assistant
-              device: temperature, viewers, video mode and target power as
-              sensors, with power, reset and Wake-on-LAN buttons. TLS optional,
-              off by default.
+              Turn on MQTT and it arrives as one auto-discovered device, sensors
+              and buttons included.
             </p>
           </div>
 
@@ -270,14 +297,9 @@ output: index.html
             </span>
             <h3>Reach it over WireGuard or Tailscale</h3>
             <p>
-              Two ways to reach the device across the internet without exposing
-              it &mdash; pick one. A built-in WireGuard client (split-tunnel over
-              the existing link, generates its own key and shows the matching
-              public key to register on your hub) for a classic hub. Or native
-              Tailscale: join your tailnet directly &mdash; no gateway, no VPS, no
-              port-forwarding &mdash; reachable at its 100.x address from anywhere,
-              with NAT traversal handled and traffic relayed through the region
-              nearest to it. Off by default.
+              Reach it across the internet without exposing it. WireGuard for a
+              classic hub, or Tailscale to join a tailnet with no gateway, VPS or
+              port-forward. Off by default.
             </p>
           </div>
 
@@ -287,10 +309,9 @@ output: index.html
             </span>
             <h3>WiFi, with a rescue hotspot</h3>
             <p>
-              On boards with an ESP32-C6 (the ESP32-P4 Function EV) &mdash; join a
-              network, or be your own access point. If the network is out of range,
-              a rescue hotspot keeps the device reachable, and a captive portal
-              opens the console on your phone the moment you connect.
+              Join a network or be the access point, on boards with an ESP32-C6.
+              Out of range, a rescue hotspot and a captive portal put the console
+              on your phone.
             </p>
           </div>
 
@@ -300,33 +321,82 @@ output: index.html
             </span>
             <h3>A little status screen</h3>
             <p>
-              Solder on a cheap OLED (SSD1306/SH1106) or a round GC9A01 colour LCD
-              and the device shows its IP, link, capture status and health at a
-              glance &mdash; no browser needed. Off by default; turn it on in
-              Settings and pick the pins right in the console.
+              A cheap OLED or a round colour LCD shows the IP, link, capture and
+              health with no browser open. Pins are picked in the console.
             </p>
             <p>
-              On the round LCD it also answers the two moments you have no browser
-              for: when the rescue hotspot is up it fills the screen with a code
-              your phone scans to join, and while you hold the recovery button it
-              fills a ring around the rim so you can see the press register.
+              The round one also fills with a code your phone scans to join the
+              rescue hotspot, and draws the recovery button press as a ring.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+            </span>
+            <h3>Wake a machine that went to sleep</h3>
+            <p>
+              A key press wakes it, the way a real keyboard would. Failing that,
+              Wake-on-LAN or the power button.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </span>
+            <h3>Power and reset, held down for you</h3>
+            <p>
+              Two optocouplers on the front-panel header put the machine&rsquo;s own
+              buttons in the browser. It reads the power LED back, so the state
+              shown is the machine&rsquo;s.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8 11h6"/></svg>
+            </span>
+            <h3>Watches the screen while you do not</h3>
+            <p>
+              Give it phrases &mdash; <code>no boot device</code>, <code>kernel
+              panic</code> &mdash; and it alerts with a still attached. A screen
+              gone one flat colour counts too.
             </p>
           </div>
         </div>
 
-        <figure class="shot shot-phone" style="margin-top: 28px">
-          <img
-            src="assets/ha.png"
-            width="1008"
-            height="2244"
-            loading="lazy"
-            alt="The ESP-KVM device in the Home Assistant app: firmware version, and sensors for frame rate, HDMI signal, resolution, target USB, temperature and viewers, plus diagnostic entities."
-          />
-          <figcaption>
-            The same device in Home Assistant &mdash; every value here is reported
-            live by the KVM over MQTT, discovered automatically.
-          </figcaption>
-        </figure>
+        <!-- The phone shot is tall and narrow; on its own it leaves half the row
+             empty. What fills that space is the list of what the picture is a
+             picture of. -->
+        <div class="beside">
+          <figure class="shot shot-phone">
+            <img
+              src="assets/ha.png"
+              width="1008"
+              height="2244"
+              loading="lazy"
+              alt="The ESP-KVM device in the Home Assistant app: firmware version, and sensors for frame rate, HDMI signal, resolution, target USB, temperature and viewers, plus diagnostic entities."
+            />
+          </figure>
+
+          <div class="beside-text">
+            <h3>What arrives in Home Assistant</h3>
+            <p>
+              One device, discovered automatically over MQTT. Off by default, TLS
+              optional.
+            </p>
+            <ul>
+              <li><strong>Sensors</strong> &mdash; frame rate, HDMI signal, resolution, codec, bitrate, viewers, chip temperature.</li>
+              <li><strong>The target</strong> &mdash; its power state, whether it sees the keyboard, and whether its USB port has power at all.</li>
+              <li><strong>Buttons</strong> &mdash; power, a hard off, reset, Wake-on-LAN, restart the KVM.</li>
+              <li><strong>A camera</strong> &mdash; a still of the target&rsquo;s screen, on demand or when the screen watch finds a phrase.</li>
+              <li><strong>The jiggler</strong> &mdash; a switch, with its interval beside it.</li>
+              <li><strong>An update entity</strong> &mdash; the version running, the version published, and the button that installs it.</li>
+              <li><strong>Diagnostics</strong> &mdash; free memory and the largest block in it, skipped frames, which firmware slot is running and why the device last booted.</li>
+            </ul>
+          </div>
+        </div>
 
         <p class="note" style="margin-top: 20px">
           <strong>Virtual media, honestly.</strong> The microSD is served
