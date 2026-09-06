@@ -108,76 +108,12 @@ output: index.html
         />
         <figcaption>
           The whole build: two boards and the ribbon that comes with them. The
-          screen is optional, and so is the case.
+          screen is optional, and so is the case. Nothing runs on the target
+          machine &mdash; which is the point, since it may not be running
+          anything at all.
         </figcaption>
       </figure>
 
-      <!-- how it connects -->
-      <section>
-        <h2>How it connects</h2>
-        <p class="lead">
-          Two cables to the target, one to the network. Nothing is installed on
-          the target and nothing runs on it.
-        </p>
-
-        <div class="diagram">
-          <svg viewBox="0 0 760 250" role="img" aria-labelledby="diagram-title">
-            <title id="diagram-title">
-              The target machine's HDMI goes to the capture board, which feeds
-              the ESP32-P4 over MIPI CSI-2. The ESP32-P4 reaches the operator's
-              browser over Ethernet, and plugs back into the target as a USB
-              keyboard and mouse.
-            </title>
-
-            <defs>
-              <marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7"
-                      markerHeight="7" orient="auto-start-reverse">
-                <path d="M0,0 L8,4 L0,8 z" fill="currentColor" />
-              </marker>
-            </defs>
-
-            <rect class="box" x="8" y="34" width="150" height="76" rx="8" />
-            <text class="label" x="83" y="66" text-anchor="middle">target machine</text>
-            <text class="sub" x="83" y="86" text-anchor="middle">no OS needed</text>
-
-            <rect class="box" x="212" y="34" width="150" height="76" rx="8" />
-            <text class="label" x="287" y="60" text-anchor="middle">TC358743</text>
-            <text class="sub" x="287" y="78" text-anchor="middle">HDMI capture</text>
-            <text class="sub" x="287" y="94" text-anchor="middle">Geekworm C790</text>
-
-            <rect class="box box-accent" x="416" y="34" width="150" height="76" rx="8" />
-            <text class="label" x="491" y="60" text-anchor="middle">ESP32-P4</text>
-            <text class="sub" x="491" y="78" text-anchor="middle">ESP-KVM firmware</text>
-            <text class="sub" x="491" y="94" text-anchor="middle">Waveshare P4-ETH</text>
-
-            <rect class="box" x="620" y="34" width="132" height="76" rx="8" />
-            <text class="label" x="686" y="66" text-anchor="middle">your browser</text>
-            <text class="sub" x="686" y="86" text-anchor="middle">anywhere on the LAN</text>
-
-            <line class="wire" x1="158" y1="72" x2="206" y2="72" marker-end="url(#arrow)"
-                  color="var(--muted)" />
-            <text class="wire-label" x="182" y="60" text-anchor="middle">HDMI</text>
-
-            <line class="wire" x1="362" y1="72" x2="410" y2="72" marker-end="url(#arrow)"
-                  color="var(--muted)" />
-            <text class="wire-label" x="386" y="60" text-anchor="middle">CSI-2</text>
-
-            <line class="wire wire-accent" x1="566" y1="72" x2="614" y2="72"
-                  marker-end="url(#arrow)" color="var(--accent)" />
-            <text class="wire-label" x="590" y="60" text-anchor="middle">HTTPS</text>
-
-            <path class="wire" d="M491,110 L491,180 L83,180 L83,116"
-                  marker-end="url(#arrow)" color="var(--muted)" />
-            <text class="wire-label" x="287" y="200" text-anchor="middle">
-              USB &mdash; keyboard and mouse the target cannot tell from real ones
-            </text>
-          </svg>
-          <p class="caption">
-            Nothing runs on the target machine &mdash; which is the point, since it
-            may not be running anything at all.
-          </p>
-        </div>
-      </section>
 
       <!-- what it does -->
       <section id="features">
