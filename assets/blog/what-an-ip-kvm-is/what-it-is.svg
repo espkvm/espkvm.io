@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" role="img" aria-labelledby="t">
+  <title id="t">A desktop machine with a small device on its HDMI and USB, reaching a browser</title>
+  <style>
+    .ln{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .bx{fill:#161b22;stroke:#9aa7b4;stroke-width:2;stroke-linejoin:round}
+    .ac{fill:none;stroke:#4c9aff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .acb{fill:#12171e;stroke:#4c9aff;stroke-width:2;stroke-linejoin:round}
+    .acf{fill:#4c9aff}
+    .dot{fill:#9aa7b4}
+    .t{fill:#9aa7b4;font-family:system-ui,sans-serif;font-size:13px}
+    .dash{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-dasharray:6 6;stroke-linecap:round}
+    @media (prefers-color-scheme: light){
+      .ln{stroke:#4c5764}
+      .bx{fill:#ffffff;stroke:#4c5764}
+      .ac{stroke:#1f6feb}
+      .acb{fill:#ffffff;stroke:#1f6feb}
+      .acf{fill:#1f6feb}
+      .dot{fill:#4c5764}
+      .t{fill:#4c5764}
+      .dash{stroke:#4c5764}
+    }
+  </style>
+  <rect class="bx" x="40" y="48" width="64" height="104" rx="6"/>
+  <path class="ln" d="M54 66 h36 M54 78 h36"/>
+  <circle class="dot" cx="62" cy="132" r="3"/>
+  <path class="ln" d="M104 74 h56"/>
+  <path class="ln" d="M104 110 h56"/>
+  <text class="t" x="132" y="66" text-anchor="middle">HDMI</text>
+  <text class="t" x="132" y="128" text-anchor="middle">USB</text>
+  <rect class="acb" x="160" y="73" width="52" height="38" rx="5"/>
+  <!-- the project mark, the same pixels as the icon -->
+  <g class="acf" transform="translate(159.66 65.66) scale(0.836)">
+    <rect x="6" y="15" width="3" height="3"/>
+    <rect x="9" y="15" width="3" height="3"/>
+    <rect x="12" y="15" width="3" height="3"/>
+    <rect x="15" y="15" width="3" height="3"/>
+    <rect x="18" y="15" width="3" height="3"/>
+    <rect x="6" y="18" width="3" height="3"/>
+    <rect x="6" y="21" width="3" height="3"/>
+    <rect x="9" y="21" width="3" height="3"/>
+    <rect x="12" y="21" width="3" height="3"/>
+    <rect x="15" y="21" width="3" height="3"/>
+    <rect x="6" y="24" width="3" height="3"/>
+    <rect x="6" y="27" width="3" height="3"/>
+    <rect x="9" y="27" width="3" height="3"/>
+    <rect x="12" y="27" width="3" height="3"/>
+    <rect x="15" y="27" width="3" height="3"/>
+    <rect x="18" y="27" width="3" height="3"/>
+    <rect x="24" y="15" width="3" height="3"/>
+    <rect x="27" y="15" width="3" height="3"/>
+    <rect x="30" y="15" width="3" height="3"/>
+    <rect x="33" y="15" width="3" height="3"/>
+    <rect x="36" y="15" width="3" height="3"/>
+    <rect x="24" y="18" width="3" height="3"/>
+    <rect x="24" y="21" width="3" height="3"/>
+    <rect x="27" y="21" width="3" height="3"/>
+    <rect x="30" y="21" width="3" height="3"/>
+    <rect x="33" y="21" width="3" height="3"/>
+    <rect x="36" y="21" width="3" height="3"/>
+    <rect x="36" y="24" width="3" height="3"/>
+    <rect x="24" y="27" width="3" height="3"/>
+    <rect x="27" y="27" width="3" height="3"/>
+    <rect x="30" y="27" width="3" height="3"/>
+    <rect x="33" y="27" width="3" height="3"/>
+    <rect x="36" y="27" width="3" height="3"/>
+    <rect x="42" y="15" width="3" height="3"/>
+    <rect x="45" y="15" width="3" height="3"/>
+    <rect x="48" y="15" width="3" height="3"/>
+    <rect x="51" y="15" width="3" height="3"/>
+    <rect x="54" y="15" width="3" height="3"/>
+    <rect x="42" y="18" width="3" height="3"/>
+    <rect x="54" y="18" width="3" height="3"/>
+    <rect x="42" y="21" width="3" height="3"/>
+    <rect x="45" y="21" width="3" height="3"/>
+    <rect x="48" y="21" width="3" height="3"/>
+    <rect x="51" y="21" width="3" height="3"/>
+    <rect x="54" y="21" width="3" height="3"/>
+    <rect x="42" y="24" width="3" height="3"/>
+    <rect x="42" y="27" width="3" height="3"/>
+    <rect x="6" y="33" width="3" height="3"/>
+    <rect x="18" y="33" width="3" height="3"/>
+    <rect x="6" y="36" width="3" height="3"/>
+    <rect x="15" y="36" width="3" height="3"/>
+    <rect x="6" y="39" width="3" height="3"/>
+    <rect x="9" y="39" width="3" height="3"/>
+    <rect x="12" y="39" width="3" height="3"/>
+    <rect x="6" y="42" width="3" height="3"/>
+    <rect x="15" y="42" width="3" height="3"/>
+    <rect x="6" y="45" width="3" height="3"/>
+    <rect x="18" y="45" width="3" height="3"/>
+    <rect x="24" y="33" width="3" height="3"/>
+    <rect x="36" y="33" width="3" height="3"/>
+    <rect x="24" y="36" width="3" height="3"/>
+    <rect x="36" y="36" width="3" height="3"/>
+    <rect x="24" y="39" width="3" height="3"/>
+    <rect x="36" y="39" width="3" height="3"/>
+    <rect x="27" y="42" width="3" height="3"/>
+    <rect x="33" y="42" width="3" height="3"/>
+    <rect x="30" y="45" width="3" height="3"/>
+    <rect x="42" y="33" width="3" height="3"/>
+    <rect x="54" y="33" width="3" height="3"/>
+    <rect x="42" y="36" width="3" height="3"/>
+    <rect x="45" y="36" width="3" height="3"/>
+    <rect x="51" y="36" width="3" height="3"/>
+    <rect x="54" y="36" width="3" height="3"/>
+    <rect x="42" y="39" width="3" height="3"/>
+    <rect x="48" y="39" width="3" height="3"/>
+    <rect x="54" y="39" width="3" height="3"/>
+    <rect x="42" y="42" width="3" height="3"/>
+    <rect x="54" y="42" width="3" height="3"/>
+    <rect x="42" y="45" width="3" height="3"/>
+    <rect x="54" y="45" width="3" height="3"/>
+  </g>
+  <path class="ac" d="M212 92 H 300 Q 320 92 320 82 V 68 Q 320 58 340 58 H 380"/>
+  <rect class="bx" x="380" y="45" width="176" height="110" rx="6"/>
+  <path class="ln" d="M380 69 h176"/>
+  <circle class="dot" cx="394" cy="57" r="3"/>
+  <circle class="dot" cx="406" cy="57" r="3"/>
+  <circle class="dot" cx="418" cy="57" r="3"/>
+  <rect class="ac" x="400" y="82" width="136" height="56" rx="3"/>
+  <path class="ac" d="M414 100 h40 M414 114 h68"/>
+</svg>

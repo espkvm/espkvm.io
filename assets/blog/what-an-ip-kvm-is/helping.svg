@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 240" role="img" aria-labelledby="t">
+  <title id="t">One person at a computer helping an older couple far away. The same picture and the same mouse pointer are on both screens. He is giving a thumbs-up; they are throwing their hands up.</title>
+  <style>
+    .ln{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .bx{fill:#161b22;stroke:#9aa7b4;stroke-width:2;stroke-linejoin:round}
+    .fc{fill:#0e1116;stroke:#9aa7b4;stroke-width:2;stroke-linejoin:round}
+    .dt{fill:#9aa7b4}
+    .cur{fill:#9aa7b4;stroke:#0e1116;stroke-width:1.5;stroke-linejoin:round}
+    .ac{fill:none;stroke:#4c9aff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .acf{fill:#4c9aff}
+    .t{fill:#9aa7b4;font-family:system-ui,sans-serif;font-size:13px}
+    .dash{fill:none;stroke:#4c9aff;stroke-width:2;stroke-dasharray:6 6;stroke-linecap:round}
+    .thumb{fill:none;stroke:#9aa7b4;stroke-width:3.5;stroke-linecap:round}
+    .mark{fill:none;stroke:#9aa7b4;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    @media (prefers-color-scheme: light){
+      .ln{stroke:#4c5764}
+      .bx{fill:#ffffff;stroke:#4c5764}
+      .fc{fill:#ffffff;stroke:#4c5764}
+      .dt{fill:#4c5764}
+      .cur{fill:#4c5764;stroke:#ffffff}
+      .ac{stroke:#1f6feb}
+      .acf{fill:#1f6feb}
+      .t{fill:#4c5764}
+      .dash{stroke:#1f6feb}
+      .thumb{stroke:#4c5764}
+      .mark{stroke:#4c5764}
+    }
+  </style>
+  <path class="ln" d="M16 196 h262"/>
+  <path class="ln" d="M330 196 h334"/>
+  <path class="ln" d="M82 144 q16 0 26 3"/>
+  <rect class="fc" x="108" y="138" width="19" height="17" rx="6"/>
+  <path class="ln" d="M114 144 h9 M114 149 h9"/>
+  <rect class="fc" x="112" y="124" width="7" height="16" rx="3.5" transform="rotate(-10 115.5 140)"/>
+  <path class="fc" d="M26 196 v-42 a30 26 0 0 1 60 0 v42"/>
+  <circle class="fc" cx="56" cy="104" r="19"/>
+  <path class="fc" d="M37 100 a19 19 0 0 1 38 0 z"/>
+  <path class="fc" d="M37 100 q-16 1 -18 7 q10 3 20 1 z"/>
+  <circle class="ln" cx="56" cy="84" r="1.8"/>
+  <!-- the K off the project mark, the way a cap carries a logo -->
+  <path class="mark" d="M53 89 v10 M59 89 l-6 5 l6 5"/>
+  <circle class="dt" cx="49" cy="103" r="2"/>
+  <circle class="dt" cx="63" cy="103" r="2"/>
+  <path class="ln" d="M49 113 q7 6 14 0"/>
+  <rect class="bx" x="136" y="78" width="132" height="88" rx="6"/>
+  <rect class="ac" x="150" y="92" width="104" height="60" rx="3"/>
+  <path class="ac" d="M162 108 h44 M162 122 h68 M162 136 h30"/>
+  <path class="cur" d="M228 118 l0 15 l4 -4 l3 7 l3 -1.5 l-3 -6.5 l5 -0.5 z"/>
+  <path class="ln" d="M202 166 v14 M182 180 h40"/>
+  <text class="t" x="202" y="222" text-anchor="middle">you</text>
+  <path class="dash" d="M274 122 Q 317 98 360 122"/>
+  <rect class="bx" x="360" y="78" width="132" height="88" rx="6"/>
+  <rect class="ac" x="374" y="92" width="104" height="60" rx="3"/>
+  <path class="ac" d="M386 108 h44 M386 122 h68 M386 136 h30"/>
+  <path class="cur" d="M452 118 l0 15 l4 -4 l3 7 l3 -1.5 l-3 -6.5 l5 -0.5 z"/>
+  <path class="ln" d="M426 166 v14 M406 180 h40"/>
+  <text class="t" x="426" y="222" text-anchor="middle">them</text>
+  <path class="ln" d="M637 138 q16 -4 20 -16"/>
+  <circle class="fc" cx="659" cy="118" r="6.5"/>
+  <path class="fc" d="M583 196 v-56 a27 24 0 0 1 54 0 v56"/>
+  <path class="fc" d="M603 106 q-1 16 7 19 q8 -3 7 -19 q-7 3 -14 0 z"/>
+  <circle class="fc" cx="610" cy="94" r="17"/>
+  <path class="ln" d="M596 89 q4 -15 14 -15 q10 0 14 15"/>
+  <path class="ln" d="M603 106 q-1 16 7 19 q8 -3 7 -19"/>
+  <path class="ln" d="M599 85 q5 -4 10 -1 M614 85 q5 -3 7 1"/>
+  <circle class="dt" cx="604" cy="94" r="2"/>
+  <circle class="dt" cx="616" cy="94" r="2"/>
+  <path class="ln" d="M602 103 q8 5 16 0"/>
+  <circle class="ln" cx="610" cy="111" r="3"/>
+  <path class="ln" d="M518 152 q-16 -6 -18 -18"/>
+  <circle class="fc" cx="499" cy="130" r="6.5"/>
+  <path class="fc" d="M518 196 v-38 a30 26 0 0 1 60 0 v38"/>
+  <circle class="fc" cx="548" cy="85" r="7.5"/>
+  <circle class="fc" cx="548" cy="112" r="19"/>
+  <path class="ln" d="M529 110 q-3 -27 19 -27 q22 0 19 27"/>
+  <path class="ln" d="M529 110 q-4 8 -2 15 M567 110 q4 8 2 15"/>
+  <path class="ln" d="M538 103 q5 -4 10 -1 M554 103 q5 -3 8 1"/>
+  <circle class="ln" cx="541" cy="112" r="5.5"/>
+  <circle class="ln" cx="556" cy="112" r="5.5"/>
+  <circle class="dt" cx="541" cy="112" r="2"/>
+  <circle class="dt" cx="556" cy="112" r="2"/>
+  <path class="ln" d="M546.5 112 h4"/>
+  <circle class="ln" cx="548" cy="124" r="3.5"/>
+  <path class="ln" d="M576 150 q18 -8 18 -22"/>
+  <circle class="fc" cx="595" cy="124" r="6.5"/>
+  <path class="acf" d="M576 34 h8 l-1.5 22 h-5 z"/>
+  <circle class="acf" cx="580" cy="64" r="3.5"/>
+</svg>

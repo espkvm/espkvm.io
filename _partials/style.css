@@ -306,6 +306,12 @@
         border-color: var(--accent-hover);
         color: var(--accent-text);
       }
+      .hero-note {
+        margin-top: 18px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
       .hero-star {
         margin-top: 16px;
       }

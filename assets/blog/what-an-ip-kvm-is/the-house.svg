@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" role="img" aria-labelledby="t">
+  <title id="t">A house whose lights, heating and lock all run through one small computer, with the device beside it and a browser outside</title>
+  <style>
+    .ln{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .bx{fill:#161b22;stroke:#9aa7b4;stroke-width:2;stroke-linejoin:round}
+    .ac{fill:none;stroke:#4c9aff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .acb{fill:#12171e;stroke:#4c9aff;stroke-width:2;stroke-linejoin:round}
+    .acf{fill:#4c9aff}
+    .dot{fill:#9aa7b4}
+    .t{fill:#9aa7b4;font-family:system-ui,sans-serif;font-size:13px}
+    @media (prefers-color-scheme: light){
+      .ln{stroke:#4c5764}
+      .bx{fill:#ffffff;stroke:#4c5764}
+      .ac{stroke:#1f6feb}
+      .acb{fill:#ffffff;stroke:#1f6feb}
+      .acf{fill:#1f6feb}
+      .dot{fill:#4c5764}
+      .t{fill:#4c5764}
+    }
+  </style>
+
+  <!-- the house, and the three things that stop when the hub does -->
+  <path class="ln" d="M34 100 L150 46 L266 100"/>
+  <rect class="bx" x="44" y="100" width="212" height="74" rx="4"/>
+  <circle class="ln" cx="76" cy="120" r="8"/>
+  <path class="ln" d="M72 130 h8 M73 134 h6"/>
+  <rect class="ln" x="112" y="110" width="26" height="24" rx="2"/>
+  <path class="ln" d="M119 114 v16 M126 114 v16 M133 114 v16"/>
+  <rect class="ln" x="172" y="118" width="20" height="16" rx="2"/>
+  <path class="ln" d="M176 118 v-4 a6 6 0 0 1 12 0 v4"/>
+
+  <!-- the hub that runs them, and the way in that does not depend on it -->
+  <rect class="bx" x="56" y="146" width="34" height="26" rx="3"/>
+  <path class="ln" d="M64 154 h12"/>
+  <circle class="dot" cx="64" cy="164" r="2.5"/>
+  <path class="ln" d="M90 151 h14"/>
+  <rect class="acb" x="104" y="132" width="52" height="38" rx="5"/>
+  <g class="acf" transform="translate(103.66 124.66) scale(0.836)">
+    <rect x="6" y="15" width="3" height="3"/>
+    <rect x="9" y="15" width="3" height="3"/>
+    <rect x="12" y="15" width="3" height="3"/>
+    <rect x="15" y="15" width="3" height="3"/>
+    <rect x="18" y="15" width="3" height="3"/>
+    <rect x="6" y="18" width="3" height="3"/>
+    <rect x="6" y="21" width="3" height="3"/>
+    <rect x="9" y="21" width="3" height="3"/>
+    <rect x="12" y="21" width="3" height="3"/>
+    <rect x="15" y="21" width="3" height="3"/>
+    <rect x="6" y="24" width="3" height="3"/>
+    <rect x="6" y="27" width="3" height="3"/>
+    <rect x="9" y="27" width="3" height="3"/>
+    <rect x="12" y="27" width="3" height="3"/>
+    <rect x="15" y="27" width="3" height="3"/>
+    <rect x="18" y="27" width="3" height="3"/>
+    <rect x="24" y="15" width="3" height="3"/>
+    <rect x="27" y="15" width="3" height="3"/>
+    <rect x="30" y="15" width="3" height="3"/>
+    <rect x="33" y="15" width="3" height="3"/>
+    <rect x="36" y="15" width="3" height="3"/>
+    <rect x="24" y="18" width="3" height="3"/>
+    <rect x="24" y="21" width="3" height="3"/>
+    <rect x="27" y="21" width="3" height="3"/>
+    <rect x="30" y="21" width="3" height="3"/>
+    <rect x="33" y="21" width="3" height="3"/>
+    <rect x="36" y="21" width="3" height="3"/>
+    <rect x="36" y="24" width="3" height="3"/>
+    <rect x="24" y="27" width="3" height="3"/>
+    <rect x="27" y="27" width="3" height="3"/>
+    <rect x="30" y="27" width="3" height="3"/>
+    <rect x="33" y="27" width="3" height="3"/>
+    <rect x="36" y="27" width="3" height="3"/>
+    <rect x="42" y="15" width="3" height="3"/>
+    <rect x="45" y="15" width="3" height="3"/>
+    <rect x="48" y="15" width="3" height="3"/>
+    <rect x="51" y="15" width="3" height="3"/>
+    <rect x="54" y="15" width="3" height="3"/>
+    <rect x="42" y="18" width="3" height="3"/>
+    <rect x="54" y="18" width="3" height="3"/>
+    <rect x="42" y="21" width="3" height="3"/>
+    <rect x="45" y="21" width="3" height="3"/>
+    <rect x="48" y="21" width="3" height="3"/>
+    <rect x="51" y="21" width="3" height="3"/>
+    <rect x="54" y="21" width="3" height="3"/>
+    <rect x="42" y="24" width="3" height="3"/>
+    <rect x="42" y="27" width="3" height="3"/>
+    <rect x="6" y="33" width="3" height="3"/>
+    <rect x="18" y="33" width="3" height="3"/>
+    <rect x="6" y="36" width="3" height="3"/>
+    <rect x="15" y="36" width="3" height="3"/>
+    <rect x="6" y="39" width="3" height="3"/>
+    <rect x="9" y="39" width="3" height="3"/>
+    <rect x="12" y="39" width="3" height="3"/>
+    <rect x="6" y="42" width="3" height="3"/>
+    <rect x="15" y="42" width="3" height="3"/>
+    <rect x="6" y="45" width="3" height="3"/>
+    <rect x="18" y="45" width="3" height="3"/>
+    <rect x="24" y="33" width="3" height="3"/>
+    <rect x="36" y="33" width="3" height="3"/>
+    <rect x="24" y="36" width="3" height="3"/>
+    <rect x="36" y="36" width="3" height="3"/>
+    <rect x="24" y="39" width="3" height="3"/>
+    <rect x="36" y="39" width="3" height="3"/>
+    <rect x="27" y="42" width="3" height="3"/>
+    <rect x="33" y="42" width="3" height="3"/>
+    <rect x="30" y="45" width="3" height="3"/>
+    <rect x="42" y="33" width="3" height="3"/>
+    <rect x="54" y="33" width="3" height="3"/>
+    <rect x="42" y="36" width="3" height="3"/>
+    <rect x="45" y="36" width="3" height="3"/>
+    <rect x="51" y="36" width="3" height="3"/>
+    <rect x="54" y="36" width="3" height="3"/>
+    <rect x="42" y="39" width="3" height="3"/>
+    <rect x="48" y="39" width="3" height="3"/>
+    <rect x="54" y="39" width="3" height="3"/>
+    <rect x="42" y="42" width="3" height="3"/>
+    <rect x="54" y="42" width="3" height="3"/>
+    <rect x="42" y="45" width="3" height="3"/>
+    <rect x="54" y="45" width="3" height="3"/>
+  </g>
+  <path class="ac" d="M156 151 H 290 Q 300 159 300 149 V 125 Q 300 115 310 115 H 380"/>
+
+  <rect class="bx" x="380" y="60" width="176" height="110" rx="6"/>
+  <path class="ln" d="M380 84 h176"/>
+  <circle class="dot" cx="394" cy="72" r="3"/>
+  <circle class="dot" cx="406" cy="72" r="3"/>
+  <circle class="dot" cx="418" cy="72" r="3"/>
+  <rect class="ac" x="400" y="98" width="136" height="56" rx="3"/>
+  <path class="ac" d="M414 116 h40 M414 130 h68"/>
+</svg>

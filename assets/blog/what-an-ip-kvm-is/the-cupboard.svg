@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" role="img" aria-labelledby="t">
+  <title id="t">A server on a shelf in a cupboard, reached from a browser</title>
+  <style>
+    .ln{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .bx{fill:#161b22;stroke:#9aa7b4;stroke-width:2;stroke-linejoin:round}
+    .ac{fill:none;stroke:#4c9aff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .acb{fill:#12171e;stroke:#4c9aff;stroke-width:2;stroke-linejoin:round}
+    .acf{fill:#4c9aff}
+    .dot{fill:#9aa7b4}
+    .t{fill:#9aa7b4;font-family:system-ui,sans-serif;font-size:13px}
+    .dash{fill:none;stroke:#9aa7b4;stroke-width:2;stroke-dasharray:6 6;stroke-linecap:round}
+    @media (prefers-color-scheme: light){
+      .ln{stroke:#4c5764}
+      .bx{fill:#ffffff;stroke:#4c5764}
+      .ac{stroke:#1f6feb}
+      .acb{fill:#ffffff;stroke:#1f6feb}
+      .acf{fill:#1f6feb}
+      .dot{fill:#4c5764}
+      .t{fill:#4c5764}
+      .dash{stroke:#4c5764}
+    }
+  </style>
+  <rect class="bx" x="40" y="30" width="180" height="140" rx="6"/>
+  <path class="ln" d="M40 104 h180"/>
+  <rect class="bx" x="58" y="52" width="86" height="34" rx="4"/>
+  <path class="ln" d="M70 62 h24 M70 72 h24"/>
+  <circle class="dot" cx="130" cy="69" r="3"/>
+  <rect class="acb" x="154" y="52" width="52" height="38" rx="5"/>
+  <!-- the project mark, the same pixels as the icon -->
+  <g class="acf" transform="translate(153.66 44.66) scale(0.836)">
+    <rect x="6" y="15" width="3" height="3"/>
+    <rect x="9" y="15" width="3" height="3"/>
+    <rect x="12" y="15" width="3" height="3"/>
+    <rect x="15" y="15" width="3" height="3"/>
+    <rect x="18" y="15" width="3" height="3"/>
+    <rect x="6" y="18" width="3" height="3"/>
+    <rect x="6" y="21" width="3" height="3"/>
+    <rect x="9" y="21" width="3" height="3"/>
+    <rect x="12" y="21" width="3" height="3"/>
+    <rect x="15" y="21" width="3" height="3"/>
+    <rect x="6" y="24" width="3" height="3"/>
+    <rect x="6" y="27" width="3" height="3"/>
+    <rect x="9" y="27" width="3" height="3"/>
+    <rect x="12" y="27" width="3" height="3"/>
+    <rect x="15" y="27" width="3" height="3"/>
+    <rect x="18" y="27" width="3" height="3"/>
+    <rect x="24" y="15" width="3" height="3"/>
+    <rect x="27" y="15" width="3" height="3"/>
+    <rect x="30" y="15" width="3" height="3"/>
+    <rect x="33" y="15" width="3" height="3"/>
+    <rect x="36" y="15" width="3" height="3"/>
+    <rect x="24" y="18" width="3" height="3"/>
+    <rect x="24" y="21" width="3" height="3"/>
+    <rect x="27" y="21" width="3" height="3"/>
+    <rect x="30" y="21" width="3" height="3"/>
+    <rect x="33" y="21" width="3" height="3"/>
+    <rect x="36" y="21" width="3" height="3"/>
+    <rect x="36" y="24" width="3" height="3"/>
+    <rect x="24" y="27" width="3" height="3"/>
+    <rect x="27" y="27" width="3" height="3"/>
+    <rect x="30" y="27" width="3" height="3"/>
+    <rect x="33" y="27" width="3" height="3"/>
+    <rect x="36" y="27" width="3" height="3"/>
+    <rect x="42" y="15" width="3" height="3"/>
+    <rect x="45" y="15" width="3" height="3"/>
+    <rect x="48" y="15" width="3" height="3"/>
+    <rect x="51" y="15" width="3" height="3"/>
+    <rect x="54" y="15" width="3" height="3"/>
+    <rect x="42" y="18" width="3" height="3"/>
+    <rect x="54" y="18" width="3" height="3"/>
+    <rect x="42" y="21" width="3" height="3"/>
+    <rect x="45" y="21" width="3" height="3"/>
+    <rect x="48" y="21" width="3" height="3"/>
+    <rect x="51" y="21" width="3" height="3"/>
+    <rect x="54" y="21" width="3" height="3"/>
+    <rect x="42" y="24" width="3" height="3"/>
+    <rect x="42" y="27" width="3" height="3"/>
+    <rect x="6" y="33" width="3" height="3"/>
+    <rect x="18" y="33" width="3" height="3"/>
+    <rect x="6" y="36" width="3" height="3"/>
+    <rect x="15" y="36" width="3" height="3"/>
+    <rect x="6" y="39" width="3" height="3"/>
+    <rect x="9" y="39" width="3" height="3"/>
+    <rect x="12" y="39" width="3" height="3"/>
+    <rect x="6" y="42" width="3" height="3"/>
+    <rect x="15" y="42" width="3" height="3"/>
+    <rect x="6" y="45" width="3" height="3"/>
+    <rect x="18" y="45" width="3" height="3"/>
+    <rect x="24" y="33" width="3" height="3"/>
+    <rect x="36" y="33" width="3" height="3"/>
+    <rect x="24" y="36" width="3" height="3"/>
+    <rect x="36" y="36" width="3" height="3"/>
+    <rect x="24" y="39" width="3" height="3"/>
+    <rect x="36" y="39" width="3" height="3"/>
+    <rect x="27" y="42" width="3" height="3"/>
+    <rect x="33" y="42" width="3" height="3"/>
+    <rect x="30" y="45" width="3" height="3"/>
+    <rect x="42" y="33" width="3" height="3"/>
+    <rect x="54" y="33" width="3" height="3"/>
+    <rect x="42" y="36" width="3" height="3"/>
+    <rect x="45" y="36" width="3" height="3"/>
+    <rect x="51" y="36" width="3" height="3"/>
+    <rect x="54" y="36" width="3" height="3"/>
+    <rect x="42" y="39" width="3" height="3"/>
+    <rect x="48" y="39" width="3" height="3"/>
+    <rect x="54" y="39" width="3" height="3"/>
+    <rect x="42" y="42" width="3" height="3"/>
+    <rect x="54" y="42" width="3" height="3"/>
+    <rect x="42" y="45" width="3" height="3"/>
+    <rect x="54" y="45" width="3" height="3"/>
+  </g>
+  <path class="ln" d="M62 128 h60 M62 144 h40"/>
+  <path class="ac" d="M206 71 H 290 Q 300 71 300 81 V 92 Q 300 102 310 102 H 380"/>
+  <rect class="bx" x="380" y="45" width="176" height="110" rx="6"/>
+  <path class="ln" d="M380 69 h176"/>
+  <circle class="dot" cx="394" cy="57" r="3"/>
+  <circle class="dot" cx="406" cy="57" r="3"/>
+  <circle class="dot" cx="418" cy="57" r="3"/>
+  <rect class="ac" x="400" y="82" width="136" height="56" rx="3"/>
+  <path class="ac" d="M414 100 h40 M414 114 h68"/>
+</svg>

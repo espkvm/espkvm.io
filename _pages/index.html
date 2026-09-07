@@ -1,9 +1,9 @@
 ---
 title: ESP-KVM &mdash; an IP-KVM on the ESP32-P4
-description: An open IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge: the target's screen and a USB keyboard and mouse, in a browser, over HTTPS. Boot a target from a disk image, update over the network, all from a megabyte of firmware.
+description: Remote desktop for a machine that has no working operating system. A board on its HDMI and USB serves the screen, keyboard and mouse to a browser - an open IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge. Boot a target from a disk image, update over the network, all from a megabyte of firmware.
 canonical: https://espkvm.io/
 og_title: ESP-KVM
-og_description: An IP-KVM on the ESP32-P4: HDMI capture, USB keyboard and mouse, boot-from-image, in a browser.
+og_description: Remote desktop that works with no operating system: an IP-KVM on the ESP32-P4 - HDMI capture, USB keyboard and mouse, in a browser.
 og_type: website
 output: index.html
 ---
@@ -52,10 +52,12 @@ output: index.html
 
         <h1>The machine, in a browser tab.</h1>
         <p class="tagline">
-          An IP-KVM built from an ESP32-P4 and a TC358743 HDMI bridge. The
-          target machine&rsquo;s screen, and a USB keyboard and mouse it cannot
-          tell from real ones, over HTTPS &mdash; even when it has no operating
-          system at all.
+          Like remote desktop, except it does not run on the machine. A small
+          board plugs into that machine&rsquo;s HDMI and a USB port and hands you
+          its screen, keyboard and mouse in a browser &mdash; so it still works
+          when the machine is stuck in the BIOS, or has no operating system at
+          all. That is an IP-KVM, and this one is built from an ESP32-P4 and a
+          TC358743 HDMI bridge.
         </p>
 
         <div class="actions">
@@ -63,6 +65,13 @@ output: index.html
           <a class="btn" href="https://demo.espkvm.io/" rel="noopener">Try the live demo</a>
           <a class="btn" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
         </div>
+        <!-- The plain-words explainer, for a reader who has not met the term.
+             Quiet and under the buttons: someone who knows what this is should
+             not have to step over it. -->
+        <p class="hero-note">
+          New to this? <a href="blog/what-an-ip-kvm-is/">What an IP-KVM is, and why you might want one &rarr;</a>
+        </p>
+
         <p class="hero-star">
           <a href="https://github.com/espkvm/espkvm" rel="noopener"><img
             src="assets/star-on-github.svg" height="44" alt="Star us on GitHub"></a>
@@ -84,11 +93,9 @@ output: index.html
 
       <section class="prose" style="border: 0">
         <p>
-          The point is to reach a machine that has no working operating system
-          &mdash; a BIOS screen, a boot menu, a kernel that will not come up &mdash;
-          from a device that costs a fraction of a commercial KVM-over-IP. It
-          captures HDMI, presents itself over USB as a keyboard and mouse,
-          hands the target a disk image to boot from, and serves the whole
+          A commercial KVM-over-IP does this too, for a great deal more money.
+          This one captures HDMI, presents itself over USB as a keyboard and
+          mouse, hands the target a disk image to boot from, and serves the whole
           thing over HTTPS from a megabyte of firmware &mdash; the console inside
           it is 44&nbsp;KB.
         </p>
