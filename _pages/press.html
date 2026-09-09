@@ -1,0 +1,822 @@
+---
+title: ESP-KVM for writers
+description: Everything needed to write about ESP-KVM without asking me first - ready descriptions of three lengths, the facts, the pictures, and the limits I would rather you printed than guessed.
+canonical: https://espkvm.io/press/
+og_type: website
+output: press/index.html
+---
+<!--
+  A press page, written for the person who has half an hour and a deadline. The
+  order is theirs, not mine: the description they can paste comes first, the
+  history comes last, and every number on the page is one I can defend.
+
+  The copy buttons are the only script here; without JavaScript the text is
+  still selectable, which is what a writer would do anyway.
+-->
+<style>
+  .lede {
+    font-size: 1.05rem;
+    color: var(--fg-dim);
+  }
+
+  .quote {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-raised);
+    padding: 16px 18px;
+    margin: 14px 0 26px;
+  }
+
+  .quote p:first-child {
+    margin-top: 0;
+  }
+
+  .quote p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .quote-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .quote-head h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+
+  .quote-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Says out loud that this is a switch between four wordings, not one text
+     with three more buried under it. */
+  .tally {
+    font-size: 0.8rem;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Without JavaScript the first wording is the one on show and the rest stay
+     in the markup - which is also what a crawler that does not run scripts
+     reads, so nobody is served something a reader cannot see. */
+  .variant + .variant {
+    display: none;
+  }
+
+  .variant[hidden] {
+    display: none;
+  }
+
+  .shuffle,
+  .copy {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  .copy:hover {
+    background: var(--bg);
+  }
+
+  .checklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 6px 28px;
+    margin: 16px 0 26px;
+  }
+
+  .checklist h3 {
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin: 12px 0 6px;
+  }
+
+  .checklist ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 22px;
+    margin: 5px 0;
+  }
+
+  .checklist li::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .checklist small {
+    color: var(--fg-dim);
+  }
+
+  .facts {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .facts td {
+    border-top: 1px solid var(--border);
+    padding: 8px 0;
+    vertical-align: top;
+  }
+
+  .facts td:first-child {
+    width: 40%;
+    color: var(--fg-dim);
+    padding-right: 16px;
+  }
+
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 18px 0 8px;
+  }
+
+  .shots figure {
+    margin: 0;
+  }
+
+  .shots img {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+
+  .logos figure img {
+    padding: 10px;
+  }
+
+  /* The photographs come in every shape there is - a console screenshot is wide,
+     a phone screenshot is tall - and a grid of them looks broken unless they are
+     given one box to sit in. */
+  .shots:not(.logos) img {
+    aspect-ratio: 16 / 10;
+    object-fit: contain;
+    background: var(--bg-raised);
+  }
+
+  .on-dark img {
+    background: #0e1116;
+  }
+
+  .on-light img {
+    background: #ffffff;
+  }
+
+  /* The two files with nothing behind them get the checkerboard every graphics
+     editor uses, so it is obvious at a glance which ones are transparent. Light
+     squares under the dark glyphs, dark squares under the light ones, or one of
+     the two would vanish. */
+  .checker-light img,
+  .checker-dark img {
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+  }
+
+  .checker-light img {
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(45deg, #d5dbe2 25%, transparent 25%, transparent 75%, #d5dbe2 75%),
+      linear-gradient(45deg, #d5dbe2 25%, transparent 25%, transparent 75%, #d5dbe2 75%);
+  }
+
+  .checker-dark img {
+    background-color: #0e1116;
+    background-image:
+      linear-gradient(45deg, #262c35 25%, transparent 25%, transparent 75%, #262c35 75%),
+      linear-gradient(45deg, #262c35 25%, transparent 25%, transparent 75%, #262c35 75%);
+  }
+
+  .shots figcaption {
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+    margin-top: 6px;
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>ESP-KVM for writers</h1>
+    <p class="tagline">
+      If you are writing about this project, take whatever is useful from this
+      page. The descriptions are meant to be pasted, the numbers are ones I can
+      defend, and the limits are here so you do not have to guess at them.
+      Nothing on this page needs my permission first.
+    </p>
+  </header>
+
+<h2>The project, at three lengths</h2>
+
+<p>
+  Every box holds four wordings of the same thing and shows one at random, so
+  that two people writing in the same week do not end up publishing the same
+  sentence. Press <em>Another wording</em> to see the rest; all four are in the
+  page whether or not you do.
+</p>
+
+<div class="quote" data-variants>
+  <div class="quote-head">
+    <h3>One line</h3>
+    <div class="quote-actions">
+      <span class="tally" aria-hidden="true"></span>
+      <button class="shuffle" type="button">Another wording</button>
+      <button class="copy" type="button">Copy</button>
+    </div>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware that turns a small ESP32-P4 board into an
+      IP-KVM: it plugs into a computer's video output and one USB port, and
+      serves that machine's screen, keyboard and mouse to a browser.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware for the ESP32-P4 that gives an ordinary
+      computer what servers have always had: its screen, keyboard and mouse in a
+      browser, whether or not the machine is running.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is an open-source IP-KVM on a small ESP32-P4 board - it takes a
+      machine's HDMI output and one of its USB ports, and hands you that machine
+      in a browser tab.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware that makes an inexpensive ESP32-P4 board
+      pretend to be a monitor and a keyboard for another computer, reachable
+      from a browser anywhere on the network.
+    </p>
+  </div>
+</div>
+
+<div class="quote" data-variants>
+  <div class="quote-head">
+    <h3>A paragraph</h3>
+    <div class="quote-actions">
+      <span class="tally" aria-hidden="true"></span>
+      <button class="shuffle" type="button">Another wording</button>
+      <button class="copy" type="button">Copy</button>
+    </div>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware that turns a small ESP32-P4 board into an
+      IP-KVM. It plugs into a computer's HDMI output and one of its USB ports,
+      and serves that machine's screen, keyboard and mouse to any browser on the
+      network. Nothing is installed on the computer, which cannot tell that the
+      keyboard and monitor are not real - so it works while the machine is in its
+      BIOS, stuck at a boot menu, or running nothing at all. It is the thing
+      servers have had for twenty years, for machines that never came with it.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      Remote desktop needs a working computer. ESP-KVM is for the times when
+      there is not one. It is open-source firmware for a small ESP32-P4 board
+      that sits on a machine's HDMI output and one USB port and puts that
+      machine's screen in a browser, with a keyboard and mouse that the computer
+      believes are plugged into it. Nothing is installed on the far end, and
+      nothing needs to be running there - a BIOS, a boot menu or a blank disk are
+      all the same to it.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      An IP-KVM is the box that lets you use a computer that cannot be reached
+      any other way: it captures the screen and pretends to be the keyboard, so
+      the machine can be driven from a browser even when its operating system is
+      gone. ESP-KVM is that box built as open-source firmware on an ESP32-P4, a
+      chip that costs a few pounds - the capability data centres take for
+      granted, at a price a home server can carry.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware for the ESP32-P4. Two small boards, one
+      cable to a computer's HDMI output and one to a USB port, and that machine's
+      screen appears in a browser with a working keyboard and mouse. The computer
+      needs nothing installed and cannot tell the difference, so the connection
+      holds through a reboot, a BIOS screen, an operating system that will not
+      start, and a disk with nothing on it at all.
+    </p>
+  </div>
+</div>
+
+<div class="quote" data-variants>
+  <div class="quote-head">
+    <h3>Longer</h3>
+    <div class="quote-actions">
+      <span class="tally" aria-hidden="true"></span>
+      <button class="shuffle" type="button">Another wording</button>
+      <button class="copy" type="button">Copy</button>
+    </div>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware that turns a small ESP32-P4 board into an
+      IP-KVM. It plugs into a computer's HDMI output and one of its USB ports,
+      and serves that machine's screen, keyboard and mouse to any browser on the
+      network. Nothing is installed on the computer, which cannot tell that the
+      keyboard and monitor are not real, so it keeps working while the machine is
+      in its BIOS, stuck at a boot menu, reinstalling, or switched off.
+    </p>
+    <p>
+      Beyond the screen and keyboard it can boot the machine from a disk image
+      held on its own microSD card, press the power and reset buttons through two
+      wires to the motherboard header, and read the screen back as text so a BIOS
+      error can be copied instead of retyped. It runs on eight ESP32-P4 boards,
+      installs from a web page with nothing to compile, and is Apache-2.0
+      licensed.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      Every server room has a way in that does not depend on the server: a card
+      that shows the screen and types on the keyboard whatever state the machine
+      is in. ESP-KVM is that, as open-source firmware on an ESP32-P4 board, for
+      the computers that never came with one. It takes HDMI on one side and a USB
+      port on the other, and gives you the machine in a browser - through a
+      reboot, a BIOS menu, a failed update or an empty disk.
+    </p>
+    <p>
+      It will also hand the target a disk image from its memory card as if
+      someone had walked over with a USB stick, press the power button through
+      two wires to the motherboard, watch the screen for phrases like "no boot
+      device" while nobody is connected, and reach you over WireGuard or
+      Tailscale. Installing it is a web page and a click, and all of it is
+      Apache-2.0.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      ESP-KVM is open-source firmware for the ESP32-P4 that does the job of an
+      IP-KVM: the screen, keyboard and mouse of one computer, in a browser on
+      another. The hardware is two small boards and no soldering - one captures
+      HDMI, the other runs everything and presents itself to the target as a USB
+      keyboard. The machine on the far end has nothing installed and no idea, so
+      the link survives everything software cannot: a black screen, a boot menu,
+      a system that will not start.
+    </p>
+    <p>
+      It carries the parts that make a remote fix possible rather than merely
+      visible - booting the target from an image on its card, the power button
+      through the motherboard header, the screen readable as text so an error can
+      be copied and searched, alerts when a phrase appears on a screen nobody is
+      watching, and a VPN of its own so none of it has to face the internet.
+    </p>
+  </div>
+  <div class="variant">
+    <p>
+      A home server that will not boot is a machine you have to walk to. ESP-KVM
+      removes the walk. It is open-source firmware on a small ESP32-P4 board that
+      takes the computer's HDMI output and one USB port and serves its screen,
+      keyboard and mouse to a browser - no agent on the machine, no operating
+      system needed, nothing to configure on the far end.
+    </p>
+    <p>
+      From that browser you can boot it from a disk image on the device's card,
+      press its power button through two wires, copy text straight off a BIOS
+      screen, and have it tell Home Assistant when the screen says something it
+      should not. It runs on eight boards, is installed from a web page, and is
+      Apache-2.0 licensed - which is the difference between this and the hardware
+      it imitates.
+    </p>
+  </div>
+</div>
+
+<h2>What people use it for</h2>
+
+<p>
+  The situations readers recognise, in the order they come up. There is a longer
+  version of each in
+  <a href="/blog/what-an-ip-kvm-is/">When remote desktop cannot help</a>, with a
+  drawing for every one - those drawings are mine and free to reprint.
+</p>
+
+<ul>
+  <li>
+    <strong>A parent's computer in another city.</strong> The fix is usually
+    small - press a key, choose a different boot entry, undo an update - and over
+    the phone it takes an hour. Through a browser it takes two minutes, and they
+    do not have to touch anything.
+  </li>
+  <li>
+    <strong>A home server nobody sits at.</strong> A machine in a cupboard with
+    no screen and no keyboard, which works for months and then one day does not
+    answer. Without a screen there is no way to see why.
+  </li>
+  <li>
+    <strong>A house that runs on one small computer.</strong> When the machine
+    behind the lights, the heating and the front door stops, nothing is running
+    on it for the usual remote tools to talk to.
+  </li>
+  <li>
+    <strong>Installing a system from far away.</strong> The device offers a disk
+    image from its card as if someone had walked over and plugged in a USB stick,
+    so a machine with an empty disk can be given a fresh system.
+  </li>
+  <li>
+    <strong>A machine that is switched off.</strong> Two wires to the power pins
+    on the motherboard, and the button in the browser does what the button on the
+    case does.
+  </li>
+  <li>
+    <strong>Anything expensive to reach.</strong> A workshop, a summer house, a
+    rented server in another country, an old machine running one program that
+    must not be touched. Getting to it costs more than fixing it.
+  </li>
+</ul>
+
+<h2>What is unusual about it</h2>
+
+<p>
+  Plenty of projects put a screen in a browser. These are the parts I would write
+  about if I were you.
+</p>
+
+<ul>
+  <li>
+    <strong>The screen can be read as text.</strong> When the machine is showing
+    a BIOS, a boot menu or a console, you can select that text with the mouse and
+    copy it. It is not OCR: a text screen is drawn from a fixed set of character
+    shapes, so each cell is looked up in a table of those shapes, and is either
+    certain or marked unreadable. There is no "recognised with errors" to mislead
+    anyone later.
+  </li>
+  <li>
+    <strong>It can watch that screen while nobody is connected.</strong> Give it
+    phrases - "no boot device", "kernel panic" - and it raises an alert when one
+    appears, in its own log and in Home Assistant.
+  </li>
+  <li>
+    <strong>It boots the target from an image on its card,</strong> so a machine
+    with an empty disk, in another building, can be given a fresh system without
+    anyone going there.
+  </li>
+  <li>
+    <strong>Installing it is a web page.</strong> Plug the board into a laptop,
+    open the flasher, click. No toolchain, no compiler, no command line.
+  </li>
+  <li>
+    <strong>Remote access is built in.</strong> WireGuard and Tailscale both run
+    on the device, so reaching it from outside the house does not need a second
+    box or a forwarded port.
+  </li>
+  <li>
+    <strong>The smallest build is the size of a matchbox</strong> and takes power
+    and network from one PoE cable.
+  </li>
+</ul>
+
+<h2>Everything it does</h2>
+
+<p>
+  The whole list, for checking a sentence against. Everything here is in the
+  released firmware today; the
+  <a href="https://github.com/espkvm/espkvm#what-works">README</a> keeps the same
+  table with the fine print.
+</p>
+
+<div class="checklist">
+  <div>
+    <h3>Screen and control</h3>
+    <ul>
+      <li>Video capture that follows the target's resolution changes</li>
+      <li>H.264 or MJPEG streaming</li>
+      <li>Keyboard, absolute and relative pointer, media keys</li>
+      <li>Pasting text <small>&mdash; US English, Russian, Czech, Ukrainian, Lithuanian layouts</small></li>
+      <li>Key macros of your own</li>
+      <li>Use from a phone <small>&mdash; touch trackpad and an on-screen keyboard</small></li>
+      <li>Several viewers at once, one in control, with takeover</li>
+      <li>Waking a sleeping machine from the keyboard</li>
+    </ul>
+
+    <h3>Beyond the screen</h3>
+    <ul>
+      <li>Virtual media <small>&mdash; boot the target from an image on the card, or a small one in the device's own flash</small></li>
+      <li>Power and reset buttons through the motherboard header, and the power LED read back</li>
+      <li>Wake-on-LAN</li>
+      <li>Reading a text screen as text, and copying it</li>
+      <li>Noticing a screen that has gone one flat colour</li>
+      <li>Watching the screen for phrases while nobody is connected</li>
+      <li>Guessing the target's operating system from how it enumerates USB</li>
+    </ul>
+  </div>
+
+  <div>
+    <h3>Getting to it</h3>
+    <ul>
+      <li>Ethernet, or WiFi on boards with a co-processor <small>&mdash; join a network or be one</small></li>
+      <li>A rescue hotspot with a captive portal</li>
+      <li>WireGuard or native Tailscale, built in <small>&mdash; no port forward, no gateway</small></li>
+      <li>HTTPS with a certificate the device issues itself, or one you bring</li>
+      <li>A login, and a password reset with the board's button</li>
+      <li>A viewing token for dashboards <small>&mdash; opens the picture and the figures, nothing that touches the target</small></li>
+      <li>IPv4 and IPv6, with nothing to fill in</li>
+    </ul>
+
+    <h3>Living with it</h3>
+    <ul>
+      <li>Firmware updates over the network, into a spare slot, with rollback</li>
+      <li>Settings to a file and back <small>&mdash; no secrets in it</small></li>
+      <li>An optional status display <small>&mdash; an I2C OLED or a round colour LCD</small></li>
+      <li>Home Assistant over MQTT <small>&mdash; sensors, buttons, an update entity, a camera of the screen</small></li>
+      <li>Diagnostics, capability reporting and a device log</li>
+      <li>A crash dump kept in flash when the firmware panics</li>
+      <li>Thermal protection</li>
+    </ul>
+  </div>
+</div>
+
+<h2>What it is not</h2>
+
+<p>
+  It is not a replacement for remote desktop. When a computer is healthy, remote
+  desktop is faster and sharper and can move files; an IP-KVM is for the times
+  when there is nothing running to connect to. 1080p arrives at about 22 to 24
+  frames per second on current silicon, which is right for fixing a machine and
+  wrong for using one all day. And it is a device with complete control of a
+  computer, so it belongs on a home network behind a VPN, not on the public
+  internet - the documentation says so in the same words.
+</p>
+
+<h2>The numbers</h2>
+
+<table class="facts">
+  <tr><td>First public release</td><td>23 July 2026</td></tr>
+  <tr><td>Latest release</td><td>0.43.0, 8 September 2026</td></tr>
+  <tr><td>Licence</td><td>Apache-2.0</td></tr>
+  <tr><td>Boards supported</td><td>Eight, across fifteen published images (some silicon revisions need their own)</td></tr>
+  <tr><td>Hardware</td><td>An ESP32-P4 board and an HDMI capture board; optionally a status display, an optocoupler for the power button, and a microSD card</td></tr>
+  <tr><td>Video</td><td>H.264 encoded on the chip, or MJPEG; about 22-24 fps at 1080p on revision 3.x silicon</td></tr>
+  <tr><td>Written in</td><td>C, on ESP-IDF; the console is plain JavaScript with no framework</td></tr>
+  <tr><td>Maintained by</td><td>Evgenij Spitsyn, one person</td></tr>
+</table>
+
+<h2>Try it without hardware</h2>
+
+<p>
+  <a href="https://demo.espkvm.io/" rel="noopener">demo.espkvm.io</a> is the real
+  console, running in the browser against a recorded machine. It is the quickest
+  way to see what a reader would see. The
+  <a href="/flash/">flasher</a> and the
+  <a href="/tools/">tools</a> also run entirely in the page.
+</p>
+
+<h2>Logo</h2>
+
+<p>
+  The mark is the name: it spells ESP-KVM in two lines, so there is no separate
+  wordmark to chase. It comes in enough colours to sit on whatever background
+  your page has - a badge with its own square, or bare glyphs in one colour.
+  Please do not restretch it, recolour it into something else, or set it on a
+  busy photograph; it is a pixel grid and it stops reading immediately.
+</p>
+
+<div class="shots logos">
+  <figure class="on-light">
+    <a href="/assets/press/espkvm-logo-512.png"><img src="/assets/press/espkvm-logo-512.png" alt="The ESP-KVM logo, light glyphs on a dark rounded square"></a>
+    <figcaption>
+      The mark, for a light page.
+      <a href="/assets/press/espkvm-logo.svg">SVG</a> &middot;
+      <a href="/assets/press/espkvm-logo-256.png">256</a> &middot;
+      <a href="/assets/press/espkvm-logo-512.png">512</a> &middot;
+      <a href="/assets/press/espkvm-logo-1024.png">1024</a>
+    </figcaption>
+  </figure>
+  <figure class="on-dark">
+    <a href="/assets/press/espkvm-logo-inverse-512.png"><img src="/assets/press/espkvm-logo-inverse-512.png" alt="The ESP-KVM logo, dark glyphs on a light rounded square"></a>
+    <figcaption>
+      Inverted, for a dark page.
+      <a href="/assets/press/espkvm-logo-inverse.svg">SVG</a> &middot;
+      <a href="/assets/press/espkvm-logo-inverse-512.png">PNG</a>
+    </figcaption>
+  </figure>
+  <figure class="checker-light">
+    <a href="/assets/press/espkvm-logo-on-light-512.png"><img src="/assets/press/espkvm-logo-on-light-512.png" alt="The ESP-KVM mark in dark glyphs with no background"></a>
+    <figcaption>
+      No square, dark glyphs - the checks are the transparency.
+      <a href="/assets/press/espkvm-logo-on-light.svg">SVG</a> &middot;
+      <a href="/assets/press/espkvm-logo-on-light-512.png">PNG</a>
+    </figcaption>
+  </figure>
+  <figure class="checker-dark">
+    <a href="/assets/press/espkvm-logo-on-dark-512.png"><img src="/assets/press/espkvm-logo-on-dark-512.png" alt="The ESP-KVM mark in light glyphs with no background"></a>
+    <figcaption>
+      The same in light glyphs, for your own dark colour.
+      <a href="/assets/press/espkvm-logo-on-dark.svg">SVG</a> &middot;
+      <a href="/assets/press/espkvm-logo-on-dark-512.png">PNG</a>
+    </figcaption>
+  </figure>
+</div>
+
+<p>
+  For one-colour printing there are pure versions with nothing behind them:
+  <a href="/assets/press/espkvm-logo-black.svg">black SVG</a> or
+  <a href="/assets/press/espkvm-logo-black-512.png">PNG</a>, and
+  <a href="/assets/press/espkvm-logo-white.svg">white SVG</a> or
+  <a href="/assets/press/espkvm-logo-white-512.png">PNG</a>. The two colours the
+  mark normally uses are <code>#0e1116</code> and <code>#e6edf3</code>.
+</p>
+
+<h2>Pictures</h2>
+
+<div class="shots">
+  <figure>
+    <a href="/assets/screenshot.webp"><img loading="lazy" src="/assets/screenshot.webp" alt="The ESP-KVM web console showing a target machine's screen"></a>
+    <figcaption>The console. Mine, use freely.</figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/board-p4.webp"><img loading="lazy" src="/assets/board-p4.webp" alt="Waveshare ESP32-P4-ETH board"></a>
+    <figcaption>Waveshare ESP32-P4-ETH. Photo &copy; Waveshare.</figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/board-c790.webp"><img loading="lazy" src="/assets/board-c790.webp" alt="Geekworm C790 HDMI capture board"></a>
+    <figcaption>Geekworm C790, the capture board. Photo &copy; Geekworm.</figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/ha.png"><img src="/assets/ha.png" alt="ESP-KVM entities in Home Assistant" loading="lazy"></a>
+    <figcaption>In Home Assistant. Mine, use freely.</figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/press/console-demo-bios.jpg"><img src="/assets/press/console-demo-bios.jpg" alt="The console showing the browser demo's simulated BIOS screen, which says no boot device found" loading="lazy"></a>
+    <figcaption>
+      <strong>The demo, not a real machine</strong> - this is the simulated BIOS
+      at demo.espkvm.io, which is why it says ESP-KVM Demo BIOS. It shows the
+      console around it, and the Select and Copy buttons that lift text off a
+      screen. If you need the same thing on real hardware, ask and I will take
+      it. Mine, use freely.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/press/display-oled.jpg"><img src="/assets/press/display-oled.jpg" alt="A small OLED on the device showing the network link, IP address and hostname, with the target machine's screen behind it" loading="lazy"></a>
+    <figcaption>
+      The optional OLED, showing where to reach the device - and behind it, the
+      machine it is plugged into. Mine, use freely.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/press/display-round.jpg"><img src="/assets/press/display-round.jpg" alt="Three photographs of the round colour display showing the logo, the network address and the device health" loading="lazy"></a>
+    <figcaption>
+      The round display, in its three states: the name, the address, the health.
+      Mine, use freely.
+    </figcaption>
+  </figure>
+  <figure>
+    <a href="/assets/press/display-qr.jpg"><img src="/assets/press/display-qr.jpg" alt="The round display showing a QR code and the words Scan to join above the hotspot name" loading="lazy"></a>
+    <figcaption>
+      With no network to join, the display puts its own hotspot on screen as a
+      QR code. Mine, use freely.
+    </figcaption>
+  </figure>
+</div>
+
+<p>
+  Every picture here is at the resolution I took it at, so they are large on
+  purpose - right-click and save rather than screenshot the page. The console
+  screenshots, the photographs of my own hardware and the drawings on this site
+  are mine and you may use them with a credit to ESP-KVM. Board photographs belong to the companies that
+  make the boards and are used here only to identify the hardware; if you print
+  one, credit them, not me. If you want a picture of something not shown here -
+  a particular board, the wiring, the display - ask and I will take one.
+</p>
+
+<h2>Video</h2>
+
+<p>
+  Two short clips, silent and unedited, recorded on the bench while the things in
+  them were being built. They are feature recordings rather than a produced
+  demonstration - there is no such video yet, so please do not call them one.
+</p>
+
+<ul>
+  <li>
+    <a href="https://youtu.be/QGABqgAR5H0" rel="noopener">Reading a screen as
+    text</a> &mdash; a NixOS boot menu captured over HDMI, with its lines
+    selected by the mouse and copied, the way text on a web page is. This is the
+    part that surprises people.
+  </li>
+  <li>
+    <a href="https://youtu.be/WU9WUWKaP9g" rel="noopener">The round display in
+    use</a> &mdash; the little screen on the device cycling its pages: the name,
+    the address to open, the health. Behind it in the shot is a laptop showing
+    the console itself, with the desktop of another machine inside it - which is
+    the whole idea in one frame.
+  </li>
+</ul>
+
+<p>
+  Both live on the <a href="https://youtube.com/@espkvm" rel="noopener">project's
+  channel</a>. Embed them or take stills; if you need a particular moment
+  recorded differently, ask.
+</p>
+
+<h2>Naming</h2>
+
+<p>
+  The project is <strong>ESP-KVM</strong>, with the hyphen and the capitals. The
+  site is <strong>espkvm.io</strong> and the source is at
+  <strong>github.com/espkvm/espkvm</strong>. It is not affiliated with Espressif,
+  Waveshare, Geekworm or M5Stack, whose boards it runs on and whose names are
+  theirs.
+</p>
+
+<h2>Asking me things</h2>
+
+<p>
+  The fastest route is a
+  <a href="https://github.com/espkvm/espkvm/discussions">GitHub discussion</a> or
+  an <a href="https://github.com/espkvm/espkvm/issues">issue</a>; both reach me
+  and both stay public, which is usually better for a reader who follows the
+  link. There is also a <a href="https://t.me/espkvm" rel="noopener">Telegram
+  channel</a>. I answer questions about how it works, what it cannot do, and what
+  I got wrong - the last one being the most useful thing I can offer a writer.
+</p>
+
+</div>
+
+<script>
+  /*
+   * Four wordings per box, one shown at random. The point is that two people
+   * writing about the project in the same week do not publish the same
+   * sentence - not that anybody is shown something different from what is
+   * indexed: all four are in the HTML that everyone receives, and the choice
+   * here is a coin toss in the browser, never a look at who is asking.
+   */
+  (function () {
+    document.querySelectorAll("[data-variants]").forEach(function (box) {
+      var all = box.querySelectorAll(".variant");
+      if (!all.length) return;
+      var at = Math.floor(Math.random() * all.length);
+
+      var tally = box.querySelector(".tally");
+
+      function show(i) {
+        at = (i + all.length) % all.length;
+        all.forEach(function (v, n) {
+          v.hidden = n !== at;
+          v.style.display = n === at ? "block" : "";
+        });
+        if (tally) tally.textContent = at + 1 + " / " + all.length;
+      }
+      show(at);
+
+      var shuffle = box.querySelector(".shuffle");
+      if (shuffle) {
+        shuffle.addEventListener("click", function () {
+          show(at + 1);
+        });
+      }
+
+      var copy = box.querySelector(".copy");
+      if (copy) {
+        copy.addEventListener("click", function () {
+          var text = Array.prototype.map
+            .call(all[at].querySelectorAll("p"), function (p) {
+              return p.textContent.replace(/\s+/g, " ").trim();
+            })
+            .join("\n\n");
+          navigator.clipboard.writeText(text).then(
+            function () {
+              copy.textContent = "Copied";
+              setTimeout(function () {
+                copy.textContent = "Copy";
+              }, 1500);
+            },
+            function () {
+              copy.textContent = "Select it";
+            }
+          );
+        });
+      }
+    });
+  })();
+</script>
