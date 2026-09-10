@@ -472,6 +472,63 @@ output: index.html
             </p>
           </div>
         </details>
+        <details class="faq-item">
+          <summary>Which ESP32-P4 boards do <em>not</em> work?</summary>
+          <div class="prose">
+            <p>
+              Being an ESP32-P4 board is not enough. Five things decide it, and a
+              board that misses any one of them cannot run ESP-KVM as it is:
+            </p>
+            <ul>
+              <li>
+                <strong>32 MB of PSRAM.</strong> The frame buffers are allocated
+                once, for the largest mode the bridge can deliver:
+                <strong>12.5 MB</strong> at 1080p on rev&nbsp;3.x silicon
+                (three buffers of 1920&times;1088 YUV422), 11.9 MB on rev&nbsp;&lt;&nbsp;3.0
+                (two of 1920&times;1080 RGB888) &mdash; before the H.264 encoder asks
+                for its reference frame. An 8 MB part cannot hold even the first of
+                those, and video shuts itself off with an explanation.
+              </li>
+              <li>
+                <strong>16 MB of flash.</strong> Two OTA slots and the rescue image
+                do not fit in 4 or 8 MB.
+              </li>
+              <li>
+                <strong>A camera connector the bridge can reach.</strong> Two CSI-2
+                data lanes, and 3.3 V and I2C on the same connector or somewhere you
+                can wire them from. Some boards bring only 1.8 / 2.8 V sensor rails
+                to the FPC and level-shift the I2C down with it &mdash; then a
+                ribbon alone is not enough.
+              </li>
+              <li>
+                <strong>USB OTG-HS on something you can plug into the target.</strong>
+                A USB port or a header. A board that only exposes D+/D&minus; on an
+                edge connector needs a carrier board first.
+              </li>
+              <li>
+                <strong>A way onto the network</strong> &mdash; an Ethernet PHY on
+                the board, or an onboard ESP32-C6.
+              </li>
+            </ul>
+            <p>
+              A worked example: the <strong>LILYGO T-Halow P4</strong> is an
+              ESP32-P4 with a camera FPC, an ESP32-C6 and Wi-Fi HaLow, and it fails
+              on four of the five. It has 8 MB of PSRAM; its Ethernet RMII and its
+              USB OTG D+/D&minus; are brought out only on the M.2 edge connector, so
+              there is no PHY and nothing to plug the target into; and its 24-pin
+              camera FPC carries no 3.3 V and a 1.8 V I2C. The C6 is wired exactly as
+              on the Function EV board and would work &mdash; but the rest is a
+              carrier board and a custom ribbon away, and the PSRAM still rules out
+              1080p.
+            </p>
+            <p>
+              Wi-Fi HaLow, for what it is worth, is not a way around any of that:
+              the modules on those boards use a vendor driver ESP-IDF does not
+              carry, and 802.11ah&rsquo;s narrow channels cannot hold a video stream
+              anyway.
+            </p>
+          </div>
+        </details>
       </section>
 
       <!-- numbers -->
