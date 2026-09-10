@@ -125,6 +125,17 @@ output: flash/index.html
         font-size: 11px;
         color: var(--faint);
       }
+      /* The last tile is not a board: it is where a board that is missing gets
+         asked for. Dashed, so it does not read as something you can flash. */
+      .board-card-add {
+        border-style: dashed;
+        color: var(--faint);
+        text-decoration: none;
+      }
+      .board-card-add img {
+        background: none;
+        opacity: 0.75;
+      }
       .board-note {
         margin: 0;
         font-size: 13px;
@@ -442,6 +453,8 @@ output: flash/index.html
         // people have, and it is the safer guess if they have not checked.
         rev = "1";
         for (const c of grid.children) {
+          /* The "ask for a board" tile is a link, not one of the choices. */
+          if (c.classList.contains("board-card-add")) continue;
           c.setAttribute("aria-pressed", String(c === card));
         }
         apply();
@@ -485,6 +498,25 @@ output: flash/index.html
           grid.appendChild(card);
           if (i === 0) select(b, card);
         });
+        // And one tile that is not a board: the way to ask for the one missing.
+        const ask = document.createElement("a");
+        ask.className = "board-card board-card-add";
+        ask.href = "https://github.com/espkvm/espkvm/issues/new";
+        ask.rel = "noopener";
+        const askImg = document.createElement("img");
+        askImg.src = "../assets/board-add.svg";
+        askImg.alt = "";
+        askImg.loading = "lazy";
+        ask.appendChild(askImg);
+        const askName = document.createElement("span");
+        askName.className = "name";
+        askName.textContent = "Your board is missing?";
+        ask.appendChild(askName);
+        const askTag = document.createElement("span");
+        askTag.className = "tag";
+        askTag.textContent = "open an issue with its schematic";
+        ask.appendChild(askTag);
+        grid.appendChild(ask);
         grid.hidden = false;
       } else if (shown.length === 1) {
         // Only one board: name it, no picker, but the revision switch still

@@ -522,6 +522,21 @@ output: index.html
               1080p.
             </p>
             <p>
+              One thing worth checking with the schematic rather than a product
+              photo: <strong>which</strong> camera connector. The 15-pin, 1.0&nbsp;mm
+              one is the Raspberry&nbsp;Pi camera connector, and the ribbon that
+              comes with a C790 plugs into it as it is. The 22-pin, 0.5&nbsp;mm one
+              carries the same signals but needs an adapter ribbon. And on either,
+              3.3&nbsp;V and a 3.3&nbsp;V I2C have to be on the connector.
+            </p>
+            <p>
+              About a dozen ESP32-P4 boards have been read through this list, the
+              ones that fail included &mdash; mostly on USB, not on memory. They
+              are written up in
+              <a href="https://github.com/espkvm/espkvm/blob/main/docs/PORTING.md" rel="noopener">docs/PORTING.md</a>.
+              If yours is not there, open an issue with a link to its schematic.
+            </p>
+            <p>
               Wi-Fi HaLow, for what it is worth, is not a way around any of that:
               the modules on those boards use a vendor driver ESP-IDF does not
               carry, and 802.11ah&rsquo;s narrow channels cannot hold a video stream
@@ -841,6 +856,28 @@ output: index.html
 
           <div class="hw-card">
             <div class="hw-photo">
+              <img src="assets/board-module-devkit.webp" width="800" height="800" loading="lazy"
+                   alt="Waveshare ESP32-P4-Module-DEV-KIT board" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The device &mdash; on a module</div>
+              <h3>Waveshare ESP32-P4-Module-DEV-KIT</h3>
+              <p>
+                The board above, packed into a module: the P4, the ESP32-C6 and
+                16&nbsp;MB of flash under one shield, 32&nbsp;MB&nbsp;PSRAM, on a
+                carrier with 100M Ethernet, a card slot, a 2x20 header and four
+                USB-A sockets. Every pin the KVM touches is one already in use,
+                and the CSI connector is the 15-pin Raspberry&nbsp;Pi one, so a
+                C790 ribbon plugs straight in. A jumper picks whether the OTG-HS
+                goes to a Type-A socket or an internal hub &mdash; the KVM wants
+                the socket. Built from the schematic, not yet run on one.
+              </p>
+              <a href="https://www.waveshare.com/esp32-p4-module-dev-kit.htm" rel="noopener">Waveshare product page &rarr;</a>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
               <img src="assets/board-wifi6.webp" width="800" height="800" loading="lazy"
                    alt="Waveshare ESP32-P4-WIFI6 board" />
             </div>
@@ -857,6 +894,47 @@ output: index.html
                 behaves differently.
               </p>
               <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-firebeetle2.webp" width="800" height="533" loading="lazy"
+                   alt="DFRobot FireBeetle 2 ESP32-P4 board" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The device &mdash; the small one</div>
+              <h3>DFRobot FireBeetle 2 ESP32-P4</h3>
+              <p>
+                60 x 25 mm, and everything the KVM needs on it:
+                32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, an ESP32-C6 for WiFi 6
+                and the 15-pin Raspberry&nbsp;Pi camera connector, so a C790
+                ribbon plugs straight in. No wired port &mdash; WiFi is the only
+                link. Two USB-C sockets, and they are not interchangeable: one is
+                power, flashing and the log, the other is the OTG-HS that goes to
+                the target. Built from the schematic, not yet run on one.
+              </p>
+              <a href="https://www.dfrobot.com/product-2915.html" rel="noopener">DFRobot product page &rarr;</a>
+            </div>
+          </div>
+
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-add.svg" width="680" height="340" loading="lazy"
+                   alt="A dashed outline with a plus sign, standing in for a board that is not on the list yet" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The device &mdash; yours, maybe</div>
+              <h3>Not the board you have?</h3>
+              <p>
+                Open an issue with a link to its schematic. If it clears the five
+                points above, adding it is a config overlay and a build &mdash;
+                the pins live in menuconfig, not in the code &mdash; and it can be
+                in the next release. That is how most of the boards on this page
+                arrived. If it does not clear them, the answer says which point it
+                fails on, which is worth having before the board is.
+              </p>
+              <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">Ask for a board &rarr;</a>
             </div>
           </div>
 
