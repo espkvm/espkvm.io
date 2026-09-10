@@ -13,10 +13,9 @@ Power panel can now wake it with a magic packet. Put the target's MAC address in
 Settings and press Wake. No optocouplers, no wiring, nothing to solder.
 
 **Static addressing that works.** The Network tab has had address fields for a
-while; now they actually take effect. DHCP stays the default. Two safety nets
-come with it: an address that does not parse falls back to DHCP at boot, and
-the board's button now reverts the device to DHCP as well as clearing the
-password. So a wrong-but-valid address is recoverable by holding the
-button, like a forgotten password.
+while and they did nothing. They take effect now, with DHCP still the default.
+Two ways back if you get it wrong: an address that does not parse falls back to
+DHCP at boot, and the board's button reverts to DHCP as well as clearing the
+password. A wrong but valid address is a button hold away from fixed.
 
 [Release v.0.4.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.4.0)

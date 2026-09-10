@@ -17,20 +17,20 @@ cable at the target's end, which turned out to reboot the device, because on
 this board the target's five volts come back down that same lead. What worked in
 the end was pulling every cable and giving the board a cold start.
 
-By then the obvious conclusion was that something on this side gets stuck by a
+The obvious conclusion by then was that something on this side gets stuck by a
 sleeping host and only a power cycle clears it. That was wrong, and one number
 said so. TinyUSB tracks whether there is a live bus at all, separately from
 whether the target has enumerated us, and that flag was false. There was no bus.
-Every re-plug had been toggling a pull-up on a wire with nobody on the other
-end. The machine had suspended the bus on its way down and its port came back
-from sleep without power.
+Every re-plug had been toggling a pull-up on a wire with nobody at the other
+end: the machine suspended the bus on its way down, and its port came back from
+sleep with no power on it.
 
-Nothing on the device's end can reach that, and it should never have pretended
-otherwise. So the status pill now separates the two silences: a target that has
+Nothing on this end can reach that, and the device should not have pretended
+otherwise. The status pill separates the two silences now: a target that has
 stopped listening, which re-plugging does fix, and a port with no power, which
-wants the cable re-seated at the machine or the machine restarted. The popup
-offers the repair only when the repair can work. Both states are on the API too,
-in `GET /api/v1/system/usbprobe`, next to the enumeration trace.
+wants the cable re-seated at the machine or the machine restarted. You are
+offered the repair only when it can work. Both states are on the API too, in
+`GET /api/v1/system/usbprobe`, next to the enumeration trace.
 
 Three smaller things came out of the same afternoon. The log now writes the bus
 going quiet and coming back, because a keyboard that dies over a lunch break used

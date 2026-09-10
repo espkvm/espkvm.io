@@ -6,12 +6,12 @@ date: 2026-07-24
 image:
 ---
 
-To fix a broken machine you need something to boot from, and that has meant
-walking to it with a USB stick.
+To fix a broken machine you need something to boot from, which until now meant
+walking over with a USB stick.
 
 Put disk images on the device's microSD card, pick one in the new Media tab, and
-the target sees a USB drive with that image in it. It boots from it like it
-would from a stick you plugged in yourself.
+the target sees a USB drive with that image in it. It boots from that the same
+way it would from a stick you plugged in yourself.
 
 Two things to know in this version:
 
@@ -19,7 +19,7 @@ Two things to know in this version:
 - the card must be FAT32, and one image can be at most 4 GB, that limit is FAT32's, not ours.
 
 Reads run at 4 MHz, about 1.5 MB/s. A heavy graphical image takes minutes to
-boot; a small rescue image takes about a minute. Higher clock rates fail on
-this chip.
+boot, a small rescue image about a minute. Higher clock rates fail on this
+chip.
 
 [Release v.0.2.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.2.0)

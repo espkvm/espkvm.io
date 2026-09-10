@@ -6,7 +6,7 @@ date: 2026-07-25
 image: /assets/blog/0-6-0-the-console-gets-out-of-the-way/console.webp
 ---
 
-A rearrangement, so that less of the console sits on top of the picture.
+A rearrangement, so less of the console sits on top of the picture.
 
 - The firmware version is a badge in the status bar. It shows a dot when a newer build is published, and its outline fills like a progress ring while an update installs. Click it and the whole firmware panel opens.
 - Live diagnostics - chip temperature, memory, uptime, ESP-IDF version - left the Settings page and became a rail button that already shows the temperature and a rough uptime.

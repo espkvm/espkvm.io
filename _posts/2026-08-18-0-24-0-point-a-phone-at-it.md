@@ -6,11 +6,11 @@ date: 2026-08-18
 image: /assets/blog/0-24-0-point-a-phone-at-it/qr.webp
 ---
 
-The rescue hotspot exists because the device cannot be reached any other way -
-which also means nothing can hand you its password. Now the panel does: when the
+The rescue hotspot exists because the device cannot be reached any other way,
+which also means nothing can hand you its password. The panel can now: while the
 hotspot is up, the round LCD gives its whole face to a QR code. Point a phone at
-it and it joins. Small mono OLEDs sit this one out, because a code that size is
-not something a phone can focus on.
+it and it joins. Mono OLEDs sit this one out, because a code that small is not
+something a phone can focus on.
 
 **The certificate names the DHCP address.** Only a static address was ever put
 in the certificate, so typing the IP of a device on DHCP landed on an untrusted
@@ -20,9 +20,9 @@ accept it. The address is recorded when it arrives and named from the next
 restart.
 
 **The button says it heard you.** Holding the board button to clear a forgotten
-password used to be a gesture into the void - no light, no message, no way to
-tell if the button was even wired. The panel now fills a ring around its rim as
-you hold, empties it if you let go too early, and says what it cleared.
+password gave you nothing back: no light, no message, no way to tell the button
+was even wired. The panel fills a ring around its rim as you hold, empties it if
+you let go too early, and says what it cleared.
 
 Two fixes underneath: the round LCD's framebuffer was not aligned the way the
 SPI driver wants, so every frame was copied through internal memory - and this

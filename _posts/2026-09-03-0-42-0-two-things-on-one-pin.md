@@ -12,19 +12,19 @@ when one of them named a pin the board's own hardware holds, like the capture
 bus or the Ethernet PHY. Neither shows up as an error. The panel simply stays
 dark, or the network stops.
 
-A write that would do that is now refused, naming the pin and what already has
-it. The pins are weighed as a set and after the request is imagined applied, so
-moving the display off a pin the buttons want still goes through in one go, and
-a clash a device already has stored does not block unrelated changes. The
-defaults moved too: the buttons used to start unassigned with the wiring page
-suggesting the same three pins the LCD starts on, so a device wearing both and
-set up by following that page ended up with three pins claimed twice.
+A write that would do that is refused now, and it names the pin and what already
+holds it. The pins are checked as a set, against how they would look after your
+change, so moving the display off a pin the buttons want still goes through in
+one go, and a clash a device already has stored does not block unrelated edits.
+The defaults moved too: the buttons started unassigned while the wiring page
+suggested the same three pins the LCD starts on, so following that page left you
+with three pins claimed twice.
 
 The capture path no longer calls the TC358743 by name. A driver registers a
-detect function, and the path asks for whatever answers on the bus, getting
-back a name to show and a table of operations to drive it with. Adding a bridge
-is adding a component. Nothing about the picture changes - there is still one
-driver and it is the same one - and the interface is a guess until a second
+detect function, the path asks for whatever answers on the bus, and gets back a
+name to show and a table of operations to drive it with. Adding a bridge is
+adding a component. Nothing about the picture changes, since there is still one
+driver and it is the same one, and the interface is a guess until a second
 bridge exists to shape it. The idea comes from Espressif's esp_cam_sensor.
 
 Then two silences. A machine that boots faster than this firmware looks at the

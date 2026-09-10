@@ -22,9 +22,8 @@ skipped for a self-signed broker.
 
 Off by default.
 
-
-There is a security fix in the same release: while the default password is still
-in force, a session can now reach nothing but the login endpoints. That rule
-used to be enforced by the console alone, which is the wrong place for it.
+A security fix in the same release: while the default password is still in
+force, a session reaches nothing but the login endpoints. The console used to
+enforce that on its own, which is the wrong place for it.
 
 [Release v.0.13.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.13.0)

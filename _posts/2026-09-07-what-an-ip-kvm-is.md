@@ -38,10 +38,9 @@ The name is old and not very friendly. KVM means keyboard, video, mouse - the
 three things such a box carries. IP means it does this over the network. So:
 keyboard, screen and mouse of one computer, over the network, in a browser.
 
-The important part is what it does not need. It does not need the operating
-system. It does not care if the computer runs Windows, Linux, or nothing at all.
-It works while the computer is still starting up, which is the moment when every
-other tool is blind.
+It needs nothing from the operating system, and it does not care whether the
+computer runs Windows, Linux or nothing at all. It works while the computer is
+still starting up, which is where every other tool is blind.
 
 ## Servers have had this for years
 
@@ -116,11 +115,11 @@ than fixing it.
 It is not a replacement for remote desktop. When the far computer is healthy,
 remote desktop is faster and sharper, and it can move files. Use it.
 
-An IP-KVM is for the other times. Think of it as the way in that keeps working
-when everything else has stopped.
+An IP-KVM is for the other times, when there is nothing on the far machine left
+to connect to.
 
-It also does not carry sound, and it cannot repair broken hardware. It only lets
-you see and press, exactly as if you were standing in front of the machine.
+It does not carry sound, and it cannot repair broken hardware. It lets you see
+and press, exactly as if you were standing in front of the machine.
 
 ## One warning
 
@@ -128,9 +127,8 @@ This box has full control of a computer. Anyone who reaches it can do anything t
 that machine. So do not put it directly on the internet.
 
 Keep it on your home network and reach it through a VPN - a private tunnel to
-your own network. ESP-KVM has two built in, so this needs no extra equipment. It
-takes ten minutes to set up and it is the difference between a useful tool and an
-open door.
+your own network. ESP-KVM has two built in, so this needs no extra equipment,
+and it takes about ten minutes to set up.
 
 ## What it takes to build one
 

@@ -6,13 +6,12 @@ date: 2026-08-28
 image:
 ---
 
-Home Assistant now shows which firmware is installed, which one the project has
-published, and a button that installs it. To do that the device had to start
-reading the update manifest itself, at most once every six hours. Until now
-only the console did, from the browser, which is no use to a dashboard. It
-appears only where the device is allowed to fetch releases; with that switched
-off there is no entity at all, because one that can never answer is worse than
-none.
+Home Assistant shows which firmware is installed, which one is published, and a
+button that installs it. For that the device had to start reading the update
+manifest itself, at most once every six hours. Until now only the console did
+that, from the browser, which is no use to a dashboard. The entity appears only where
+the device is allowed to fetch releases. With that switched off there is none at
+all, because one that can never answer is worse than nothing.
 
 There is also a camera holding a still of the target's screen. A button takes
 one, and a setting takes one by itself when the screen watch matches a phrase,
@@ -21,8 +20,8 @@ It needs the MJPEG codec, because while H.264 runs there is no still to take.
 It is off by default too: a 1080p frame is a few hundred kilobytes through your
 broker.
 
-The mouse jiggler is a switch now, with its interval beside it. The case for it
-is an automation: quiet during the day, awake overnight. Turning it back on
+The mouse jiggler is a switch now, with its interval beside it, so you can put
+it in an automation: quiet during the day, awake overnight. Turning it back on
 restores the interval you had.
 
 And the diagnostics: free internal memory and the largest unbroken block in it,

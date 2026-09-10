@@ -20,8 +20,8 @@ chip is in the box. So both are published: `p4-eth` and `p4-eth-rev3`, `p4-poe`
 and `p4-poe-rev3`. Check the boot log, which prints `Chip rev:`. On rev 3.x you
 also get the faster capture path and a writable microSD card.
 
-The round LCD's pins now default per board, instead of five numbers
-that were right for one of them. The NANO's values come from
+The round LCD's pins default per board now, instead of five numbers that were
+right for one board. The NANO's values come from
 [@DaveDavenport](https://github.com/DaveDavenport), who worked out what that
 board can spare. A device already set up keeps its own values.
 

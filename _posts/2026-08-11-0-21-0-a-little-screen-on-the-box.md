@@ -6,20 +6,20 @@ date: 2026-08-11
 image: /assets/blog/0-21-0-a-little-screen-on-the-box/round-pages.webp
 ---
 
-Until now the device only spoke through the browser, so standing next to the box
-you could not tell whether it was on the network at all.
+The device only spoke through the browser, so standing next to the box you could
+not tell whether it was on the network at all.
 
-Now it can say so itself. Solder on a small mono OLED, an SSD1306 or SH1106.
-They are found automatically on the capture chip's own I2C bus, so they cost no
-pins. A round GC9A01 colour LCD works too. Turn it on in Settings and the panel
-shows a boot logo, then cycles through pages: the IP address, the link, what the
-capture sees, and health with temperature and memory bars.
+Solder on a small mono OLED, an SSD1306 or SH1106. They are found automatically
+on the capture chip's I2C bus, so they cost no pins. A round GC9A01 colour LCD
+works too. Turn it on in Settings and the panel shows a boot logo, then cycles
+pages: the IP address, the link, what the capture sees, and health with
+temperature and memory bars.
 
 Off by default, and it stays out of the video encoder's way, so switching it on
-does not cost frames.
+costs you no frames.
 
-The three pictures above are the round LCD on a real board: the boot logo, the
-network page with the address to type, and health with temperature and memory.
+The three pictures above are the round LCD on a board here: the boot logo, the
+network page with the address to type, and health.
 
 ![A 128x64 mono OLED soldered to the capture chip's I2C bus, showing the network page: the link it is on, its address, and the name it answers to.](/assets/blog/0-21-0-a-little-screen-on-the-box/oled.webp)
 

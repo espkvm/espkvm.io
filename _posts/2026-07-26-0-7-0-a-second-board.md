@@ -19,8 +19,7 @@ What that means in practice:
 - every board gets its own update manifest, so a device only ever checks for images that will run on it;
 - the plain files stay where they were, so devices flashed before this release keep updating exactly as they did.
 
-A board is a settings overlay, not code, so the next one is cheap to
-add.
+A board is a settings overlay, not code, so the next one is cheap to add.
 
 
 [Release v.0.7.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.7.0)

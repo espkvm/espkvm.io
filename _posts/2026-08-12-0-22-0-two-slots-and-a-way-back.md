@@ -7,14 +7,14 @@ image:
 ---
 
 The device has always kept two firmware slots and installed an update into the
-one it is not running from. That is what lets a bad update undo itself. Until
-now you could not see any of it.
+one it is not running from, which is what lets a bad update undo itself. You
+could not see any of that.
 
-The firmware panel now lists both slots: the version in each, which one is
-running, and whether it has been confirmed or is still on trial. Next to the
-other one there is a "Boot this" button, which switches to it and restarts. So
-dropping back to the previous build is a click, not a cable. A slot with no
-valid image refuses, so the button cannot strand the device.
+The firmware panel lists both slots now: the version in each, which one is
+running, and whether it is confirmed or still on trial. Next to the other one is
+a "Boot this" button that switches and restarts, so going back to the previous
+build is a click instead of a cable. A slot with no valid image refuses, so the
+button cannot strand the device.
 
 Two fixes in the same release:
 

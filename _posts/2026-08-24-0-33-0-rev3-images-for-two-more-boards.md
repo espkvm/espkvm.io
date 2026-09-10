@@ -8,8 +8,8 @@ image:
 
 ![The Waveshare ESP32-P4-NANO. The same product code ships with either family of ESP32-P4 silicon, and the boot log is the only way to tell.](/assets/blog/0-33-0-rev3-images-for-two-more-boards/board-nano.webp)
 
-A NANO bought in August came up as chip revision v3.1, and the flashing tool
-refused every release we had. The board was fine. The image was built for the
+A NANO bought in August came up as chip revision v3.1 and the flashing tool
+refused every release there was. The board was fine. The image was built for the
 other silicon family, and the two fence each other off on purpose.
 
 Both boards now build and publish a `-rev3` image beside the plain one, each with

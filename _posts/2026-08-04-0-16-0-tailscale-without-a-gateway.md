@@ -20,8 +20,9 @@ MagicDNS name, so the console is trusted over Tailscale the same way it is on
 the local network.
 
 **The console is installable.** It ships a manifest, a service worker and icons,
-so a phone can add it to the home screen and run it full screen. That also gets rid of the browser's own bars. Touch control became a
-proper trackpad with acceleration at the same time.
+so a phone can add it to the home screen and run it full screen, without the
+browser's own bars. Touch control became a proper trackpad with acceleration at
+the same time.
 
 The device's own certificate authority is now named after the device, so it is
 recognisable in a phone's list of trusted credentials, instead of one more

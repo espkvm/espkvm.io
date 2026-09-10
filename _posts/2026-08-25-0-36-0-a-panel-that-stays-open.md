@@ -6,9 +6,9 @@ date: 2026-08-25
 image:
 ---
 
-Panels float over the picture on purpose: a picture that resizes every time
-something opens makes you find everything again. On a wide screen there is room
-for both.
+Panels float over the picture on purpose, because a picture that resizes every
+time something opens makes you hunt for everything again. On a wide screen there is
+room for both.
 
 The pin in a panel's header now hands it a strip of the stage. The picture
 shrinks to what is left, and everything drawn on the picture stays lined up with

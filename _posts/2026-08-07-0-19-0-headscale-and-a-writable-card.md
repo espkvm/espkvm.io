@@ -6,10 +6,10 @@ date: 2026-08-07
 image:
 ---
 
-Tailscale is convenient and it is somebody else's control server. If you run
-your own - Headscale, or Ionscale - the device can now be pointed at it instead.
-It is one field in the VPN settings: the control server URL, and a port if it
-needs one. Everything else works the same.
+Tailscale is convenient, and it is somebody else's control server. If you run
+your own, Headscale or Ionscale, point the device at it instead. One field in
+the VPN settings: the control server URL, and a port if it needs one. The rest
+works the same.
 
 Two smaller things in the same few days:
 

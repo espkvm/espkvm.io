@@ -6,25 +6,23 @@ date: 2026-08-21
 image: /assets/blog/0-28-0-reading-the-screen-as-text/clip.webp
 ---
 
-Until now, getting a serial number or an error code off a BIOS screen meant
-reading it and typing it out somewhere else. Press Select and sweep the mouse
-over the picture as if it were a page, or press Copy and take the whole screen.
-A UEFI boot menu, memtest, a Linux console: all of them come back as text.
+Getting a serial number or an error code off a BIOS screen used to mean reading
+it off the picture and typing it out somewhere else. Press Select and sweep the
+mouse over the picture as if it were a page, or press Copy and take the whole
+screen. A UEFI boot menu, memtest, a Linux console all come back as text.
 
-There is a short silent clip of it happening: a NixOS boot menu, its lines being
-selected with the mouse while the menu is walked up and down at the same time -
-which is the part that proves this is the live screen and not a screenshot
-somebody pasted.
+There is a short silent clip: a NixOS boot menu, lines being selected with the
+mouse while the menu is walked up and down at the same time, so you can see it
+is the live screen and not a pasted screenshot.
 
 [Watch it on YouTube](https://youtu.be/QGABqgAR5H0) - no sound, nothing installed
 on the target, and the machine has not booted yet.
 
-**It is not OCR.** A text screen is drawn by a character
-generator: a fixed grid, one fixed bitmap per character. So each cell is simply
-looked up in a table of the shapes the font has. Either a cell matches and the
-character is certain, or it comes back as a question mark and you can see
-exactly which cells were not read. There is no "recognised, probably" to catch
-you out three days later.
+**It is not OCR.** A text screen is drawn by a character generator: a fixed
+grid, one fixed bitmap per character. Each cell is looked up in a table of the
+shapes the font has. Either it matches and the character is certain, or it comes
+back as a question mark and you can see which cells were not read. Nothing comes
+back as "probably".
 
 Three fonts are known: the one a legacy BIOS draws with, the one a Linux console
 draws with (a different font - five printable characters differ, including f and

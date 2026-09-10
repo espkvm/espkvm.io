@@ -16,8 +16,8 @@ firmware on one yet. One thing to check before wiring: a jumper switches the USB
 OTG port between HOST and DEVICE, and the KVM needs DEVICE.
 
 Two boards in the same family were looked at and left out. The ESP32-P4-Pico and
-the ESP32-P4-Core-DEV-KIT have neither Ethernet nor a WiFi co-processor, and a
-KVM nobody can reach over the network is not much of a KVM.
+the ESP32-P4-Core-DEV-KIT have neither Ethernet nor a WiFi co-processor, so
+there is no way to reach them.
 
 ![The Waveshare ESP32-P4-WIFI6. The PoE board without its wired half. WiFi is the only way in.](/assets/blog/0-40-0-two-more-boards/board-wifi6.webp)
 

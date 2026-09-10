@@ -15,10 +15,10 @@ the endpoint and a tunnel address. Bring-up runs on its own task, so a peer that
 is slow or unreachable never holds up boot or the web server.
 
 **An API a script can use.** The console drives the target over a binary
-WebSocket protocol, which is efficient and awful to write against. So there are
-now plain HTTP endpoints for the same things: fetch one JPEG of the screen, move
-the pointer, click, press a key, type a string. That is enough for a monitoring
-script, or for an AI agent that needs to look at a machine and press something.
+WebSocket protocol, which is efficient and awful to write against. There are
+plain HTTP endpoints for the same things now: fetch one JPEG of the screen, move
+the pointer, click, press a key, type a string. Enough for a monitoring script,
+or for an agent that has to look at a machine and press something.
 
 Because those endpoints hand out the same control the console has, they are
 behind a setting that is off by default, and each call still needs a session and

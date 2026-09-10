@@ -6,8 +6,8 @@ date: 2026-08-27
 image: /assets/blog/a-case-somebody-else-printed/case-p4eth.webp
 ---
 
-Two boards, a ribbon cable and two leads: on a desk ESP-KVM looks like a
-project, not a device. People kept asking for a case.
+Two boards, a ribbon cable and two leads. On a desk ESP-KVM looks like a
+project, not a device. You kept asking for a case.
 
 Colin Hickey printed one for the Waveshare ESP32-P4-ETH with the C790 inside and
 published the model:
