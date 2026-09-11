@@ -603,6 +603,17 @@
         text-transform: uppercase;
         letter-spacing: 0.06em;
       }
+      /* A board nobody has run says so in the warning colour, not in the same
+         grey as "the capture" or "optional". Half the supported list is in that
+         state and a reader should be able to see which half at a glance. */
+      .hw-body .role.untested {
+        color: var(--warn);
+        font-weight: 700;
+      }
+      .hw-body .role.untested::before {
+        content: "\26A0\FE0E";
+        margin-right: 5px;
+      }
       .hw-body h3 {
         margin: 4px 0 6px;
         font-size: 17px;

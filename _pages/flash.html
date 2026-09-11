@@ -121,9 +121,23 @@ output: flash/index.html
         font-size: 13px;
         line-height: 1.3;
       }
+      /* Half the boards here were built from a schematic and have never been
+         run on the hardware. That is the single most important thing on this
+         page for the person about to flash one, so it is a badge in the warning
+         colour rather than a grey footnote. */
       .board-card .tag {
         font-size: 11px;
-        color: var(--faint);
+        color: var(--warn);
+        border: 1px solid var(--warn);
+        border-radius: 999px;
+        padding: 1px 8px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .board-card[aria-pressed="true"] .tag {
+        background: var(--warn);
+        color: var(--bg);
       }
       /* The last tile is not a board: it is where a board that is missing gets
          asked for. Dashed, so it does not read as something you can flash. */
@@ -140,6 +154,15 @@ output: flash/index.html
         margin: 0;
         font-size: 13px;
         color: var(--faint);
+      }
+      /* The same warning again in words, once a board is picked: the badge says
+         which board, this says what it means. */
+      .board-note.warn {
+        color: var(--text);
+        border-left: 3px solid var(--warn);
+        background: var(--bg-raised);
+        padding: 10px 12px;
+        border-radius: 0 8px 8px 0;
       }
 
       .rev-row {
@@ -414,7 +437,7 @@ output: flash/index.html
       ];
 
       const UNTESTED_NOTE =
-        "Configured from the datasheet, not yet verified on hardware - it should work, but reports are welcome.";
+        "Nobody has run this firmware on this board. It was configured from the vendor's schematic: the pins should be right, the image builds and boots in theory, and that is all anyone can promise. It cannot damage the board - the worst case is an image that does not start, which a reflash undoes. Tell us how it goes either way.";
       const REV_NOTE =
         "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. Almost every board on sale today is rev 1.x - pick rev 3.x only if you know yours is. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
 
@@ -445,6 +468,7 @@ output: flash/index.html
         note.textContent = [board.untested ? UNTESTED_NOTE : "", pair ? REV_NOTE : ""]
           .filter(Boolean)
           .join(" ");
+        note.classList.toggle("warn", !!board.untested);
       };
 
       const select = (b, card) => {
@@ -490,7 +514,7 @@ output: flash/index.html
           if (b.untested) {
             const tag = document.createElement("span");
             tag.className = "tag";
-            tag.textContent = "configured \u00b7 untested";
+            tag.textContent = "untested";
             card.appendChild(tag);
           }
 
