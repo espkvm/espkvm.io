@@ -555,6 +555,21 @@
 
       /* ---- hardware cards (photos) --------------------------------------- */
 
+      /* The hardware list is read by someone deciding what to buy, so it is
+         grouped: what has been run, what has only been built, capture, power,
+         display, cases. The headings carry that; the cards stay as they were. */
+      .hw-head {
+        margin: 28px 0 2px;
+        font-size: 18px;
+      }
+      .hw-head:first-of-type {
+        margin-top: 8px;
+      }
+      .hw-lead {
+        margin: 0 0 14px;
+        color: var(--muted);
+        max-width: 70ch;
+      }
       .hw {
         display: grid;
         gap: 16px;

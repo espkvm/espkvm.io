@@ -740,6 +740,8 @@ output: index.html
           works, these are the ones this project is built and tested on.
         </p>
 
+        <h3 class="hw-head">Boards that have been run on hardware</h3>
+        <p class="hw-lead">Five of these have had this firmware on them, on someone's bench. Any of them does the whole job.</p>
         <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
@@ -760,7 +762,6 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-funcev.webp" width="680" height="680" loading="lazy"
@@ -779,7 +780,6 @@ output: index.html
               <a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html" rel="noopener">Espressif user guide &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-nano.jpg" width="680" height="680" loading="lazy"
@@ -797,7 +797,6 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-nano.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-guition.webp" width="680" height="680" loading="lazy"
@@ -814,7 +813,31 @@ output: index.html
               </p>
             </div>
           </div>
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-wifi6.webp" width="800" height="800" loading="lazy"
+                   alt="Waveshare ESP32-P4-WIFI6 board" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The device &mdash; wireless only</div>
+              <h3>Waveshare ESP32-P4-WIFI6</h3>
+              <p>
+                The PoE board without the wired port, contributed by someone who
+                has one: capture and the USB keyboard and mouse are confirmed on
+                hardware. 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash. Its WiFi link
+                used to stall; since 0.41.1 the chip's own pull-ups are switched
+                on for this board and it holds. That is one board and one
+                tester, and WiFi is the only way in here, so tell us if yours
+                behaves differently.
+              </p>
+              <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
+            </div>
+          </div>
+        </div>
 
+        <h3 class="hw-head">Boards built from a schematic, never run</h3>
+        <p class="hw-lead">Their pins were read off the vendor's schematic, the images build and are published, and that is the whole claim. Flashing one cannot damage it - the worst case is an image that does not start, and a reflash undoes that. Tell me how it goes and the board moves up a block.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-poe.jpg" width="800" height="800" loading="lazy"
@@ -833,7 +856,6 @@ output: index.html
               </p>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-wifi6-devkit.webp" width="800" height="800" loading="lazy"
@@ -853,7 +875,6 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-module-devkit.webp" width="800" height="800" loading="lazy"
@@ -875,28 +896,25 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-module-dev-kit.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
-              <img src="assets/board-wifi6.webp" width="800" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-WIFI6 board" />
+              <img src="assets/board-nano-wifi6-db.webp" width="758" height="800" loading="lazy"
+                   alt="Waveshare ESP32-P4-NANO-WIFI6-DB board" />
             </div>
             <div class="hw-body">
-              <div class="role">The device &mdash; wireless only</div>
-              <h3>Waveshare ESP32-P4-WIFI6</h3>
+              <div class="role untested">Not tested on hardware</div>
+              <h3>Waveshare ESP32-P4-NANO-WIFI6-DB</h3>
               <p>
-                The PoE board without the wired port, contributed by someone who
-                has one: capture and the USB keyboard and mouse are confirmed on
-                hardware. 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash. Its WiFi link
-                used to stall; since 0.41.1 the chip's own pull-ups are switched
-                on for this board and it holds. That is one board and one
-                tester, and WiFi is the only way in here, so tell us if yours
-                behaves differently.
+                The NANO with a dual-band <strong>ESP32-C5</strong> in place of the
+                C6, so it can join a 5&nbsp;GHz network &mdash; the first supported
+                board that can. 32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, 100M
+                Ethernet with a PoE header, a Type-A port for the target, and the
+                15-pin Raspberry&nbsp;Pi camera connector, so a C790 ribbon fits. It
+                carries rev&nbsp;3.x silicon, so it has one image and no pre-3.0 twin.
               </p>
-              <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
+              <a href="https://www.waveshare.com/esp32-p4-nano-wifi6-db.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-firebeetle2.webp" width="800" height="533" loading="lazy"
@@ -917,7 +935,6 @@ output: index.html
               <a href="https://www.dfrobot.com/product-2915.html" rel="noopener">DFRobot product page &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-add.svg" width="680" height="340" loading="lazy"
@@ -937,7 +954,11 @@ output: index.html
               <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">Ask for a board &rarr;</a>
             </div>
           </div>
+        </div>
 
+        <h3 class="hw-head">The capture board</h3>
+        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. One board is supported today. M5Stack's Add-on Display In is the other candidate - it plugs onto their PoE-P4 with no ribbon at all - but its bridge is a Lontium LT6911D rather than the TC358743, that driver is not written, and until it is there is no picture from it.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-c790.webp" width="680" height="680" loading="lazy"
@@ -959,7 +980,11 @@ output: index.html
               <a href="https://wiki.geekworm.com/C790" rel="noopener">Geekworm wiki page &rarr;</a>
             </div>
           </div>
+        </div>
 
+        <h3 class="hw-head">Power control (optional)</h3>
+        <p class="hw-lead">Two wires to the machine's front-panel header let the console press its power and reset buttons. A relay module does the same job - the firmware only pulses a pin, and which way round it triggers is a setting. Reading the power LED back is the one part a relay cannot do: that input wants an optocoupler.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/817.webp" width="680" height="680" loading="lazy"
@@ -978,7 +1003,11 @@ output: index.html
               </p>
             </div>
           </div>
+        </div>
 
+        <h3 class="hw-head">Status display (optional)</h3>
+        <p class="hw-lead">A small screen on the box, so you can see its address and link without opening a browser.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/SSD1306.jpg" width="700" height="700" loading="lazy"
@@ -996,7 +1025,6 @@ output: index.html
               </p>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/GC9A01.webp" width="1500" height="1500" loading="lazy"
@@ -1013,7 +1041,11 @@ output: index.html
               </p>
             </div>
           </div>
+        </div>
 
+        <h3 class="hw-head">A case (optional)</h3>
+        <p class="hw-lead">Printed by people who built one. Both models are published.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo is-photo">
               <img src="assets/case-p4eth.webp" width="900" height="506" loading="lazy"
@@ -1032,7 +1064,6 @@ output: index.html
               <a href="https://www.printables.com/model/1824874-esp32-p4-eth-kvm-case" rel="noopener">Model on Printables &rarr;</a>
             </div>
           </div>
-
           <div class="hw-card">
             <div class="hw-photo is-photo">
               <img src="assets/case-p4eth-makerworld.webp" width="810" height="607" loading="lazy"
@@ -1049,63 +1080,6 @@ output: index.html
               <a href="https://makerworld.com/en/models/3238485-kvm-case-for-esp32-p4-eth-and-c790" rel="noopener">Model on MakerWorld &rarr;</a>
             </div>
           </div>
-        </div>
-
-        <p class="hw-cables">
-          <strong>Cables:</strong> a CSI ribbon between the two boards, HDMI from
-          the target, and USB-C from the board to the target. A microSD card if
-          you want boot-from-image.
-        </p>
-      </section>
-
-      <!-- getting started -->
-      <section id="start">
-        <h2>Getting started</h2>
-        <div class="prose">
-          <p>
-            The easiest way is
-            <a href="flash/">flashing straight from the browser</a> &mdash;
-            Chrome and Edge can talk to the board over USB, and nothing needs
-            installing. If you would rather use the command line, download the
-            merged firmware image for your board from the
-            <a href="https://github.com/espkvm/espkvm/releases">releases page</a>
-            and write it at offset 0 with
-            <a href="https://github.com/espressif/esptool">esptool</a> &mdash; one
-            file, no unpacking:
-          </p>
-
-          <pre><code>esptool --chip esp32p4 -b 921600 write-flash 0x0 espkvm-&lt;version&gt;-&lt;board&gt;-merged.bin</code></pre>
-
-          <p>
-            Installing esptool, finding the serial port and the driver notes for
-            Linux, macOS and Windows are all in the
-            <a href="https://github.com/espkvm/espkvm/blob/main/docs/FLASHING.md">flashing guide</a>.
-          </p>
-
-          <p>
-            Then plug in Ethernet, HDMI from the target and USB to the target,
-            and open <code>https://espkvm.local/</code>. The browser will warn
-            about the certificate once &mdash; the device signed it itself, and
-            nothing else vouches for it. Sign in as <code>admin / admin</code>;
-            the console will not go any further until that password is changed.
-          </p>
-          <p>
-            Accepting the warning is enough to watch the screen. For H.264 and for
-            the keyboard and mouse the browser needs a trusted connection, so
-            download the device&rsquo;s CA (Settings &rarr; Security) and add it to
-            your trusted authorities once &mdash; the
-            <a href="https://github.com/espkvm/espkvm#quick-start">README</a>
-            has the steps.
-          </p>
-        </div>
-
-        <div class="downloads" id="downloads" hidden>
-          <h3 class="dl-head">
-            Latest release <span class="mono" id="dl-version"></span>
-            <span class="dl-date" id="dl-date"></span>
-            <a id="dl-notes" href="https://github.com/espkvm/espkvm/releases/latest">release notes</a>
-          </h3>
-          <div class="dl-list" id="dl-list"></div>
         </div>
       </section>
 
