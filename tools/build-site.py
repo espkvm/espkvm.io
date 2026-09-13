@@ -99,7 +99,9 @@ def read_posts(include_drafts):
         # The listing wants a picture whether or not the post opens with one, so
         # a post with no hero lends the listing its first inline figure. The
         # hero itself stays exactly what the front matter says.
-        thumb = meta.get("image", "")
+        # `thumb` names a listing picture that is not the hero (a square crop of
+        # a figure that is wide in the post, say).
+        thumb = meta.get("thumb") or meta.get("image", "")
         if not thumb:
             first = re.search(r"^!\[([^\]]*)\]\(([^)\s]+)\)$", body, re.M)
             if first:
