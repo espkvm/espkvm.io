@@ -1,0 +1,203 @@
+---
+title: Macros and runbooks
+description: The script language ESP-KVM macros and runbooks are written in - the commands, every key name, what a wait can and cannot see, and the limits.
+canonical: https://espkvm.io/scripts/
+og_type: article
+output: scripts/index.html
+---
+<!--
+  The reference for the one script language two features share. The same text
+  lives in docs/SCRIPTS.md in the firmware repository; this is the copy a
+  person finds from the console's own hint, so it stays short and the tables
+  come before the prose.
+-->
+<style>
+  .doc {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    background: var(--bg-raised);
+  }
+
+  .doc h2 {
+    margin-top: 0;
+  }
+
+  .doc table {
+    margin: 10px 0 4px;
+  }
+
+  .doc td:first-child {
+    white-space: nowrap;
+  }
+
+  .doc pre {
+    margin: 10px 0 0;
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Macros and runbooks</h1>
+    <p class="tagline">
+      One script language for both. A <strong>macro</strong> is played by the
+      console in your browser and stops if the tab closes. A
+      <strong>runbook</strong> is run by the device itself: it can wait for words
+      on the screen, and it carries on with the browser closed.
+    </p>
+  </header>
+
+  <section class="doc">
+    <h2>Commands</h2>
+    <p>
+      One command per line, <code>#</code> starts a comment, blank lines are
+      ignored. Case does not matter for the commands or the key names.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <tr><td><code>key <em>chord</em></code></td><td>press the chord and let go: <code>key f2</code>, <code>key ctrl+alt+del</code>, <code>key shift+tab</code></td></tr>
+        <tr><td><code>type <em>text</em></code></td><td>type the rest of the line as characters</td></tr>
+        <tr><td><code>delay <em>ms</em></code></td><td>pause for that many milliseconds</td></tr>
+      </table>
+    </div>
+    <p>Runbooks add three more:</p>
+    <div class="table-scroll">
+      <table>
+        <tr><td><code>wait <em>phrase</em></code></td><td>hold until a row of the screen contains the phrase</td></tr>
+        <tr><td><code>gone <em>phrase</em></code></td><td>hold until no row contains it</td></tr>
+        <tr><td><code>timeout <em>seconds</em></code></td><td>how long the waits below it may take; 60 if unsaid</td></tr>
+      </table>
+    </div>
+    <p>
+      A wait that runs out stops the runbook at that line, and the panel says
+      so. The device reads the screen as characters, so a wait only ever sees a
+      text screen &mdash; a BIOS, a boot menu, a boot loader, a console. On a
+      picture, <code>wait</code> runs out and <code>gone</code> is satisfied at
+      once. Phrases are matched within one row, case is ignored, and a phrase
+      is at most 63 ASCII characters.
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>Chords</h2>
+    <p>
+      A chord is one key and any number of modifiers, joined with
+      <code>+</code>. Modifiers: <code>ctrl</code> (or <code>control</code>),
+      <code>shift</code>, <code>alt</code> (or <code>option</code>),
+      <code>gui</code> (or <code>win</code>, <code>cmd</code>,
+      <code>super</code>, <code>meta</code>).
+    </p>
+    <div class="table-scroll">
+      <table>
+        <tr><td>letters and digits</td><td><code>a</code> .. <code>z</code>, <code>0</code> .. <code>9</code></td></tr>
+        <tr><td>function keys</td><td><code>f1</code> .. <code>f12</code></td></tr>
+        <tr><td>the usual</td><td><code>enter</code> / <code>return</code>, <code>esc</code> / <code>escape</code>, <code>tab</code>, <code>space</code>, <code>backspace</code></td></tr>
+        <tr><td>arrows</td><td><code>up</code>, <code>down</code>, <code>left</code>, <code>right</code></td></tr>
+        <tr><td>navigation</td><td><code>home</code>, <code>end</code>, <code>pageup</code> / <code>pgup</code>, <code>pagedown</code> / <code>pgdn</code>, <code>insert</code> / <code>ins</code>, <code>delete</code> / <code>del</code></td></tr>
+        <tr><td>punctuation</td><td><code>minus</code>, <code>equal</code> &mdash; the <code>-</code> and <code>=</code> keys</td></tr>
+        <tr><td>locks and the rest</td><td><code>capslock</code>, <code>scrolllock</code>, <code>pause</code>, <code>printscreen</code> / <code>prtsc</code> / <code>sysrq</code></td></tr>
+      </table>
+    </div>
+    <p>
+      The key is a position, not a character: <code>key a</code> presses the key
+      that is <code>a</code> on a US keyboard, whatever the target&rsquo;s layout
+      says it is.
+    </p>
+    <p>
+      A modifier on its own is a keypress too: <code>key gui</code> taps the
+      Windows key, <code>key ctrl+shift</code> holds and releases both.
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>DuckyScript</h2>
+    <p>
+      You can also paste a Hak5 <strong>DuckyScript</strong> and it runs as-is
+      &mdash; the same payloads written for a Rubber Ducky. It is recognised by
+      its upper-case verbs, so nothing has to be switched; put it in the same box.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <tr><td><code>REM <em>text</em></code></td><td>a comment</td></tr>
+        <tr><td><code>STRING <em>text</em></code></td><td>type the text</td></tr>
+        <tr><td><code>STRINGLN <em>text</em></code></td><td>type the text and press Enter</td></tr>
+        <tr><td><code>DELAY <em>ms</em></code></td><td>pause</td></tr>
+        <tr><td><code>DEFAULT_DELAY <em>ms</em></code></td><td>pause that much after every command below it</td></tr>
+        <tr><td><code>REPEAT <em>n</em></code></td><td>do the line before this one n more times</td></tr>
+        <tr><td><code>GUI r</code>, <code>CTRL ALT DELETE</code>, <code>ENTER</code></td><td>a chord or a key: modifiers (<code>GUI</code>/<code>WINDOWS</code>, <code>CTRL</code>, <code>ALT</code>, <code>SHIFT</code>) and one key, space-separated</td></tr>
+      </table>
+    </div>
+    <p>
+      Only the keyboard is covered. <code>STRING</code> is US ASCII, like
+      <code>type</code>. DuckyScript cannot wait for the screen &mdash; for that
+      use a runbook in the language above.
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>Typing</h2>
+    <p>
+      <code>type</code> is different in the two places. A macro sends each
+      character through the keyboard layout chosen in Settings &rarr; Input, so
+      it can type what that layout can. A runbook runs on the device, which has
+      no layout tables: it types printable US ASCII only, and the editor refuses
+      a line with anything else.
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>Limits</h2>
+    <p>
+      A runbook has at most 64 steps, a <code>delay</code> is 1 to 60000 ms, a
+      <code>timeout</code> 1 to 3600 s. All the runbooks together must fit in
+      3000 bytes, all the macros in 2000; the editor says when they do not.
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>Schedules</h2>
+    <p>
+      The Automation panel can also fire a runbook, or a single action, on a
+      timetable. A schedule is a five-field cron line - <code>minute hour
+      day-of-month month weekday</code> - and an action. <code>0 7 * * 1-5</code>
+      is 07:00 on weekdays; <code>*/15 * * * *</code> is every fifteen minutes.
+    </p>
+    <p>
+      The action is Wake-on-LAN, an ATX button (power, reset, force-off), a named
+      runbook, or a restart of the device. Schedules need the wall clock, which
+      the device sets over SNTP &mdash; point it at a time server on the local
+      network if there is no internet. Until the clock is set nothing fires, and
+      the panel says so. Times are in the zone you give as a POSIX TZ string
+      (<code>UTC0</code>, <code>MSK-3</code>).
+    </p>
+  </section>
+
+  <section class="doc">
+    <h2>Examples</h2>
+    <p>Into the setup of a machine that says so on its splash screen:</p>
+<pre><code>timeout 120
+wait Press F2
+key f2
+wait Boot</code></pre>
+    <p>Log in on a Linux console and start a service:</p>
+<pre><code>wait login:
+type root
+key enter
+delay 500
+wait assword
+type hunter2
+key enter
+wait #
+type systemctl start nginx
+key enter</code></pre>
+    <p>Pick the second entry of a boot menu, as a macro or a runbook:</p>
+<pre><code>key down
+delay 200
+key enter</code></pre>
+    <p>
+      The same reference lives in the firmware repository as
+      <a href="https://github.com/espkvm/espkvm/blob/main/docs/SCRIPTS.md">docs/SCRIPTS.md</a>.
+    </p>
+  </section>
+</div>

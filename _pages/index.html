@@ -304,7 +304,20 @@ output: index.html
             <p>
               Give it phrases &mdash; <code>no boot device</code>, <code>kernel
               panic</code> &mdash; and it alerts with a still attached. A screen
-              gone one flat colour counts too.
+              gone one flat colour counts too. It can push the alert, with a
+              screenshot, to Telegram or a webhook.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l14 8-14 8z"/></svg>
+            </span>
+            <h3>Runbooks: a macro that can wait</h3>
+            <p>
+              <code>wait Press F2</code>, <code>key f2</code>, <code>wait Boot</code>.
+              Run on the device, so the tab can close; a button each in Home
+              Assistant, or on a schedule. <a href="/scripts/">The language</a>.
             </p>
           </div>
         </div>
@@ -680,7 +693,11 @@ output: index.html
               </tr>
               <tr>
                 <td>User macros &mdash; replayable key sequences</td>
-                <td class="yes">works</td>
+                <td class="yes">works &mdash; <a href="/scripts/">the language</a></td>
+              </tr>
+              <tr>
+                <td>Runbooks &mdash; a macro that waits for words on the screen, run on the device</td>
+                <td class="yes">works; text screens only</td>
               </tr>
               <tr>
                 <td>Wake-on-LAN (no ATX wiring)</td>

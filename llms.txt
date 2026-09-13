@@ -23,6 +23,17 @@ Key facts:
 - The device can watch a text screen while nobody is connected: give it phrases
   (`no boot device`, `kernel panic`) and it raises an alert, in its log and in
   Home Assistant, when one appears. Off by default.
+- Runbooks: a script of keys to send and phrases to wait for (`wait Press F2`,
+  `key f2`), run on the device itself so it carries on with the browser closed;
+  each one is a button in Home Assistant. Macros are the same language without
+  the waits, played by the console. The language: https://espkvm.io/scripts/
+- A scheduler: five-field cron lines that fire an action on the device on a
+  timetable - Wake-on-LAN, an ATX button, a runbook, or a restart. It sets a
+  wall clock over SNTP (a LAN time server works with no internet) and does
+  nothing until the clock is set. Times in a POSIX TZ zone.
+- Push notifications: when a watched phrase appears or the screen goes blank,
+  the device sends a message to Telegram (with a screenshot on the MJPEG codec)
+  or to a webhook. Off by default.
 - Pasting text types it out as keystrokes, so it follows the target's keyboard
   layout: US English, Russian, Czech, Ukrainian and Lithuanian. A character the
   layout cannot type is reported rather than guessed at.
