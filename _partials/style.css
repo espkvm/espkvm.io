@@ -133,7 +133,7 @@
       /* The hamburger. Hidden until the script unhides it, so a page with no
          JavaScript keeps the links themselves rather than a dead button. */
       .nav-toggle {
-        display: inline-flex;
+        display: none;
         align-items: center;
         justify-content: center;
         padding: 6px;
@@ -176,7 +176,13 @@
         align-items: center;
       }
 
-      @media (max-width: 640px) {
+      /* 800px, not a phone width: with six links, GitHub and two icons the bar
+         wraps onto a second line anywhere under about 780px. */
+      @media (max-width: 800px) {
+        .nav[data-js] .nav-toggle:not([hidden]) {
+          display: inline-flex;
+        }
+
         /* The links move out of the bar and into a panel under it. Only once
            the script is running: [data-js] is set by the nav's own script, so
            without it the links stay where they are. */
