@@ -1,5 +1,6 @@
 ---
-title: The card and the radio
+title: 0.48.0 - microSD and WiFi at the same time
+redirect_from: /blog/0-48-0-the-card-and-the-radio/
 description: 0.48.0 lets the microSD card and WiFi run together, keeps the video alive when the HDMI signal comes back, lets H.264 be switched on after boot, and adds a Sign out button.
 tags: storage, video, hardware, community
 date: 2026-09-14

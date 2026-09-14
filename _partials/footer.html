@@ -43,3 +43,22 @@
         </p>
       </div>
     </footer>
+
+<script>
+  /* Copy link on the share rows. The button starts hidden, so without a script
+     or a clipboard there is simply no button. */
+  (function () {
+    if (!navigator.clipboard) return;
+    document.querySelectorAll(".share-copy").forEach(function (b) {
+      b.hidden = false;
+      b.addEventListener("click", function () {
+        navigator.clipboard.writeText(b.getAttribute("data-url")).then(function () {
+          b.textContent = "Copied";
+          setTimeout(function () {
+            b.textContent = "Copy link";
+          }, 1500);
+        });
+      });
+    });
+  })();
+</script>

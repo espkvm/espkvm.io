@@ -1047,6 +1047,29 @@
         margin: 0 0 10px;
       }
 
+      /* ---- share row --------------------------------------------------------- */
+
+      .share {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+      .post-foot .share {
+        margin-top: 18px;
+      }
+      .share-label {
+        margin-right: 4px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .share .btn-sm {
+        padding: 6px 12px;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
       /* ---- tags ------------------------------------------------------------ */
 
       .tag-row {

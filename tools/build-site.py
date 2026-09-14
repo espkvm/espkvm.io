@@ -22,6 +22,7 @@ import html
 import os
 import re
 import sys
+from urllib.parse import quote
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -217,11 +218,13 @@ def build_pages(shell):
                 head.append("    " + block.strip())
                 body = body.replace(block, "", 1)
 
+        out = meta["output"]
+        url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
+        # A page asks for a share row by leaving this comment where it goes.
+        body = body.replace("<!-- share -->", share_links(SITE + url, meta["title"]))
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
-        out = meta["output"]
-        url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
         write_redirects(meta.get("redirect_from", ""), url)
         written.append(out)
     return written
@@ -406,6 +409,28 @@ def tags_index(posts):
     return dict(sorted(index.items(), key=lambda kv: (-len(kv[1]), kv[0])))
 
 
+def share_links(url, text):
+    """A row of plain share links. Each is an ordinary link to the network's own
+    share form - no script from any of them loads here, so nobody is tracked for
+    reading. Mastodon has no one address to send to, which is what Copy link is
+    for; the footer's script shows that button and makes it work."""
+    text = html.unescape(text)
+    u, t = quote(url, safe=""), quote(text, safe="")
+    links = [
+        ("X", "https://x.com/intent/post?text=%s&url=%s" % (t, u)),
+        ("Reddit", "https://www.reddit.com/submit?url=%s&title=%s" % (u, t)),
+        ("Hacker News", "https://news.ycombinator.com/submitlink?u=%s&t=%s" % (u, t)),
+        ("LinkedIn", "https://www.linkedin.com/sharing/share-offsite/?url=%s" % u),
+        ("Telegram", "https://t.me/share/url?url=%s&text=%s" % (u, t)),
+        ("Bluesky", "https://bsky.app/intent/compose?text=%s" % quote(text + " " + url, safe="")),
+    ]
+    items = "".join('<a class="btn btn-sm" href="%s" rel="noopener" target="_blank">%s</a>'
+                    % (html.escape(href), name) for name, href in links)
+    return ('<p class="share"><span class="share-label">Share</span>%s'
+            '<button type="button" class="btn btn-sm share-copy" data-url="%s" hidden>Copy link</button></p>'
+            % (items, html.escape(url)))
+
+
 def post_page(shell, post):
     hero = ""
     if post["image"]:
@@ -436,6 +461,7 @@ def post_page(shell, post):
           <a href="https://x.com/espkvm" rel="noopener">X</a> and
           <a href="/blog/feed.xml">RSS</a>.
         </p>
+        {share}
       </footer>
     </article>
 """.format(
@@ -445,6 +471,7 @@ def post_page(shell, post):
         hero=hero,
         tags=tag_links(post["tags"]),
         body=render_markdown(post["body"], post["path"]),
+        share=share_links("%s/blog/%s/" % (SITE, post["slug"]), post["title"] + " - ESP-KVM"),
     )
 
     return render_page(shell, {
