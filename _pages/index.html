@@ -363,8 +363,8 @@ output: index.html
           is about 3.5&nbsp;MB/s on the Function EV and 1.5&nbsp;MB/s on the older
           P4-ETH chip. Pause the video while you upload: the encoder and the
           Ethernet chip share a bus, and the upload is several times faster without
-          it. Boards not checked yet start at 1.5&nbsp;MB/s reads, and a pre-3.0
-          chip among them keeps the card read-only. For the rescue case there is
+          it. The other boards with a slot are wired the same way and start at
+          40&nbsp;MHz too; they have not been run on hardware yet. For the rescue case there is
           another option that sidesteps the card entirely: a small image (iPXE,
           memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served from
           memory and writable from the browser.
