@@ -355,16 +355,19 @@ output: index.html
         </div>
 
         <p class="note" style="margin-top: 20px">
-          <strong>Virtual media, honestly.</strong> The microSD is served
-          read-only &mdash; this board cannot write it reliably &mdash; so images
-          go on the card in a reader, formatted FAT32, up to 4&nbsp;GB each.
-          Reads run around 1.5&nbsp;MB/s: quick for a rescue or minimal image,
-          several minutes for a heavy graphical one. It is a known ESP32-P4 SD
-          limitation, and the console tells you so. For the rescue case there is
+          <strong>Virtual media, honestly.</strong> Images live on a microSD
+          card, formatted FAT32, up to 4&nbsp;GB each, and the console uploads them.
+          How fast the card runs depends on the board, and the device finds that
+          out per card. On the Function EV and the P4-ETH the card runs at
+          40&nbsp;MHz: it reads at about 8.5&nbsp;MB/s, and an upload over Ethernet
+          is about 3.5&nbsp;MB/s on the Function EV and 1.5&nbsp;MB/s on the older
+          P4-ETH chip. Pause the video while you upload: the encoder and the
+          Ethernet chip share a bus, and the upload is several times faster without
+          it. Boards not checked yet start at 1.5&nbsp;MB/s reads, and a pre-3.0
+          chip among them keeps the card read-only. For the rescue case there is
           another option that sidesteps the card entirely: a small image (iPXE,
-          memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served fast
-          from memory and &mdash; because flash writes <em>are</em> reliable here
-          &mdash; writable from the browser.
+          memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served from
+          memory and writable from the browser.
         </p>
       </section>
 

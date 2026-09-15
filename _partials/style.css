@@ -1119,13 +1119,17 @@
         padding: 22px 0;
         border-top: 1px solid var(--border-soft);
       }
-      /* A post with a picture puts it beside the text; one without simply fills
-         the row, so the two kinds sit in the same list without a ragged edge. */
+      /* A post with a picture puts it to the right of the text, so every
+         heading in the list starts at the same left edge, picture or not. */
       .post-item.has-thumb {
         display: grid;
-        grid-template-columns: 200px 1fr;
+        grid-template-columns: 1fr 200px;
         gap: 18px;
         align-items: start;
+      }
+      .post-item.has-thumb .post-thumb {
+        grid-column: 2;
+        grid-row: 1;
       }
       .post-thumb {
         display: block;
@@ -1145,9 +1149,13 @@
         border-color: var(--muted);
       }
       @media (max-width: 640px) {
+        /* One column on a phone: the picture goes back on top. */
         .post-item.has-thumb {
           grid-template-columns: 1fr;
           gap: 12px;
+        }
+        .post-item.has-thumb .post-thumb {
+          grid-column: 1;
         }
       }
       .post-item h2 {

@@ -325,9 +325,40 @@ def render_markdown(text, where="post"):
             i += 1
             continue
 
+        # A table: a header row, a |---| row, then body rows, each on one line.
+        # Colons in the rule row set the alignment, as in GitHub's Markdown.
         if stripped.startswith("|"):
-            sys.exit("%s: tables are not supported - write the HTML by hand "
-                     "or add them to tools/build-blog.py" % where)
+            rows = []
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                row = lines[i].strip()
+                if not row.endswith("|"):
+                    sys.exit("%s: a table row must end with |: %s" % (where, row))
+                rows.append([cell.strip() for cell in row[1:-1].split("|")])
+                i += 1
+            if len(rows) < 2 or not all(re.match(r"^:?-+:?$", c) for c in rows[1]):
+                sys.exit("%s: a table needs a header row and a |---| row under it" % where)
+            width = len(rows[0])
+            for row in rows:
+                if len(row) != width:
+                    sys.exit("%s: a table row has %d cells, the header %d: %s"
+                             % (where, len(row), width, " | ".join(row)))
+            aligns = []
+            for rule in rows[1]:
+                if rule.startswith(":") and rule.endswith(":"):
+                    aligns.append(' style="text-align: center"')
+                elif rule.endswith(":"):
+                    aligns.append(' style="text-align: right"')
+                else:
+                    aligns.append("")
+            head = "".join("<th%s>%s</th>" % (aligns[k], inline(c, where))
+                           for k, c in enumerate(rows[0]))
+            body = "\n".join(
+                "    <tr>%s</tr>" % "".join("<td%s>%s</td>" % (aligns[k], inline(c, where))
+                                          for k, c in enumerate(row))
+                for row in rows[2:])
+            out.append('<div class="table-scroll">\n<table>\n  <thead><tr>%s</tr></thead>\n'
+                       "  <tbody>\n%s\n  </tbody>\n</table>\n</div>" % (head, body))
+            continue
 
         if line.startswith(("  -", "  *", "    -")):
             sys.exit("%s: nested lists are not supported: %s" % (where, stripped))
