@@ -10,8 +10,11 @@ board over USB straight from the browser.
 
 No framework and no dependencies. Every page is assembled from the same pieces
 by `tools/build-site.py`, which needs nothing but Python 3, and what a reader
-receives is a plain static file that fetches nothing. A project whose point is
-working on a network with no way out should not describe itself through a CDN.
+receives is a plain static file that fetches nothing - no CDN, no fonts, no
+analytics. A project whose point is working on a network with no way out should
+not describe itself through a CDN. The one exception is a blog post with a video
+in it: that post embeds the player from youtube-nocookie.com, and nothing else
+on the site does.
 
 ```
 _partials/style.css    one stylesheet, inlined into every page
@@ -79,13 +82,14 @@ with a front matter block:
 ---
 title: Five bugs from twelve days of ESP32-P4 firmware
 description: One sentence. It is the search result and the link preview.
-date: 2026-08-19
+date: 2026-08-19 14:30
 image: /assets/something.webp
 ---
 ```
 
-`image` is optional (it is the link preview picture, and the one shown at the
-top of the post), and `draft: true` keeps a post out of everything until you
+The date may carry a time, and two posts on one day then sit in the order they
+were published rather than by file name. `image` is optional (it is the link
+preview picture, and the one shown at the top of the post), and `draft: true` keeps a post out of everything until you
 remove it. Build, and the post, the blog index, the RSS feed and the sitemap
 all follow. Pushing the Markdown is all that publishing takes.
 
@@ -95,9 +99,11 @@ empty the blog builds as an empty page and nothing links to it - the Blog links
 in the nav and the footer come back with the first post.
 
 The builder carries a small Markdown of its own rather than pulling one in,
-covering headings, paragraphs, fenced code, lists, quotes, rules, images and
-inline emphasis, code and links. Anything outside that makes the build stop and
-say so, so a post cannot render wrong quietly.
+covering headings, paragraphs, fenced code, lists, quotes, rules, tables, images
+and inline emphasis, code and links. Anything outside that makes the build stop
+and say so, so a post cannot render wrong quietly. The one piece of raw markup
+it passes through is an `<iframe>`, for a video player: it goes into a box that
+keeps its aspect ratio on a phone.
 
 ## Preview
 

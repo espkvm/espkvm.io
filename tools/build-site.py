@@ -109,10 +109,14 @@ def read_posts(include_drafts):
                 thumb = first.group(2)
 
         slug = meta.get("slug") or re.sub(r"^\d{4}-\d{2}-\d{2}-", "", name[:-3])
+        # A time may follow the date - two posts on one day then sit in the
+        # order they were published, newest first, rather than by file name.
         try:
-            date = datetime.strptime(meta["date"], "%Y-%m-%d")
+            raw = meta["date"].strip()
+            fmt = "%Y-%m-%d %H:%M" if " " in raw else "%Y-%m-%d"
+            date = datetime.strptime(raw, fmt)
         except ValueError:
-            sys.exit("%s: date must be YYYY-MM-DD" % path)
+            sys.exit("%s: date must be YYYY-MM-DD, with an optional HH:MM" % path)
 
         posts.append({
             "slug": slug,
@@ -290,6 +294,22 @@ def render_markdown(text, where="post"):
             else:
                 sys.exit("%s: an HTML comment is never closed" % where)
             out.append("\n".join(l.strip() for l in block))
+            i += 1
+            continue
+
+        # An <iframe> is passed through as it was written, in a box that keeps
+        # its aspect ratio on a narrow screen. The only markup allowed in raw:
+        # a video player is the one thing this page cannot draw itself.
+        if stripped.startswith("<iframe"):
+            block = []
+            while i < len(lines):
+                block.append(lines[i].strip())
+                if "</iframe>" in lines[i]:
+                    break
+                i += 1
+            else:
+                sys.exit("%s: an <iframe> is never closed" % where)
+            out.append('<div class="video-embed">%s</div>' % " ".join(block))
             i += 1
             continue
 
