@@ -61,14 +61,26 @@ output: scripts/index.html
         <tr><td><code>delay <em>ms</em></code></td><td>pause for that many milliseconds</td></tr>
       </table>
     </div>
-    <p>Runbooks add three more:</p>
+    <p>Runbooks add these:</p>
     <div class="table-scroll">
       <table>
         <tr><td><code>wait <em>phrase</em></code></td><td>hold until a row of the screen contains the phrase</td></tr>
         <tr><td><code>gone <em>phrase</em></code></td><td>hold until no row contains it</td></tr>
         <tr><td><code>timeout <em>seconds</em></code></td><td>how long the waits below it may take; 60 if unsaid</td></tr>
+        <tr><td><code>record</code></td><td>start recording the screen to the microSD card, and go on to the next line</td></tr>
+        <tr><td><code>record <em>seconds</em></code></td><td>the same, stopping by itself after that long</td></tr>
+        <tr><td><code>record stop</code></td><td>stop the recording</td></tr>
+        <tr><td><code>timelapse <em>every</em></code></td><td>record one frame every that many seconds, played back at 25 fps, until stopped</td></tr>
+        <tr><td><code>timelapse <em>every</em> <em>seconds</em></code></td><td>the same, stopping by itself after that long</td></tr>
+        <tr><td><code>screenshot</code></td><td>save the screen as a JPEG on the microSD card</td></tr>
       </table>
     </div>
+    <p>
+      A recording started by a runbook carries on after the runbook ends, until
+      <code>record stop</code>, its length, or the length limit in Settings. If a
+      recording or a screenshot cannot be made &mdash; no card, H.264 not selected
+      &mdash; the runbook stops there and says why.
+    </p>
     <p>
       A wait that runs out stops the runbook at that line, and the panel says
       so. The device reads the screen as characters, so a wait only ever sees a
@@ -150,7 +162,7 @@ output: scripts/index.html
     <h2>Limits</h2>
     <p>
       A runbook has at most 64 steps, a <code>delay</code> is 1 to 60000 ms, a
-      <code>timeout</code> 1 to 3600 s. All the runbooks together must fit in
+      <code>timeout</code> 1 to 3600 s, a <code>record</code> 1 to 86400 s. All the runbooks together must fit in
       3000 bytes, all the macros in 2000; the editor says when they do not.
     </p>
   </section>
@@ -168,7 +180,8 @@ output: scripts/index.html
       runbook, or a restart of the device. Schedules need the wall clock, which
       the device sets over SNTP &mdash; point it at a time server on the local
       network if there is no internet. Until the clock is set nothing fires, and
-      the panel says so. Times are in the zone you give as a POSIX TZ string
+      the panel says so. Times are in the time zone from Settings, System: a
+      city from the list. Underneath it is a POSIX TZ string
       (<code>UTC0</code>, <code>MSK-3</code>).
     </p>
   </section>
@@ -191,6 +204,14 @@ key enter
 wait #
 type systemctl start nginx
 key enter</code></pre>
+    <p>Restart a machine and keep a video of how its boot went, with a picture of the setup screen:</p>
+<pre><code>record 180
+key ctrl+alt+del
+timeout 120
+wait Press F2
+key f2
+wait Boot
+screenshot</code></pre>
     <p>Pick the second entry of a boot menu, as a macro or a runbook:</p>
 <pre><code>key down
 delay 200

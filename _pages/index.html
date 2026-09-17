@@ -761,7 +761,7 @@ output: index.html
         </p>
 
         <h3 class="hw-head">Boards that have been run on hardware</h3>
-        <p class="hw-lead">Five of these have had this firmware on them, on someone's bench. Any of them does the whole job.</p>
+        <p class="hw-lead">Six of these have had this firmware on them, on someone's bench. Any of them does the whole job.</p>
         <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
@@ -853,29 +853,31 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
-        </div>
-
-        <h3 class="hw-head">Boards built from a schematic, never run</h3>
-        <p class="hw-lead">Their pins were read off the vendor's schematic, the images build and are published, and that is the whole claim. Flashing one cannot damage it - the worst case is an image that does not start, and a reflash undoes that. Tell me how it goes and the board moves up a block.</p>
-        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-poe.jpg" width="800" height="800" loading="lazy"
                    alt="Waveshare ESP32-P4-WIFI6-POE-ETH board" />
             </div>
             <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
+              <div class="role">The device &mdash; community-tested, PoE</div>
               <h3>Waveshare ESP32-P4-WIFI6-POE-ETH</h3>
               <p>
                 The first supported board that takes <strong>PoE</strong>: one cable
                 to a KVM in a rack instead of two. Same Ethernet, microSD and
-                ESP32-C6 wiring as the boards above, on the same pins;
-                32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash, and a full-size USB-A port
-                for the target. Built and published from its schematic &mdash; nobody
-                has run it on one yet, so tell us how it goes.
+                ESP32-C6 wiring as the boards above; 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB
+                flash, and a full-size USB-A port for the target. Confirmed by a user
+                on rev&nbsp;3.x silicon with the <code>p4-poe-rev3</code> image:
+                1080p over H.264 at 23&nbsp;fps. Check the chip revision in the boot
+                log before flashing &mdash; the older image has not been run on it yet.
               </p>
+              <a href="https://www.waveshare.com/esp32-p4-wifi6-poe-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
+        </div>
+
+        <h3 class="hw-head">Boards built from a schematic, never run</h3>
+        <p class="hw-lead">Their pins were read off the vendor's schematic, the images build and are published, and that is the whole claim. Flashing one cannot damage it - the worst case is an image that does not start, and a reflash undoes that. Tell me how it goes and the board moves up a block.</p>
+        <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/board-wifi6-devkit.webp" width="800" height="800" loading="lazy"
@@ -998,7 +1000,7 @@ output: index.html
         </div>
 
         <h3 class="hw-head">The capture board</h3>
-        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. One board is supported today. M5Stack's Add-on Display In is the other candidate - it plugs onto their PoE-P4 with no ribbon at all - but its bridge is a Lontium LT6911D rather than the TC358743, that driver is not written, and until it is there is no picture from it.</p>
+        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. Two boards are confirmed, both on the TC358743 bridge: the C790 this project is built on, and Waveshare's adapter. M5Stack's Add-on Display In is a third candidate - it plugs onto their PoE-P4 with no ribbon at all - but its bridge is a Lontium LT6911D rather than the TC358743, that driver is not written, and until it is there is no picture from it.</p>
         <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
@@ -1019,6 +1021,24 @@ output: index.html
                 the README on what its EDID may do to a 1080p60 source.
               </p>
               <a href="https://wiki.geekworm.com/C790" rel="noopener">Geekworm wiki page &rarr;</a>
+            </div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-waveshare-19137.webp" width="680" height="680" loading="lazy"
+                   alt="Waveshare HDMI to CSI Adapter (19137), a TC358743 capture board with a full-size HDMI socket and a 15-pin camera ribbon" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The capture &mdash; community-tested</div>
+              <h3>Waveshare HDMI to CSI Adapter</h3>
+              <p>
+                The same TC358743 bridge on Waveshare&rsquo;s board (product 19137),
+                so the firmware treats it exactly like the C790. A full-size HDMI
+                input, and a 15-pin Raspberry&nbsp;Pi camera connector that also
+                powers it. A user confirmed it on the
+                ESP32-P4-WIFI6-POE-ETH: 1080p over H.264 at 23&nbsp;fps.
+              </p>
+              <a href="https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter" rel="noopener">Waveshare wiki page &rarr;</a>
             </div>
           </div>
         </div>
@@ -1085,7 +1105,7 @@ output: index.html
         </div>
 
         <h3 class="hw-head">A case (optional)</h3>
-        <p class="hw-lead">Printed by people who built one. Both models are published.</p>
+        <p class="hw-lead">Printed by people who built one. All three models are published.</p>
         <div class="hw">
           <div class="hw-card">
             <div class="hw-photo is-photo">
@@ -1119,6 +1139,23 @@ output: index.html
                 ports coming out of the ends. Photo by the author.
               </p>
               <a href="https://makerworld.com/en/models/3238485-kvm-case-for-esp32-p4-eth-and-c790" rel="noopener">Model on MakerWorld &rarr;</a>
+            </div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-photo is-photo">
+              <img src="assets/case-nano-c6.webp" width="900" height="583" loading="lazy"
+                   alt="A small black 3D-printed case for the ESP32-P4-NANO and the C790, with Ethernet, USB and HDMI coming out of one end" />
+            </div>
+            <div class="hw-body">
+              <div class="role">A case (optional)</div>
+              <h3>ESP32-P4-NANO / C6 KVM case</h3>
+              <p>
+                A compact box for the ESP32-P4-NANO with its ESP32-C6 and the C790,
+                by Crisspii. Ethernet, USB and HDMI come out of one end, the sides are
+                vented, and there is room for a small heatsink. Five M2 screws close
+                it. A version with a display is planned. Photo by the author.
+              </p>
+              <a href="https://makerworld.com/de/models/3317162-esp32-p4-nano-c6-kvm-case" rel="noopener">Model on MakerWorld &rarr;</a>
             </div>
           </div>
         </div>
