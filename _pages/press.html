@@ -519,6 +519,18 @@ output: press/index.html
       <li>Waking a sleeping machine from the keyboard</li>
     </ul>
 
+    <h3>Recording it</h3>
+    <ul>
+      <li>Recording the screen to the device's own microSD card <small>&mdash; the stream the viewers already get, so nothing is encoded twice</small></li>
+      <li>Screenshots to the card, on either codec</li>
+      <li>A dashcam <small>&mdash; the last minutes kept, and saved as an MP4 with chapters when a stop screen shows, a watched phrase appears, the power goes off, or you ask</small></li>
+      <li>Clips to Telegram, as a video that plays in the chat</li>
+      <li>Keystrokes as subtitles beside the video <small>&mdash; masked as dots unless you ask for the characters</small></li>
+      <li>A timelapse <small>&mdash; one frame every few seconds, played back at 25 fps</small></li>
+      <li>Playback in the console, streamed from the card, with seeking</li>
+      <li>Searching a recording for what was on the screen <small>&mdash; character screens only</small></li>
+    </ul>
+
     <h3>Beyond the screen</h3>
     <ul>
       <li>Virtual media <small>&mdash; boot the target from an image on the card, or a small one in the device's own flash</small></li>
@@ -572,12 +584,12 @@ output: press/index.html
 
 <table class="facts">
   <tr><td>First public release</td><td>23 July 2026</td></tr>
-  <tr><td>Latest release</td><td>0.43.0, 8 September 2026</td></tr>
+  <tr><td>Latest release</td><td>0.51.2, 18 September 2026</td></tr>
   <tr><td>Licence</td><td>Apache-2.0</td></tr>
-  <tr><td>Boards supported</td><td>Eight, across fifteen published images (some silicon revisions need their own)</td></tr>
+  <tr><td>Boards supported</td><td>Thirteen, across nineteen published images (some silicon revisions need their own)</td></tr>
   <tr><td>Hardware</td><td>An ESP32-P4 board and an HDMI capture board; optionally a status display, an optocoupler for the power button, and a microSD card</td></tr>
   <tr><td>Video</td><td>H.264 encoded on the chip, or MJPEG; about 22-24 fps at 1080p on revision 3.x silicon</td></tr>
-  <tr><td>Written in</td><td>C on ESP-IDF, about 30,000 lines; the console is Vue 3 and TypeScript, built into a single file and served from the device's own flash</td></tr>
+  <tr><td>Written in</td><td>C on ESP-IDF; the console is Vue 3 and TypeScript, built into a single file and served from the device's own flash</td></tr>
   <tr><td>Maintained by</td><td>Evgenij Spitsyn, one person</td></tr>
 </table>
 
@@ -712,12 +724,19 @@ output: press/index.html
 <h2>Video</h2>
 
 <p>
-  Two short clips, silent and unedited, recorded on the bench while the things in
-  them were being built. They are feature recordings rather than a produced
+  Three short clips, silent and unedited, recorded on the bench while the things
+  in them were being built. They are feature recordings rather than a produced
   demonstration - there is no such video yet, so please do not call them one.
 </p>
 
 <ul>
+  <li>
+    <a href="https://www.youtube.com/watch?v=xXm6DybTtbE" rel="noopener">Recording
+    the screen</a> &mdash; a recording whose picture starts before the record
+    button was pressed, because the device was already holding the last minutes
+    of the screen; then the same recording played back with the keys that were
+    typed shown as subtitles.
+  </li>
   <li>
     <a href="https://youtu.be/QGABqgAR5H0" rel="noopener">Reading a screen as
     text</a> &mdash; a NixOS boot menu captured over HDMI, with its lines

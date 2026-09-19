@@ -48,7 +48,7 @@ can be dots instead of characters, which is the default when you turn it on, or
 written out in full if that is what you need. Put the `.srt` next to the video
 and any player shows it; the console's own player shows it over the picture.
 
-![A dashcam clip playing in the console's own player, with the keystroke subtitles over the picture: "Ctrl+A" and "Typed: esp32" followed by the backspaces that erased it.](/assets/blog/0-51-0-a-dashcam-for-the-machine-in-the-closet/subtitles.webp)
+![A recording plays in the console itself, subtitles and all: a dashcam clip in the player, with "Ctrl+A" and "Typed: esp32" over the picture.](/assets/blog/0-51-0-a-dashcam-for-the-machine-in-the-closet/subtitles.webp)
 
 ## The loop, and the bang
 

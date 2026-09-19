@@ -28,15 +28,28 @@ Key facts:
   each one is a button in Home Assistant. Macros are the same language without
   the waits, played by the console. The language: https://espkvm.io/scripts/
 - A scheduler: five-field cron lines that fire an action on the device on a
-  timetable - Wake-on-LAN, an ATX button, a runbook, or a restart. It sets a
-  wall clock over SNTP (a LAN time server works with no internet) and does
-  nothing until the clock is set. Times in a POSIX TZ zone.
+  timetable - Wake-on-LAN, an ATX button, a runbook, or a restart, and recording
+  or a timelapse. The device sets its clock over SNTP (a LAN time server works
+  with no internet) or takes the browser's time when you sign in; the time zone
+  is picked from a list of cities in Settings.
 - Push notifications: when a watched phrase appears or the screen goes blank,
   the device sends a message to Telegram (with a screenshot on the MJPEG codec)
   or to a webhook. Off by default.
 - Pasting text types it out as keystrokes, so it follows the target's keyboard
   layout: US English, Russian, Czech, Ukrainian and Lithuanian. A character the
   layout cannot type is reported rather than guessed at.
+- Recording: a button writes the screen to the device's own microSD card as H.264
+  in .ts files - the same stream the viewers get, so nothing is encoded twice -
+  and another saves a JPEG. A dashcam keeps the last minutes of the screen (in
+  PSRAM, or on the card on boards short of it) and saves them as an MP4 with a
+  chapter per event when the screen stays one flat colour, a watched phrase
+  appears, the target's power LED goes off, or the operator asks; with
+  notifications on the clip goes to Telegram as a video. Keystrokes can be
+  written into a .srt beside the video, masked as dots by default. A timelapse
+  keeps one frame every few seconds and plays back at 25 fps. Recordings play in
+  the console, streamed from the card, and what the screen said during a
+  recording is searchable (character screens only). Recording needs H.264 and a
+  writable card.
 - Virtual media: boot the target from a disk image on a microSD card or from a
   small image in the device's own flash.
 - Networking: Ethernet, or WiFi on boards with an ESP32-C6 (the Function EV Board) -
