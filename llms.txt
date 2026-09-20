@@ -60,7 +60,8 @@ Key facts:
 - An optional status screen on the device (I2C OLED, or a round SPI LCD) shows the
   link, address, capture state and health with no browser. The round one also shows
   a code a phone scans to join the rescue hotspot, and fills a ring while the
-  recovery button is held.
+  recovery button is held. Either can be mounted upside down and turned over in
+  the settings.
 - Security: HTTPS with a certificate the device issues itself, plus a login. It is
   not meant for the public internet - keep it on a trusted network, or reach it over
   the built-in WireGuard client (split-tunnel, generates its own key).
