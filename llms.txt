@@ -9,8 +9,11 @@
 Key facts:
 
 - Hardware: an ESP32-P4 plus a TC358743 HDMI-to-MIPI-CSI-2 bridge. Reference build
-  is a Waveshare ESP32-P4-ETH with a Geekworm C790; it also builds for the
-  Espressif ESP32-P4 Function EV Board.
+  is a Waveshare ESP32-P4-ETH with a Geekworm C790; a dozen other P4 boards have
+  their own images, among them the Espressif ESP32-P4 Function EV Board. The one
+  exception to the bridge is the M5Stack Unit PoE-P4, whose Add-on Display In
+  carries a Lontium LT6911D instead - that add-on fits M5Stack's own units and
+  nothing else.
 - Video: follows the target's resolution automatically (a 640x480 BIOS through a
   1080p desktop); MJPEG or hardware H.264.
 - Input: a composite USB HID device - keyboard, absolute and relative pointer,

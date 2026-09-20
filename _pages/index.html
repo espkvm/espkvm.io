@@ -899,6 +899,28 @@ output: index.html
               <a href="https://www.waveshare.com/esp32-p4-wifi6-poe-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
             </div>
           </div>
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-m5-poe-p4.webp" width="1200" height="1200" loading="lazy"
+                   alt="M5Stack Unit PoE-P4 module" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The smallest complete one</div>
+              <h3>M5Stack Unit PoE-P4</h3>
+              <p>
+                A matchbox that takes power, network and video on two cables:
+                32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, 100M Ethernet and
+                802.3at PoE. The odd one out here &mdash; its capture is not a
+                C790 on a camera ribbon but M5Stack&rsquo;s own Add-on Display In,
+                below, which plugs onto a 24-pin flat cable and brings a microSD
+                slot with it. 23&nbsp;fps at 1280&times;720, checked on hardware.
+                The rev&nbsp;3.x <strong>PoE-P4X</strong> takes the same firmware
+                from an image of its own, and pays neither of the older
+                chip&rsquo;s costs.
+              </p>
+              <a href="https://docs.m5stack.com/en/unit/Unit_PoE-P4" rel="noopener">M5Stack documentation &rarr;</a>
+            </div>
+          </div>
         </div>
 
         <h3 class="hw-head">Boards built from a schematic, never run</h3>
@@ -1026,7 +1048,7 @@ output: index.html
         </div>
 
         <h3 class="hw-head">The capture board</h3>
-        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. Two boards are confirmed, both on the TC358743 bridge: the C790 this project is built on, and Waveshare's adapter. M5Stack's Add-on Display In is a third candidate - it plugs onto their PoE-P4 with no ribbon at all - but its bridge is a Lontium LT6911D rather than the TC358743, that driver is not written, and until it is there is no picture from it.</p>
+        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. Two are confirmed on the TC358743 bridge and work with any board on this page: the C790 this project is built on, and Waveshare's adapter. A third, M5Stack's Add-on Display In, carries a Lontium LT6911D instead and is now driven too - but it plugs onto M5Stack's own PoE-P4 units and onto nothing else.</p>
         <div class="hw">
           <div class="hw-card">
             <div class="hw-photo">
@@ -1065,6 +1087,27 @@ output: index.html
                 ESP32-P4-WIFI6-POE-ETH: 1080p over H.264 at 23&nbsp;fps.
               </p>
               <a href="https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter" rel="noopener">Waveshare wiki page &rarr;</a>
+            </div>
+          </div>
+          <div class="hw-card">
+            <div class="hw-photo">
+              <img src="assets/board-m5-addon-display-in.webp" width="1200" height="1200" loading="lazy"
+                   alt="M5Stack Add-on Display In: an LT6911D capture module with an HDMI socket and a 24-pin flat cable" />
+            </div>
+            <div class="hw-body">
+              <div class="role">The capture &mdash; one board only</div>
+              <h3>M5Stack Add-on Display In</h3>
+              <p>
+                Not a TC358743: a Lontium LT6911D, and a microSD slot with it. It
+                plugs onto the 24-pin flat cable on M5Stack&rsquo;s Unit PoE-P4 and
+                PoE-P4X &mdash; that is the ribbon in the picture, not the 15-pin
+                Raspberry&nbsp;Pi camera cable every other board here uses, so it
+                fits none of them and none of them drives it. Together
+                they are the smallest complete KVM of the lot: 23&nbsp;fps at
+                1280&times;720 over MJPEG, H.264 as well, power, network and video
+                on two cables.
+              </p>
+              <a href="https://shop.m5stack.com/products/add-on-display-in-for-poe-p4-lt6911d" rel="noopener">M5Stack shop page &rarr;</a>
             </div>
           </div>
         </div>
