@@ -3,6 +3,8 @@ title: 0.52.3 - Fixed: firmware install from Home Assistant, and a more reliable
 description: Pressing Install on the firmware card in Home Assistant gave an error and did nothing. One missing field. Then I went through the rest of the MQTT side.
 tags: home-assistant, update
 date: 2026-09-21 20:00
+image: /assets/blog/0-52-3-home-assistant-install-fixed/ha-install-progress.webp
+image_alt: The ESP-KVM firmware card in Home Assistant while an update installs: a progress bar at 40%, installed version 0.52.3-dirty, latest 0.52.3.
 ---
 
 A report on GitHub (#58), and I could see it on my own setup too. Press Install
@@ -51,7 +53,8 @@ with your console login.
 
 ## What you see now
 
-The update card shows a progress bar while the image downloads, and it links
-to the release notes. There is also a firmware version sensor under
+The update card shows a progress bar while the image downloads - the picture
+at the top is one from my own Home Assistant - and it links to the release
+notes. There is also a firmware version sensor under
 Diagnostic. It is there even when the device is not allowed to check for
 updates.
