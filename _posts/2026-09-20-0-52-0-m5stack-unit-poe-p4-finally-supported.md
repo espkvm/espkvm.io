@@ -1,5 +1,5 @@
 ---
-title: 0.52.0 - M5Stack Unit PoE-P4 + Add-on Display In, finally supported
+title: 0.52.0 - Support for the M5Stack Unit PoE-P4 with the Display In module
 description: A whole IP-KVM the size of a matchbox. Its capture module uses a chip this firmware had never driven, and getting a picture out of it took a week - in which I was wrong three times and the chip was innocent every time.
 tags: hardware, boards, m5stack, video, screen-text, display
 date: 2026-09-20 18:00

@@ -1,5 +1,5 @@
 ---
-title: The update that undid itself
+title: 0.52.1 - Fixed: after an update the device rolled back to the old version
 description: An update would install, reboot, and come back as the old version. The new image was never the problem - it never ran. The firmware on its way out broke the boot behind it.
 tags: ota, diagnostics, video
 date: 2026-09-20 21:00

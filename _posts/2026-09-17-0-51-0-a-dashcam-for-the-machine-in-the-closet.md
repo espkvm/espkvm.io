@@ -1,5 +1,5 @@
 ---
-title: 0.51.0 - a dashcam for the machine in the closet
+title: 0.51.0 - Recording the screen to microSD: videos, screenshots, dashcam, timelapse
 description: A car dashcam records the road nobody is watching and keeps the minutes before the crash. This release gives a server the same thing: the screen goes to the device's own microSD card, the last minutes are held and saved when something happens, and the console plays it all back - with what was typed as subtitles, and search over what the screen said.
 tags: recording, dashcam, video, storage, console
 date: 2026-09-17 20:00
