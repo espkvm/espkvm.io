@@ -62,7 +62,7 @@ output: index.html
 
         <div class="actions">
           <a class="btn btn-primary" href="flash/">Flash from the browser</a>
-          <a class="btn" href="https://demo.espkvm.io/" rel="noopener">Try the live demo</a>
+          <a class="btn" href="https://demo.espkvm.io/" rel="noopener" data-demo="hero">Try the live demo</a>
           <a class="btn" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
         </div>
         <!-- The plain-words explainer, for a reader who has not met the term.
@@ -79,12 +79,17 @@ output: index.html
       </header>
 
       <figure class="shot">
+        <a class="shot-demo" href="https://demo.espkvm.io/" rel="noopener" data-demo="screenshot">
         <img
           src="assets/screenshot.webp"
+          srcset="assets/screenshot-700.webp 700w, assets/screenshot-1050.webp 1050w, assets/screenshot.webp 1396w"
+          sizes="(max-width: 852px) calc(100vw - 32px), 820px"
           width="1396"
           height="805"
           alt="The ESP-KVM console showing a target machine's desktop, a right-click menu open on it, with the status bar and the video settings panel."
         />
+          <span class="shot-demo-badge">&#9654; Try it live &mdash; the demo runs in your browser</span>
+        </a>
         <figcaption>
           The console, driving a real machine: its desktop, its right-click
           menu, and the live status bar &mdash; all in a browser tab.
@@ -1475,6 +1480,11 @@ output: index.html
     </script>
 
     <script>
+      /* Which way people go into the demo: the button or the screenshot. */
+      document.querySelectorAll("[data-demo]").forEach((a) =>
+        a.addEventListener("click", () => track("demo_open", { from: a.dataset.demo })),
+      );
+
       /* Full-viewport constellation behind the page: points drift, the ones near
          a cursor that lags behind the real one light up and link to it, and a
          click sends a discharge running out along those rays. Drawn in the theme's

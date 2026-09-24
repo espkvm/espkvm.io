@@ -10,7 +10,7 @@
         --border-soft: #222831;
         --text: #e6edf3;
         --muted: #9aa7b4;
-        --faint: #6b7885;
+        --faint: #7d8a97;
         --accent: #4c9aff;
         --accent-hover: #6bb0ff;
         --accent-text: #08121f;
@@ -34,11 +34,11 @@
           --border-soft: #e2e7ec;
           --text: #10151c;
           --muted: #4c5764;
-          --faint: #6b7885;
-          --accent: #1f6feb;
-          --accent-hover: #1158c7;
+          --faint: #5d6975;
+          --accent: #1560d0;
+          --accent-hover: #0f4fae;
           --accent-text: #ffffff;
-          --accent-soft: rgba(31, 111, 235, 0.1);
+          --accent-soft: rgba(21, 96, 208, 0.1);
           --ok: #1a7f4b;
           --warn: #9a6700;
         }
@@ -326,6 +326,39 @@
 
       .shot {
         margin: 40px 0 8px;
+      }
+      /* The screenshot is also the way into the demo. */
+      .shot-demo {
+        position: relative;
+        display: block;
+        border-radius: 12px;
+      }
+      .shot-demo-badge {
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--accent-text);
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+      .shot-demo:hover .shot-demo-badge,
+      .shot-demo:focus-visible .shot-demo-badge {
+        background: var(--accent-hover);
+        transform: translateX(-50%) scale(1.04);
+      }
+      @media (max-width: 560px) {
+        .shot-demo-badge {
+          font-size: 13px;
+          padding: 8px 14px;
+          bottom: 10px;
+        }
       }
       .shot img {
         display: block;
