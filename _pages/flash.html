@@ -471,7 +471,7 @@ output: flash/index.html
         note.classList.toggle("warn", !!board.untested);
       };
 
-      const select = (b, card) => {
+      const select = (b, card, auto) => {
         board = b;
         // A board is always offered on the older silicon first: that is what
         // people have, and it is the safer guess if they have not checked.
@@ -482,14 +482,42 @@ output: flash/index.html
           c.setAttribute("aria-pressed", String(c === card));
         }
         apply();
+        if (!auto) track("flash_board", { board: b.id });
       };
 
       for (const r of revBtns) {
         r.addEventListener("click", () => {
           rev = r.dataset.rev;
           apply();
+          track("flash_rev", { board: board.id, rev });
         });
       }
+
+      // How installs end, counted per board: the flasher is the one place a
+      // real device shows up. esp-web-tools keeps the progress on its dialog,
+      // so watch that property as the dialog renders.
+      if (!("serial" in navigator)) track("flash_unsupported");
+      customElements.whenDefined("ewt-install-dialog").then(() => {
+        const proto = customElements.get("ewt-install-dialog").prototype;
+        const updated = proto.updated;
+        proto.updated = function (changed) {
+          if (updated) updated.call(this, changed);
+          const st = this._installState && this._installState.state;
+          if (!board || !st || st === this._trackedState) return;
+          this._trackedState = st;
+          const p = { board: board.id, rev };
+          if (st === "preparing") {
+            this._trackedAt = Date.now();
+            track("flash_start", p);
+          } else if (st === "finished") {
+            p.seconds = Math.round((Date.now() - (this._trackedAt || Date.now())) / 1000);
+            track("flash_done", p);
+          } else if (st === "error") {
+            p.reason = String(this._installState.message || "").slice(0, 100);
+            track("flash_error", p);
+          }
+        };
+      });
 
       const render = () => {
       if (shown.length > 1) {
@@ -520,13 +548,14 @@ output: flash/index.html
 
           card.addEventListener("click", () => select(b, card));
           grid.appendChild(card);
-          if (i === 0) select(b, card);
+          if (i === 0) select(b, card, true);
         });
         // And one tile that is not a board: the way to ask for the one missing.
         const ask = document.createElement("a");
         ask.className = "board-card board-card-add";
         ask.href = "https://github.com/espkvm/espkvm/issues/new";
         ask.rel = "noopener";
+        ask.addEventListener("click", () => track("flash_board_request"));
         const askImg = document.createElement("img");
         askImg.src = "../assets/board-add.svg";
         askImg.alt = "";

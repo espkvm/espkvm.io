@@ -759,6 +759,7 @@ output: tools/index.html
       var out = el("img-out");
       out.textContent = "";
       var r = parseImage(await fileBytes(file));
+      track("tool_image", { ok: !r.error, merged: !!r.merged });
       if (r.error) {
         out.innerHTML = '<p class="out bad"></p>';
         out.querySelector("p").textContent = r.error;
@@ -820,6 +821,7 @@ output: tools/index.html
       symStatus("Reading " + entry.name + "...");
       try {
         syms = parseSym(await zipRead(zipBytes, entry));
+        track("tool_symbols", { count: syms.length });
         symStatus(entry.name + ": " + syms.length + " symbols.", "ok");
       } catch (err) {
         syms = null;
@@ -850,6 +852,7 @@ output: tools/index.html
         await useEntry(zipList[0]);
       } else {
         syms = parseSym(new TextDecoder().decode(bytes));
+        track("tool_symbols", { count: syms.length });
         el("sym-pick-row").hidden = true;
         symStatus(
           syms.length
@@ -868,6 +871,7 @@ output: tools/index.html
       var out = el("panic-out");
       out.textContent = "";
       var text = el("panic-in").value;
+      track("tool_panic", { symbols: !!syms });
       if (!syms) {
         out.appendChild(rowsTable([["", "Load the symbols first.", "warn"]]));
         return;
@@ -930,6 +934,7 @@ output: tools/index.html
       var out = el("edid-out");
       out.textContent = "";
       var info = edidInfo(bytes);
+      track("tool_edid", { ok: !info.error });
       if (info.error) {
         var p = document.createElement("p");
         p.className = "out bad";

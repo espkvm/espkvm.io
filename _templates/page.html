@@ -10,6 +10,11 @@
       gtag('js', new Date());
 
       gtag('config', 'G-GMCW6ZNY7D');
+      /* Counts what the page's tools are used for: never file contents, names
+         or pasted text. Blocked analytics simply means nothing is counted. */
+      function track(name, params) {
+        try { gtag('event', name, params || {}); } catch (e) {}
+      }
     </script>
     <!-- analytics:end -->
 

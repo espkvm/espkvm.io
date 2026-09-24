@@ -334,10 +334,12 @@ output: serial/index.html
         disconnectBtn.hidden = false;
         baudEl.disabled = true;
         setStatus("Connected at " + baudEl.value + " baud. Listening.", true);
+        track("serial_connect", { baud: Number(baudEl.value) });
         await readLoop();
       } catch (err) {
         if (err && err.name === "NotFoundError") return; /* the picker was dismissed */
         setStatus("Could not open the port: " + (err && err.message ? err.message : err));
+        track("serial_error", { reason: String((err && err.name) || err).slice(0, 100) });
         await disconnect(true);
         return;
       }
