@@ -3,7 +3,6 @@
   <head>
     <!-- analytics:start -->
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GMCW6ZNY7D"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -15,6 +14,24 @@
       function track(name, params) {
         try { gtag('event', name, params || {}); } catch (e) {}
       }
+      /* The tag is a few hundred KB of script the page does not need to draw,
+         so it loads on the first touch, key or scroll, or 4 s after the page
+         has loaded. What was sent before it waits in dataLayer. */
+      (function () {
+        var done = false;
+        var evs = ["pointerdown", "keydown", "scroll", "touchstart"];
+        function load() {
+          if (done) return;
+          done = true;
+          evs.forEach(function (e) { removeEventListener(e, load); });
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=G-GMCW6ZNY7D";
+          document.head.appendChild(s);
+        }
+        evs.forEach(function (e) { addEventListener(e, load, { once: true, passive: true }); });
+        addEventListener("load", function () { setTimeout(load, 4000); });
+      })();
     </script>
     <!-- analytics:end -->
 
