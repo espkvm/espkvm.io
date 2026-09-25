@@ -57,7 +57,7 @@ output: index.html
           its screen, keyboard and mouse in a browser &mdash; so it still works
           when the machine is stuck in the BIOS, or has no operating system at
           all. That is an IP-KVM, and this one is built from an ESP32-P4 and a
-          TC358743 HDMI bridge.
+          TC358743 HDMI bridge &mdash; firmware, with <a href="#no-linux">no Linux inside</a>.
         </p>
 
         <div class="actions">
@@ -128,6 +128,81 @@ output: index.html
         </figcaption>
       </figure>
 
+
+      <!-- The one difference from every other IP-KVM, said early: most of them
+           are a Linux computer, this is firmware. Each card is a way a KVM can
+           fail that this one does not have. -->
+      <section id="no-linux">
+        <h2>No Linux, fewer ways to fail</h2>
+        <p class="lead">
+          Almost every IP-KVM is a small Linux computer. This one is firmware on a
+          microcontroller, and a KVM is often the only way into a machine that is
+          already in trouble - so the fewer parts that can break, the better.
+          <a href="/compare/">How it compares with PiKVM, JetKVM and the others.</a>
+        </p>
+        <div class="grid">
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+            </span>
+            <h3>A power cut is harmless</h3>
+            <p>
+              No filesystem holding an operating system to corrupt. Power comes
+              back and the device is ready in about 15 seconds.
+            </p>
+          </div>
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            </span>
+            <h3>An update undoes itself</h3>
+            <p>
+              Two firmware slots. An image that fails to come up puts the device
+              back on the one that worked, with nobody on site.
+            </p>
+          </div>
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <h3>Less to attack</h3>
+            <p>
+              No shell, no SSH, no package manager. On the network it answers
+              with the web console, and with MQTT or a VPN only if you turn them on.
+            </p>
+          </div>
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            </span>
+            <h3>Nothing to maintain</h3>
+            <p>
+              No distribution, no packages, no kernel to patch. The whole device
+              is one firmware image, updated from the browser.
+            </p>
+          </div>
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+            </span>
+            <h3>Small, cool and quiet</h3>
+            <p>
+              A microcontroller board with no fan, on a 5 V USB supply or over
+              PoE, small enough to stay attached to a machine.
+            </p>
+          </div>
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/><path d="M4 6h16"/><path d="M4 18h16"/></svg>
+            </span>
+            <h3>The same every time</h3>
+            <p>
+              Nothing updates itself in the background, so it behaves tomorrow
+              the way it did today.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <!-- what it does -->
       <section id="features">
@@ -415,7 +490,8 @@ output: index.html
               not read the host&rsquo;s internal sensors the way a BMC does.
               Think of it as closer to PiKVM than to IPMI: not a replacement for a
               BMC on a server, but the useful slice of one for everything that
-              never had a BMC.
+              never had a BMC. How it compares with PiKVM, JetKVM, NanoKVM and
+              GL.iNet Comet, honestly: <a href="/compare/">the comparison</a>.
             </p>
           </div>
         </details>
@@ -795,7 +871,7 @@ output: index.html
           works, these are the ones this project is built and tested on.
         </p>
 
-        <h3 class="hw-head">Boards that have been run on hardware</h3>
+        <h3 class="hw-head" id="boards">Boards that have been run on hardware</h3>
         <p class="hw-lead">Six of these have had this firmware on them, on someone's bench. Any of them does the whole job.</p>
         <div class="hw">
           <div class="hw-card">

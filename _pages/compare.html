@@ -1,0 +1,386 @@
+---
+title: ESP-KVM vs PiKVM, JetKVM, NanoKVM and GL.iNet Comet - an honest IP-KVM comparison
+description: How an open-source IP-KVM with no Linux - firmware on an ESP32-P4 microcontroller - compares with PiKVM, JetKVM, JetKVM Mini, Sipeed NanoKVM and GL.iNet Comet - what each does better, and when to pick something else.
+canonical: https://espkvm.io/compare/
+og_type: article
+output: compare/index.html
+---
+<!--
+  Written to be fair to the others: every fact about another product has a
+  source at the bottom of the page, and a fact that could not be checked is
+  left out rather than guessed. No prices - they change by the month and by the
+  shop. Checked 2026-09-25; the date is on the page so a reader knows how old it is.
+-->
+<style>
+  .lede {
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+  .compare-table th:first-child,
+  .compare-table td:first-child {
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .compare-table thead th {
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .compare-table td {
+    font-size: 14px;
+    min-width: 140px;
+  }
+  .compare-table td.us {
+    min-width: 190px;
+  }
+  /* Wider than the text column: seven columns do not fit in 820 px. */
+  .compare-wide {
+    width: min(1180px, calc(100vw - 32px));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .compare-table th:first-child,
+  .compare-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--bg);
+    z-index: 1;
+  }
+  .compare-table .us {
+    background: var(--accent-soft);
+  }
+  /* Where ESP-KVM is ahead: a tick and the success colour, so the advantages
+     read at a glance without hiding the rows where the others win. */
+  .compare-table td.win {
+    font-weight: 600;
+  }
+  .compare-table td.win::before {
+    content: "\2713\FE0E  ";
+    color: var(--ok);
+    font-weight: 700;
+  }
+  .legend {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 6px 0 0;
+  }
+  .legend b {
+    color: var(--ok);
+  }
+  .checked {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .sources li {
+    font-size: 14px;
+    color: var(--muted);
+    word-break: break-word;
+  }
+  .nolinux {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    background: var(--bg-raised);
+    padding: 16px 20px 6px;
+    margin: 22px 0 26px;
+  }
+  .nolinux h2 {
+    margin-top: 0;
+  }
+  .nolinux li {
+    margin-bottom: 8px;
+  }
+  .faq h3 {
+    margin-bottom: 4px;
+  }
+  .faq p {
+    margin-top: 0;
+  }
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is ESP-KVM a PiKVM alternative?",
+      "acceptedAnswer": { "@type": "Answer", "text": "For reaching a machine's BIOS, boot menu or a hung console from a browser, yes: video capture, keyboard and mouse, virtual media, ATX power and Wake-on-LAN are all there. PiKVM is a Linux computer with 1080p60 video and a large ecosystem; ESP-KVM is firmware on an ESP32-P4 microcontroller, with lower frame rates and nothing to administer." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is ESP-KVM different from JetKVM Mini?",
+      "acceptedAnswer": { "@type": "Answer", "text": "They use the same ESP32-P4 chip. JetKVM Mini is a finished product announced in September 2026, with its firmware promised to be open. ESP-KVM is open-source firmware available today for a dozen off-the-shelf ESP32-P4 boards that you connect to an HDMI capture board yourself." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does ESP-KVM run Linux?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. It is firmware on an ESP32-P4 microcontroller, built on ESP-IDF. There is no operating system to update or secure: no shell, no SSH, no package manager. It is ready about 15 seconds after power-on, a power cut cannot corrupt a system that is not there, and a bad update rolls back by itself." }
+    },
+    {
+      "@type": "Question",
+      "name": "What frame rate does ESP-KVM reach at 1080p?",
+      "acceptedAnswer": { "@type": "Answer", "text": "About 20-23 fps over MJPEG on every board. Over H.264, 22-24 fps on ESP32-P4 chips of revision 3.x and about 7 fps on the older revision 1.3." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can ESP-KVM be reached from outside without port forwarding?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The firmware has native Tailscale and WireGuard clients built in, so the device can join a tailnet and be reached at its 100.x address from anywhere, with no port forward and no vendor cloud." }
+    }
+  ]
+}
+</script>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>ESP-KVM compared with PiKVM, JetKVM, NanoKVM and GL.iNet Comet</h1>
+    <p class="tagline">
+      An honest look at where an IP-KVM on a microcontroller wins, where it
+      loses, and when you should buy one of the others instead.
+    </p>
+  </header>
+
+  <p class="lede">
+    Almost every IP-KVM is a small Linux computer: a Raspberry Pi, a Rockchip or
+    a RISC-V board running a full operating system. ESP-KVM is firmware on an
+    ESP32-P4 microcontroller, with no operating system at all. That one
+    difference explains most of what follows - the lower frame rate, the
+    quick start, the short list of things to keep updated, and a
+    board you can buy from several makers instead of one box from one vendor.
+  </p>
+
+  <section class="nolinux">
+    <h2>Why no Linux is the point</h2>
+    <ul>
+      <li><strong>Ready about 15 seconds after power-on.</strong> There is no operating system to boot first - the firmware is the whole device.</li>
+      <li><strong>Nothing to maintain.</strong> No distribution, no package updates, no kernel to patch. The whole device is one firmware image, updated from the browser in one click.</li>
+      <li><strong>Less to attack.</strong> No shell, no SSH, no package manager. What answers on the network is the web console and the device's local name (mDNS) - plus MQTT or a VPN, only if you switch them on.</li>
+      <li><strong>A power cut cannot break it.</strong> There is no filesystem holding an operating system to corrupt. The firmware sits in flash in two slots, and a bad update puts the device back on the one that worked, by itself.</li>
+      <li><strong>Small, cool and quiet.</strong> A microcontroller board with no fan, on a 5 V USB supply or over PoE, small enough to stay attached to a machine.</li>
+      <li><strong>The same every time.</strong> Nothing updates itself in the background, so the device behaves tomorrow the way it did today.</li>
+    </ul>
+  </section>
+
+  <p class="checked">
+    Checked on 25 September 2026 against each vendor's own pages; the sources
+    are at the bottom. No prices here - they change by the month and by the shop.
+  </p>
+
+  <h2>The table</h2>
+
+  <div class="table-scroll compare-wide">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="us">ESP-KVM</th>
+          <th>PiKVM V4</th>
+          <th>JetKVM</th>
+          <th>JetKVM Mini</th>
+          <th>Sipeed NanoKVM</th>
+          <th>GL.iNet Comet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Runs on</td>
+          <td class="us win">ESP32-P4 microcontroller, no OS</td>
+          <td>Raspberry Pi CM4, Linux</td>
+          <td>Rockchip RV1106, Linux</td>
+          <td>ESP32-P4X microcontroller, no Linux</td>
+          <td>SG2002 RISC-V, Linux (Pro: Axera AX630C)</td>
+          <td>Rockchip RV1126, Linux</td>
+        </tr>
+        <tr>
+          <td>What you get</td>
+          <td class="us win">Firmware for <a href="/#boards">a dozen off-the-shelf boards</a> from several makers (six run on hardware so far), plus an HDMI capture board you connect</td>
+          <td>Finished appliance</td>
+          <td>Finished appliance</td>
+          <td>Finished appliance, shipping from late October 2026</td>
+          <td>Finished units (Lite is partly DIY)</td>
+          <td>Finished appliance</td>
+        </tr>
+        <tr>
+          <td>Video</td>
+          <td class="us">1080p: 20-23 fps MJPEG; H.264 22-24 fps on rev 3.x chips, ~7 on rev 1.3</td>
+          <td>Up to 1920x1200 at 60 fps, MJPEG and H.264</td>
+          <td>1080p60 H.264, 30-60 ms claimed</td>
+          <td>1080p30 or 720p60, H.264</td>
+          <td>1080p60, MJPEG and H.264 (Pro: 4K)</td>
+          <td>H.264, up to 4K input</td>
+        </tr>
+        <tr>
+          <td>Virtual media</td>
+          <td class="us">Yes, images on a microSD card (FAT32 or exFAT) or in flash</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes, from a microSD card</td>
+          <td>Yes</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>ATX power control</td>
+          <td class="us">Yes, with an optocoupler module you wire</td>
+          <td>Included</td>
+          <td>Add-on board</td>
+          <td>Planned as an extension</td>
+          <td>Full and PCIe versions</td>
+          <td>Add-on board</td>
+        </tr>
+        <tr>
+          <td>Network</td>
+          <td class="us">Ethernet; PoE and Wi-Fi on the boards that have them</td>
+          <td>Gigabit Ethernet, Wi-Fi</td>
+          <td>100 Mbit Ethernet</td>
+          <td>Ethernet or Wi-Fi models</td>
+          <td>Ethernet; PoE and Wi-Fi options</td>
+          <td>Gigabit Ethernet; PoE, Wi-Fi 6 and 5G models</td>
+        </tr>
+        <tr>
+          <td>Remote access</td>
+          <td class="us win">Native Tailscale and WireGuard in the firmware, no vendor cloud</td>
+          <td>Tailscale, installed by you</td>
+          <td>JetKVM Cloud, or Tailscale installed by you</td>
+          <td>Not documented yet</td>
+          <td>Tailscale supported</td>
+          <td>Tailscale built in; GL.iNet cloud</td>
+        </tr>
+        <tr>
+          <td>Home Assistant</td>
+          <td class="us">Built in, over MQTT discovery: sensors, power buttons, a camera, runbooks</td>
+          <td>Community integration (HACS)</td>
+          <td>Built in, over MQTT discovery (since March 2026)</td>
+          <td></td>
+          <td>Community integration (HACS)</td>
+          <td>Community integration (HACS)</td>
+        </tr>
+        <tr>
+          <td>Text off the screen</td>
+          <td class="us">Reads the character grid of a text screen (BIOS, boot loader, console): exact, but text modes only</td>
+          <td>OCR (Tesseract) on any screen region; can misread</td>
+          <td>Two-way clipboard through OS Services, which needs software running on the target</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Source code</td>
+          <td class="us win">Apache-2.0</td>
+          <td>GPL-3.0</td>
+          <td>GPL-2.0</td>
+          <td>Promised open, not published yet</td>
+          <td>GPL-3.0</td>
+          <td>GPL-3.0 (a fork of PiKVM's kvmd)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="legend"><b>&#x2713;&#xFE0E;</b> marks where ESP-KVM is ahead. The video row is where the others are ahead; on Home Assistant and text the approaches differ more than they rank. An empty cell means the vendor's pages do not say either way.</p>
+
+  <h2>When to pick something else</h2>
+  <p>
+    If any of these matter to you, ESP-KVM is the wrong choice today:
+  </p>
+  <ul>
+    <li><strong>Smooth 60 fps video or 4K.</strong> PiKVM, JetKVM, NanoKVM and the Comet all stream 1080p at 60 fps, and some go higher. ESP-KVM is fine for a BIOS, an installer or a console, and gets sluggish for a video playing on the target.</li>
+    <li><strong>A box that works out of the box.</strong> ESP-KVM is two boards and a ribbon cable; there is no case, no warranty and no vendor support. Flashing takes a minute from the browser, but the build is yours.</li>
+    <li><strong>HDMI audio.</strong> Not implemented.</li>
+    <li><strong>A device you want to put on the public internet.</strong> There is a login and TLS, but no external security audit, and secure boot is not switched on. Reach it over the built-in VPN instead.</li>
+  </ul>
+
+  <h2>When ESP-KVM is the better fit</h2>
+  <ul>
+    <li><strong>Nothing to administer.</strong> No Linux, no package updates, no operating system on an SD card. It is ready about 15 seconds after power-on and does one job.</li>
+    <li><strong>Reachable from anywhere without a cloud.</strong> Tailscale and WireGuard run inside the firmware. The device joins your tailnet directly; there is no vendor relay in between.</li>
+    <li><strong>Automation on the device.</strong> Runbooks wait for words on a text screen (<code>wait Press F2</code>) and press keys, on the device itself, with the browser closed. The device can watch a BIOS or console for phrases while nobody is looking. Home Assistant picks everything up by itself over MQTT.</li>
+    <li><strong>Hardware you choose.</strong> <a href="/#boards">A dozen ESP32-P4 boards</a> are supported (six of them run on hardware so far), from a small Ethernet board to PoE and Wi-Fi ones, and the M5Stack Unit PoE-P4 with its HDMI add-on. If one maker stops selling a board, another one works.</li>
+    <li><strong>Everything is open.</strong> The firmware and the web console are Apache-2.0, published and building in public CI.</li>
+  </ul>
+
+  <h2>ESP-KVM as a PiKVM alternative</h2>
+  <p>
+    PiKVM is the reference open-source IP-KVM, and it is better at video: 1080p
+    and up at 60 fps, with a large community and years of polish. What ESP-KVM
+    offers instead is a device with no operating system to maintain, VPN access
+    built into the firmware rather than installed on top, and Home Assistant
+    support out of the box. If you already run PiKVM and are happy, keep it. If
+    you need a KVM on several machines that mostly sit at a BIOS or a console,
+    the microcontroller build is simpler to live with.
+  </p>
+
+  <h2>ESP-KVM and JetKVM Mini: the same chip</h2>
+  <p>
+    JetKVM announced the JetKVM Mini in September 2026. It uses the ESP32-P4X,
+    the same chip ESP-KVM runs on, which says something good about the idea: a
+    microcontroller is enough for a KVM. The Mini is a finished product from a
+    company, with a case and support, due to ship at the end of October 2026;
+    its firmware is promised to be open source but is not published yet.
+    ESP-KVM is open-source firmware you can flash today onto boards from
+    Waveshare, Espressif, M5Stack, Guition and others. The original JetKVM, on a
+    Rockchip chip running Linux, is the one to pick for 1080p60 video.
+  </p>
+
+  <h2>ESP-KVM and Sipeed NanoKVM</h2>
+  <p>
+    NanoKVM runs Linux on a RISC-V chip and streams 1080p at 60 fps; the
+    NanoKVM-Pro adds 4K. Its capture library used to be closed and has been
+    replaced by an open one since version 2.2.0. It is a finished unit with ATX
+    control on the Full and PCIe versions. ESP-KVM has the lower frame rate, and
+    no Linux underneath.
+  </p>
+
+  <h2>ESP-KVM and GL.iNet Comet</h2>
+  <p>
+    The Comet family is a line of finished products built on a fork of PiKVM's
+    software: Gigabit Ethernet, PoE, Wi-Fi 6 and 5G models, Tailscale built in,
+    and GL.iNet's own cloud and app. It is the polished choice if you want a
+    product. ESP-KVM is the choice if you want to own every part of the stack,
+    down to the firmware.
+  </p>
+
+  <h2>Also worth knowing about</h2>
+  <p>
+    <strong>TinyPilot</strong> (now the Voyager 3) is a Raspberry Pi based
+    appliance with 1920x1200 at 60 fps; its community edition is MIT, the Pro
+    software shipped on the devices is proprietary.
+    <strong>BliKVM</strong> builds PiKVM-compatible hardware - CM4, PCIe, HAT and
+    an Allwinner v4 with PoE - under GPL-3.0.
+  </p>
+
+  <section class="faq">
+    <h2>Questions</h2>
+    <h3>Is ESP-KVM a PiKVM alternative?</h3>
+    <p>For reaching a machine's BIOS, boot menu or a hung console from a browser, yes: video, keyboard and mouse, virtual media, ATX power and Wake-on-LAN are all there. For smooth 1080p60 video, no.</p>
+    <h3>Does ESP-KVM run Linux?</h3>
+    <p>No. It is firmware on an ESP32-P4 microcontroller, built on ESP-IDF. There is no operating system to update or secure, a power cut cannot corrupt one, and a bad update rolls back by itself.</p>
+    <h3>What frame rate does it reach at 1080p?</h3>
+    <p>About 20-23 fps over MJPEG on every board. Over H.264, 22-24 fps on ESP32-P4 chips of revision 3.x and about 7 fps on revision 1.3.</p>
+    <h3>Can I reach it from outside without port forwarding?</h3>
+    <p>Yes, with the Tailscale or WireGuard client built into the firmware. No vendor cloud is involved.</p>
+  </section>
+
+  <h2>Try it before building one</h2>
+  <p>
+    The <a href="https://demo.espkvm.io/" rel="noopener" data-demo="compare">console runs in your browser as a demo</a>,
+    against a simulated machine, with no hardware. When you have a board, the
+    <a href="/flash/">web flasher</a> installs the firmware over USB in about a
+    minute. The source is on <a href="https://github.com/espkvm/espkvm">GitHub</a>.
+  </p>
+
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li>PiKVM: <a href="https://pikvm.org/products/" rel="noopener">pikvm.org/products</a>, <a href="https://docs.pikvm.org/v4/" rel="noopener">docs.pikvm.org/v4</a>, <a href="https://docs.pikvm.org/tailscale/" rel="noopener">docs.pikvm.org/tailscale</a>, <a href="https://github.com/pikvm/kvmd" rel="noopener">github.com/pikvm/kvmd</a></li>
+    <li>JetKVM: <a href="https://jetkvm.com/docs" rel="noopener">jetkvm.com/docs</a>, <a href="https://github.com/jetkvm/kvm" rel="noopener">github.com/jetkvm/kvm</a>, <a href="https://jetkvm.com/docs/networking/remote-access" rel="noopener">remote access</a>, <a href="https://jetkvm.com/products/atx-extension-board" rel="noopener">ATX extension</a></li>
+    <li>JetKVM Mini: <a href="https://jetkvm.com/blog/introducing-jetkvm-mini" rel="noopener">jetkvm.com/blog/introducing-jetkvm-mini</a>, <a href="https://www.cnx-software.com/2026/09/14/jetkvm-mini-a-low-cost-esp32-p4x-based-kvm-with-ethernet-or-wifi-connectivity/" rel="noopener">CNX Software</a></li>
+    <li>Sipeed NanoKVM: <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM)</a>, <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM_Pro/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM-Pro)</a>, <a href="https://github.com/sipeed/NanoKVM" rel="noopener">github.com/sipeed/NanoKVM</a></li>
+    <li>GL.iNet Comet: <a href="https://www.gl-inet.com/en-us/products/gl-rm1" rel="noopener">gl-inet.com (GL-RM1)</a>, <a href="https://docs.gl-inet.com/kvm/en/user_guide/gl-rm1/" rel="noopener">docs.gl-inet.com</a>, <a href="https://github.com/gl-inet/glkvm" rel="noopener">github.com/gl-inet/glkvm</a>, <a href="https://www.cnx-software.com/2025/07/13/review-of-gl-inet-comet-gl-rm1-kvm-over-ip-solution-and-atx-power-control-board/" rel="noopener">CNX Software review</a></li>
+    <li>TinyPilot: <a href="https://tinypilotkvm.com/products/tinypilot-voyager-3" rel="noopener">tinypilotkvm.com (Voyager 3)</a>, <a href="https://github.com/tiny-pilot/tinypilot" rel="noopener">github.com/tiny-pilot/tinypilot</a></li>
+    <li>Home Assistant: <a href="https://github.com/jetkvm/kvm/pull/1195" rel="noopener">JetKVM MQTT and discovery (PR #1195)</a>, <a href="https://github.com/adamoutler/pikvm-homeassistant-integration" rel="noopener">PiKVM integration</a>, <a href="https://github.com/chmajster/Home-Assistant-nanokvm-rest-api" rel="noopener">NanoKVM integration</a>, <a href="https://github.com/heidrickla/ha-glkvm" rel="noopener">GL.iNet Comet integration</a></li>
+    <li>Text off the screen: <a href="https://docs.pikvm.org/ocr/" rel="noopener">PiKVM OCR</a>, <a href="https://jetkvm.com/blog/introducing-jetkvm-os-services" rel="noopener">JetKVM OS Services</a></li>
+    <li>BliKVM: <a href="https://github.com/blikvm/blikvm" rel="noopener">github.com/blikvm/blikvm</a>, <a href="https://www.blikvm.com/docs/device-guides/BliKVM-v4-datasheet/" rel="noopener">BliKVM v4 datasheet</a></li>
+    <li>ESP-KVM: the numbers are from the <a href="https://github.com/espkvm/espkvm#readme">README</a>, measured on hardware.</li>
+  </ul>
+  <p class="checked">Something here out of date or wrong? <a href="https://github.com/espkvm/espkvm/issues/new">Open an issue</a> and I will fix it.</p>
+</div>

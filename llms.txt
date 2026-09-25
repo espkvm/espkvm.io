@@ -79,6 +79,7 @@ Key facts:
 - [Flash from the browser](https://espkvm.io/flash/)
 - [Serial monitor in the browser](https://espkvm.io/serial/)
 - [Tools: read a firmware image, decode a panic, inspect an EDID](https://espkvm.io/tools/)
+- [Comparison with PiKVM, JetKVM, JetKVM Mini, NanoKVM and GL.iNet Comet](https://espkvm.io/compare/)
 - [For writers: descriptions, facts, logo files, pictures](https://espkvm.io/press/)
 - [Interactive demo, no hardware needed](https://demo.espkvm.io/)
 - [Blog: what each release changed, and how](https://espkvm.io/blog/)
