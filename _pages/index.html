@@ -496,6 +496,21 @@ output: index.html
           </div>
         </details>
         <details class="faq-item">
+          <summary>How does it compare with PiKVM, JetKVM or NanoKVM?</summary>
+          <div class="prose">
+            <p>
+              They are Linux computers; this is firmware on a microcontroller. They
+              win on video - 1080p at 60 fps and more, where this does about 20. It
+              wins on having no operating system to maintain or break, VPN built
+              into the firmware, and running on a dozen boards you can buy from
+              several makers. JetKVM Mini, announced in September 2026, uses the
+              same ESP32-P4 chip. The full side-by-side, with sources and the cases
+              where you should buy one of the others:
+              <a href="/compare/">ESP-KVM compared</a>.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item">
           <summary>What USB cable connects the device to the target (Waveshare ESP32-P4-ETH)?</summary>
           <div class="prose">
             <p>
@@ -1556,11 +1571,6 @@ output: index.html
     </script>
 
     <script>
-      /* Which way people go into the demo: the button or the screenshot. */
-      document.querySelectorAll("[data-demo]").forEach((a) =>
-        a.addEventListener("click", () => track("demo_open", { from: a.dataset.demo })),
-      );
-
       /* Full-viewport constellation behind the page: points drift, the ones near
          a cursor that lags behind the real one light up and link to it, and a
          click sends a discharge running out along those rays. Drawn in the theme's

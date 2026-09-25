@@ -60,6 +60,74 @@ output: compare/index.html
     color: var(--ok);
     font-weight: 700;
   }
+  /* A phone: the row names and ESP-KVM stay put, the others scroll past them,
+     so any product can be read side by side with this one. Both are narrow
+     enough to leave room for one more column. The ESP-KVM column needs an
+     opaque background, or the scrolling cells show through the tint. */
+  @media (max-width: 720px) {
+    .compare-table td,
+    .compare-table th {
+      font-size: 13px;
+      padding: 8px 8px;
+    }
+    .compare-table th:first-child,
+    .compare-table td:first-child {
+      width: 88px;
+      min-width: 88px;
+      max-width: 88px;
+      white-space: normal;
+      box-sizing: border-box;
+    }
+    .compare-table td {
+      min-width: 128px;
+    }
+    .compare-table th.us,
+    .compare-table td.us {
+      position: sticky;
+      left: 88px;
+      z-index: 1;
+      min-width: 128px;
+      max-width: 128px;
+      box-sizing: border-box;
+      background: linear-gradient(var(--accent-soft), var(--accent-soft)), var(--bg);
+      box-shadow: 2px 0 0 var(--border);
+    }
+  }
+  /* The smallest phones (360 px and below): narrower pinned columns still
+     leave a readable column beside them. */
+  @media (max-width: 380px) {
+    .compare-table td,
+    .compare-table th {
+      font-size: 12px;
+      padding: 7px 6px;
+    }
+    .compare-table th:first-child,
+    .compare-table td:first-child {
+      width: 72px;
+      min-width: 72px;
+      max-width: 72px;
+    }
+    .compare-table td {
+      min-width: 104px;
+    }
+    .compare-table th.us,
+    .compare-table td.us {
+      left: 72px;
+      min-width: 112px;
+      max-width: 112px;
+    }
+  }
+  .swipe-hint {
+    display: none;
+  }
+  @media (max-width: 720px) {
+    .swipe-hint {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 6px;
+    }
+  }
   .legend {
     color: var(--muted);
     font-size: 14px;
@@ -170,6 +238,7 @@ output: compare/index.html
 
   <h2>The table</h2>
 
+  <p class="swipe-hint">Swipe the table sideways: ESP-KVM stays in place, the others slide past it.</p>
   <div class="table-scroll compare-wide">
     <table class="compare-table">
       <thead>
@@ -286,14 +355,15 @@ output: compare/index.html
   <ul>
     <li><strong>Smooth 60 fps video or 4K.</strong> PiKVM, JetKVM, NanoKVM and the Comet all stream 1080p at 60 fps, and some go higher. ESP-KVM is fine for a BIOS, an installer or a console, and gets sluggish for a video playing on the target.</li>
     <li><strong>A box that works out of the box.</strong> ESP-KVM is two boards and a ribbon cable; there is no case, no warranty and no vendor support. Flashing takes a minute from the browser, but the build is yours.</li>
+    <li><strong>Remote access with nothing to set up.</strong> JetKVM Cloud and GL.iNet's app get you in from anywhere after a sign-in with their service. ESP-KVM has no such service: you set up Tailscale or WireGuard on it yourself - which is the point, see below.</li>
     <li><strong>HDMI audio.</strong> Not implemented.</li>
     <li><strong>A device you want to put on the public internet.</strong> There is a login and TLS, but no external security audit, and secure boot is not switched on. Reach it over the built-in VPN instead.</li>
   </ul>
 
   <h2>When ESP-KVM is the better fit</h2>
   <ul>
+    <li><strong>No vendor cloud, ever.</strong> Tailscale and WireGuard run inside the firmware: the device joins your own tailnet and is reached directly. There is no account with me to create and no service of mine in the path - nothing that can be switched off, changed or bought out from under you. Several others build remote access around their own service: JetKVM's goes through JetKVM Cloud with a Google sign-in, GL.iNet has its own cloud and app. Both are optional, and JetKVM's cloud is open source and can be self-hosted.</li>
     <li><strong>Nothing to administer.</strong> No Linux, no package updates, no operating system on an SD card. It is ready about 15 seconds after power-on and does one job.</li>
-    <li><strong>Reachable from anywhere without a cloud.</strong> Tailscale and WireGuard run inside the firmware. The device joins your tailnet directly; there is no vendor relay in between.</li>
     <li><strong>Automation on the device.</strong> Runbooks wait for words on a text screen (<code>wait Press F2</code>) and press keys, on the device itself, with the browser closed. The device can watch a BIOS or console for phrases while nobody is looking. Home Assistant picks everything up by itself over MQTT.</li>
     <li><strong>Hardware you choose.</strong> <a href="/#boards">A dozen ESP32-P4 boards</a> are supported (six of them run on hardware so far), from a small Ethernet board to PoE and Wi-Fi ones, and the M5Stack Unit PoE-P4 with its HDMI add-on. If one maker stops selling a board, another one works.</li>
     <li><strong>Everything is open.</strong> The firmware and the web console are Apache-2.0, published and building in public CI.</li>
@@ -319,7 +389,11 @@ output: compare/index.html
     its firmware is promised to be open source but is not published yet.
     ESP-KVM is open-source firmware you can flash today onto boards from
     Waveshare, Espressif, M5Stack, Guition and others. The original JetKVM, on a
-    Rockchip chip running Linux, is the one to pick for 1080p60 video.
+    Rockchip chip running Linux, is the one to pick for 1080p60 video. Its
+    built-in way in from outside is JetKVM Cloud: WebRTC through the company's
+    service, signing in with a Google account. That is optional, the cloud's
+    code is open and can be self-hosted, and Tailscale can be installed instead.
+    ESP-KVM has no service of its own to go through at all.
   </p>
 
   <h2>ESP-KVM and Sipeed NanoKVM</h2>
@@ -335,8 +409,8 @@ output: compare/index.html
   <p>
     The Comet family is a line of finished products built on a fork of PiKVM's
     software: Gigabit Ethernet, PoE, Wi-Fi 6 and 5G models, Tailscale built in,
-    and GL.iNet's own cloud and app. It is the polished choice if you want a
-    product. ESP-KVM is the choice if you want to own every part of the stack,
+    and GL.iNet's own cloud and app (optional; a self-hostable version exists).
+    It is the polished choice if you want a product. ESP-KVM is the choice if you want to own every part of the stack,
     down to the firmware.
   </p>
 
@@ -372,7 +446,7 @@ output: compare/index.html
   <h2>Sources</h2>
   <ul class="sources">
     <li>PiKVM: <a href="https://pikvm.org/products/" rel="noopener">pikvm.org/products</a>, <a href="https://docs.pikvm.org/v4/" rel="noopener">docs.pikvm.org/v4</a>, <a href="https://docs.pikvm.org/tailscale/" rel="noopener">docs.pikvm.org/tailscale</a>, <a href="https://github.com/pikvm/kvmd" rel="noopener">github.com/pikvm/kvmd</a></li>
-    <li>JetKVM: <a href="https://jetkvm.com/docs" rel="noopener">jetkvm.com/docs</a>, <a href="https://github.com/jetkvm/kvm" rel="noopener">github.com/jetkvm/kvm</a>, <a href="https://jetkvm.com/docs/networking/remote-access" rel="noopener">remote access</a>, <a href="https://jetkvm.com/products/atx-extension-board" rel="noopener">ATX extension</a></li>
+    <li>JetKVM: <a href="https://jetkvm.com/docs" rel="noopener">jetkvm.com/docs</a>, <a href="https://github.com/jetkvm/kvm" rel="noopener">github.com/jetkvm/kvm</a>, <a href="https://jetkvm.com/docs/networking/remote-access" rel="noopener">remote access</a>, <a href="https://github.com/jetkvm/cloud-api" rel="noopener">JetKVM Cloud source</a>, <a href="https://jetkvm.com/products/atx-extension-board" rel="noopener">ATX extension</a></li>
     <li>JetKVM Mini: <a href="https://jetkvm.com/blog/introducing-jetkvm-mini" rel="noopener">jetkvm.com/blog/introducing-jetkvm-mini</a>, <a href="https://www.cnx-software.com/2026/09/14/jetkvm-mini-a-low-cost-esp32-p4x-based-kvm-with-ethernet-or-wifi-connectivity/" rel="noopener">CNX Software</a></li>
     <li>Sipeed NanoKVM: <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM)</a>, <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM_Pro/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM-Pro)</a>, <a href="https://github.com/sipeed/NanoKVM" rel="noopener">github.com/sipeed/NanoKVM</a></li>
     <li>GL.iNet Comet: <a href="https://www.gl-inet.com/en-us/products/gl-rm1" rel="noopener">gl-inet.com (GL-RM1)</a>, <a href="https://docs.gl-inet.com/kvm/en/user_guide/gl-rm1/" rel="noopener">docs.gl-inet.com</a>, <a href="https://github.com/gl-inet/glkvm" rel="noopener">github.com/gl-inet/glkvm</a>, <a href="https://www.cnx-software.com/2025/07/13/review-of-gl-inet-comet-gl-rm1-kvm-over-ip-solution-and-atx-power-control-board/" rel="noopener">CNX Software review</a></li>

@@ -32,6 +32,12 @@
         evs.forEach(function (e) { addEventListener(e, load, { once: true, passive: true }); });
         addEventListener("load", function () { setTimeout(load, 4000); });
       })();
+      /* Every way into the demo, on every page: from is the link's data-demo,
+         or the page it was on. */
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="https://demo.espkvm.io"]');
+        if (a) track("demo_open", { from: a.getAttribute("data-demo") || location.pathname });
+      });
     </script>
     <!-- analytics:end -->
 

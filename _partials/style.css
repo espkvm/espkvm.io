@@ -176,6 +176,15 @@
         align-items: center;
       }
 
+      /* The smallest phones: logo, GitHub, three icons and the menu button do
+         not fit on one line under ~400px, and the menu dropped to a second one.
+         Telegram, X and YouTube are in the footer too. */
+      @media (max-width: 400px) {
+        .nav-social {
+          display: none;
+        }
+      }
+
       /* 800px, not a phone width: with six links, GitHub and two icons the bar
          wraps onto a second line anywhere under about 780px. */
       @media (max-width: 800px) {
