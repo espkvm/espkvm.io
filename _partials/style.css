@@ -699,6 +699,291 @@
         color: var(--muted);
         font-size: 14px;
       }
+      /* The optional parts on the front page: a small picture beside the text
+         rather than a big one above it. */
+      .hw-compact {
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      }
+      .hw-compact .hw-card {
+        flex-direction: row;
+      }
+      .hw-compact .hw-photo {
+        flex: 0 0 110px;
+        aspect-ratio: auto;
+        padding: 10px;
+        border-right: 1px solid var(--border);
+      }
+      .hw-compact .hw-body {
+        padding: 12px 14px;
+      }
+      .hw-compact .hw-body .role {
+        display: none;
+      }
+      .hw-compact .hw-body h3 {
+        margin-top: 0;
+        font-size: 15px;
+      }
+      .hw-compact .hw-body p {
+        font-size: 13px;
+        margin: 0;
+      }
+      @media (max-width: 420px) {
+        .hw-compact {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .hw-compact .hw-photo {
+          flex-basis: 84px;
+        }
+      }
+
+      /* ---- catalog cards: boards, capture, cases ---------------------------
+
+         Small and even: a short photo band, maker over model, and the few
+         facts that decide a purchase as chips. Everything else is on the
+         board's own page, one click away. */
+      .cat-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      }
+      .cat-card {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg-raised);
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+        transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .cat-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+      .cat-card[hidden] {
+        display: none;
+      }
+      .cat-photo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 116px;
+        padding: 10px;
+        background: #ffffff;
+      }
+      .cat-photo img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+      .cat-photo.cat-photo-cover {
+        padding: 0;
+        background: var(--bg);
+      }
+      .cat-photo.cat-photo-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        mix-blend-mode: normal;
+      }
+      .cat-body {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 10px 12px 12px;
+        border-top: 1px solid var(--border);
+        flex: 1;
+      }
+      .cat-maker {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        color: var(--faint);
+        font-size: 12px;
+      }
+      .cat-model {
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 1.3;
+      }
+      .cat-card:hover .cat-model {
+        color: var(--accent);
+      }
+      .cat-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 6px;
+      }
+      .cat-chip {
+        font-size: 11px;
+        line-height: 1;
+        padding: 4px 6px;
+        border-radius: 4px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .cat-status {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ok, #3fb950);
+      }
+      .cat-status.untested {
+        color: var(--warn);
+      }
+      .cat-card-add .cat-photo {
+        background: var(--bg);
+      }
+      .cat-card-add .cat-photo img {
+        mix-blend-mode: normal;
+        opacity: 0.7;
+      }
+      .cat-head {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin: 32px 0 12px;
+        font-size: 19px;
+      }
+      .cat-count {
+        color: var(--faint);
+        font-size: 14px;
+        font-weight: 400;
+      }
+      .cat-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 14px;
+      }
+      .cat-filter {
+        font: inherit;
+        font-size: 13px;
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-raised);
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .cat-filter:hover {
+        border-color: var(--accent);
+      }
+      .cat-filter[aria-pressed="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #ffffff;
+      }
+      .cat-note {
+        margin-top: 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* ---- a board's page, and the catalog ------------------------------- */
+
+      .board-page {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 36px 20px 56px;
+      }
+      .board-page h1 {
+        margin: 4px 0 8px;
+        font-size: clamp(26px, 4vw, 34px);
+        line-height: 1.15;
+      }
+      .board-page .lead {
+        color: var(--muted);
+        margin: 0 0 16px;
+        max-width: 70ch;
+      }
+      .board-page .role {
+        color: var(--faint);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .board-page .role.untested {
+        color: var(--warn);
+        font-weight: 700;
+      }
+      .board-page .role.untested::before {
+        content: "\26A0\FE0E";
+        margin-right: 5px;
+      }
+      .board-top {
+        display: grid;
+        gap: 28px;
+        grid-template-columns: 260px minmax(0, 1fr);
+        align-items: start;
+        margin-bottom: 24px;
+      }
+      @media (max-width: 640px) {
+        .board-top {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .board-photo {
+          max-width: 260px;
+        }
+      }
+      .board-photo {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        aspect-ratio: 1 / 1;
+        padding: 14px;
+      }
+      .board-specs th {
+        width: 34%;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .board-specs th,
+      .board-specs td {
+        padding: 7px 10px;
+        font-size: 14px;
+      }
+      .board-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 16px 0 0;
+      }
+      .board-intro {
+        margin: 0 0 24px;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+        background: var(--bg-raised);
+        color: var(--muted);
+        font-size: 14px;
+        max-width: none;
+      }
+      .board-intro strong {
+        color: var(--text, inherit);
+      }
+      .board-intro a {
+        white-space: nowrap;
+        margin-left: 6px;
+        font-weight: 500;
+      }
+      .board-credit {
+        color: var(--faint);
+        font-size: 13px;
+        margin: 10px 0 0;
+      }
+      .board-page .post-body {
+        max-width: 70ch;
+      }
 
       /* ---- tables -------------------------------------------------------- */
 

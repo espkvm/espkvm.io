@@ -886,336 +886,30 @@ output: index.html
           works, these are the ones this project is built and tested on.
         </p>
 
-        <h3 class="hw-head" id="boards">Boards that have been run on hardware</h3>
-        <p class="hw-lead">Six of these have had this firmware on them, on someone's bench. Any of them does the whole job.</p>
-        <div class="hw">
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-p4.webp" width="680" height="680" loading="lazy"
-                   alt="Waveshare ESP32-P4-ETH board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device</div>
-              <h3>Waveshare ESP32-P4-ETH</h3>
-              <p>
-                ESP32-P4 with 100M Ethernet, a Raspberry-Pi-compatible CSI
-                connector, USB-C OTG and a microSD slot. Another ESP32-P4 board
-                with Ethernet and the same CSI connector can run it too &mdash;
-                the pins are set in
-                <a href="https://github.com/espkvm/espkvm/blob/main/docs/PORTING.md">menuconfig</a>,
-                not the code.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-funcev.webp" width="680" height="680" loading="lazy"
-                   alt="Espressif ESP32-P4 Function EV Board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device (rev&nbsp;3.2)</div>
-              <h3>Espressif ESP32-P4 Function EV Board</h3>
-              <p>
-                Espressif&rsquo;s own ESP32-P4 board, with a rev&nbsp;3.2 chip. It
-                has its own build target and the browser flasher offers it
-                directly. The newer silicon captures native YUV422 straight into
-                the video encoders, which frees the colour-convert engine and
-                lifts 1080p to a little over 20&nbsp;fps.
-              </p>
-              <a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html" rel="noopener">Espressif user guide &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-nano.jpg" width="680" height="680" loading="lazy"
-                   alt="Waveshare ESP32-P4-NANO board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device &mdash; community-tested</div>
-              <h3>Waveshare ESP32-P4-NANO</h3>
-              <p>
-                Same IP101 Ethernet and onboard ESP32-C6 as the boards above, with
-                32&nbsp;MB PSRAM and 16&nbsp;MB flash. Contributors confirmed capture,
-                USB and Ethernet on both silicon revisions, and WiFi on rev&nbsp;3.1.
-                The USB lead to the target is an A-to-A cable with the 5&nbsp;V wire cut.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-nano.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-guition.webp" width="680" height="680" loading="lazy"
-                   alt="Guition ESP32-P4-M3-Dev (JC-ESP32P4-M3) board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device &mdash; community-tested</div>
-              <h3>Guition ESP32-P4-M3-Dev</h3>
-              <p>
-                A display board (4.3&Prime; MIPI-DSI touch, unused by the KVM) that
-                also carries Ethernet and an ESP32-C6; 32&nbsp;MB PSRAM, 16&nbsp;MB
-                flash. Two USB-C ports &mdash; the target goes on the OTG-HS one, and
-                the capture board&rsquo;s ribbon goes into <strong>J3</strong>, not J2.
-                A contributor confirmed capture, USB and Ethernet (on pre-3.0 silicon).
-              </p>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-wifi6.webp" width="800" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-WIFI6 board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device &mdash; wireless only</div>
-              <h3>Waveshare ESP32-P4-WIFI6</h3>
-              <p>
-                The PoE board without the wired port, contributed by someone who
-                has one: capture and the USB keyboard and mouse are confirmed on
-                hardware. 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB flash. Its WiFi link
-                used to stall; since 0.41.1 the chip's own pull-ups are switched
-                on for this board and it holds. That is one board and one
-                tester, and WiFi is the only way in here, so tell us if yours
-                behaves differently.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-wifi6.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-poe.jpg" width="800" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-WIFI6-POE-ETH board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device &mdash; community-tested, PoE</div>
-              <h3>Waveshare ESP32-P4-WIFI6-POE-ETH</h3>
-              <p>
-                The first supported board that takes <strong>PoE</strong>: one cable
-                to a KVM in a rack instead of two. Same Ethernet, microSD and
-                ESP32-C6 wiring as the boards above; 32&nbsp;MB&nbsp;PSRAM, 32&nbsp;MB
-                flash, and a full-size USB-A port for the target. Confirmed by a user
-                on rev&nbsp;3.x silicon with the <code>p4-poe-rev3</code> image:
-                1080p over H.264 at 23&nbsp;fps. Check the chip revision in the boot
-                log before flashing &mdash; the older image has not been run on it yet.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-wifi6-poe-eth.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-m5-poe-p4.webp" width="1200" height="1200" loading="lazy"
-                   alt="M5Stack Unit PoE-P4 module" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The smallest complete one</div>
-              <h3>M5Stack Unit PoE-P4</h3>
-              <p>
-                A matchbox that takes power, network and video on two cables:
-                32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, 100M Ethernet and
-                802.3at PoE. The odd one out here &mdash; its capture is not a
-                C790 on a camera ribbon but M5Stack&rsquo;s own Add-on Display In,
-                below, which plugs onto a 24-pin flat cable and brings a microSD
-                slot with it. 23&nbsp;fps at 1280&times;720, checked on hardware.
-                The rev&nbsp;3.x <strong>PoE-P4X</strong> takes the same firmware
-                from an image of its own, and pays neither of the older
-                chip&rsquo;s costs.
-              </p>
-              <a href="https://docs.m5stack.com/en/unit/Unit_PoE-P4" rel="noopener">M5Stack documentation &rarr;</a>
-            </div>
-          </div>
-        </div>
-
-        <h3 class="hw-head">Boards built from a schematic, never run</h3>
-        <p class="hw-lead">Their pins were read off the vendor's schematic, the images build and are published, and that is the whole claim. Flashing one cannot damage it - the worst case is an image that does not start, and a reflash undoes that. Tell me how it goes and the board moves up a block.</p>
-        <div class="hw">
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-wifi6-devkit.webp" width="800" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-WIFI6-DEV-KIT board" />
-            </div>
-            <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
-              <h3>Waveshare ESP32-P4-WIFI6-DEV-KIT</h3>
-              <p>
-                Ethernet and WiFi 6 on one board: a 100M magjack that also takes
-                PoE, plus the ESP32-C6. Same pins as the boards above, so the
-                build is almost the stock one; 32&nbsp;MB&nbsp;PSRAM,
-                32&nbsp;MB flash. Its USB OTG port is switched between host and
-                device by a jumper &mdash; the KVM needs device. Built from the
-                schematic, not yet run on one.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-module-devkit.webp" width="800" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-Module-DEV-KIT board" />
-            </div>
-            <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
-              <h3>Waveshare ESP32-P4-Module-DEV-KIT</h3>
-              <p>
-                The board above, packed into a module: the P4, the ESP32-C6 and
-                16&nbsp;MB of flash under one shield, 32&nbsp;MB&nbsp;PSRAM, on a
-                carrier with 100M Ethernet, a card slot, a 2x20 header and four
-                USB-A sockets. Every pin the KVM touches is one already in use,
-                and the CSI connector is the 15-pin Raspberry&nbsp;Pi one, so a
-                C790 ribbon plugs straight in. A jumper picks whether the OTG-HS
-                goes to a Type-A socket or an internal hub &mdash; the KVM wants
-                the socket. Built from the schematic, not yet run on one.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-module-dev-kit.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-nano-wifi6-db.webp" width="758" height="800" loading="lazy"
-                   alt="Waveshare ESP32-P4-NANO-WIFI6-DB board" />
-            </div>
-            <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
-              <h3>Waveshare ESP32-P4-NANO-WIFI6-DB</h3>
-              <p>
-                The NANO with a dual-band <strong>ESP32-C5</strong> in place of the
-                C6, so it can join a 5&nbsp;GHz network &mdash; the first supported
-                board that can. 32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, 100M
-                Ethernet with a PoE header, a Type-A port for the target, and the
-                15-pin Raspberry&nbsp;Pi camera connector, so a C790 ribbon fits. It
-                carries rev&nbsp;3.x silicon, so it has one image and no pre-3.0 twin.
-              </p>
-              <a href="https://www.waveshare.com/esp32-p4-nano-wifi6-db.htm" rel="noopener">Waveshare product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-firebeetle2.webp" width="800" height="533" loading="lazy"
-                   alt="DFRobot FireBeetle 2 ESP32-P4 board" />
-            </div>
-            <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
-              <h3>DFRobot FireBeetle 2 ESP32-P4</h3>
-              <p>
-                60 x 25 mm, and everything the KVM needs on it:
-                32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, an ESP32-C6 for WiFi 6
-                and the 15-pin Raspberry&nbsp;Pi camera connector, so a C790
-                ribbon plugs straight in. No wired port &mdash; WiFi is the only
-                link. Two USB-C sockets, and they are not interchangeable: one is
-                power, flashing and the log, the other is the OTG-HS that goes to
-                the target. Built from the schematic, not yet run on one.
-              </p>
-              <a href="https://www.dfrobot.com/product-2915.html" rel="noopener">DFRobot product page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-viewe-p4-pi.webp" width="800" height="513" loading="lazy"
-                   alt="VIEWE ESP32-P4-Pi board" />
-            </div>
-            <div class="hw-body">
-              <div class="role untested">Not tested on hardware</div>
-              <h3>VIEWE ESP32-P4-Pi</h3>
-              <p>
-                A Raspberry-Pi-shaped carrier for VIEWE's own P4 module:
-                32&nbsp;MB&nbsp;PSRAM, 16&nbsp;MB flash, an ESP32-C6, 100M
-                Ethernet, microSD and the 15-pin Raspberry&nbsp;Pi camera
-                connector, so a C790 ribbon fits. Three USB ports &mdash; one
-                Type-C for power, flashing and the log, the other Type-C is the
-                OTG-HS that goes to the target, and the Type-A socket is a host
-                port the KVM does not use. Both schematics are published, carrier
-                and module, so every pin was read rather than guessed.
-              </p>
-              <a href="https://github.com/VIEWESMART/ESP32-P4-Pi" rel="noopener">VIEWE documentation &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-add.svg" width="680" height="340" loading="lazy"
-                   alt="A dashed outline with a plus sign, standing in for a board that is not on the list yet" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The device &mdash; yours, maybe</div>
-              <h3>Not the board you have?</h3>
-              <p>
-                Open an issue with a link to its schematic. If it clears the five
-                points above, adding it is a config overlay and a build &mdash;
-                the pins live in menuconfig, not in the code &mdash; and it can be
-                in the next release. That is how most of the boards on this page
-                arrived. If it does not clear them, the answer says which point it
-                fails on, which is worth having before the board is.
-              </p>
-              <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">Ask for a board &rarr;</a>
-            </div>
-          </div>
+        <h3 class="hw-head" id="boards">The board</h3>
+        <p class="hw-lead">Any of these does the whole job. "Untested" ones were built from the vendor's schematic and nobody has run them yet; flashing one cannot damage it. Each card opens the board's page. <a href="/boards/">All boards, with filters &rarr;</a></p>
+        <div class="cat-grid">
+<!-- catalog:tested -->
+<!-- catalog:untested -->
+          <a class="cat-card cat-card-add" href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">
+            <span class="cat-photo"><img src="assets/board-add.svg" width="680" height="340" loading="lazy" alt="" /></span>
+            <span class="cat-body">
+              <span class="cat-maker">Yours, maybe</span>
+              <span class="cat-model">Not on the list?</span>
+              <span class="cat-chips"><span class="cat-chip">open an issue with its schematic</span></span>
+            </span>
+          </a>
         </div>
 
         <h3 class="hw-head">The capture board</h3>
-        <p class="hw-lead">This is what turns the target's HDMI into something the ESP32-P4 can read. Two are confirmed on the TC358743 bridge and work with any board on this page: the C790 this project is built on, and Waveshare's adapter. A third, M5Stack's Add-on Display In, carries a Lontium LT6911D instead and is now driven too - but it plugs onto M5Stack's own PoE-P4 units and onto nothing else.</p>
-        <div class="hw">
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-c790.webp" width="680" height="680" loading="lazy"
-                   alt="Geekworm C790 TC358743 HDMI-to-CSI capture board" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The capture</div>
-              <h3>Geekworm C790</h3>
-              <p>
-                A TC358743 HDMI&nbsp;&rarr;&nbsp;MIPI CSI-2 bridge that turns the
-                target&rsquo;s HDMI into a camera stream the ESP32-P4 can read.
-                Any other TC358743 capture board should do just as well &mdash;
-                the firmware talks to that chip, not to the board around it. The
-                <a href="https://wiki.geekworm.com/C792" rel="noopener">C792</a>
-                is the same bridge with a splitter in front and should work too,
-                though nobody here has run one; use its 15-pin connector, and see
-                the README on what its EDID may do to a 1080p60 source.
-              </p>
-              <a href="https://wiki.geekworm.com/C790" rel="noopener">Geekworm wiki page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-waveshare-19137.webp" width="680" height="680" loading="lazy"
-                   alt="Waveshare HDMI to CSI Adapter (19137), a TC358743 capture board with a full-size HDMI socket and a 15-pin camera ribbon" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The capture &mdash; community-tested</div>
-              <h3>Waveshare HDMI to CSI Adapter</h3>
-              <p>
-                The same TC358743 bridge on Waveshare&rsquo;s board (product 19137),
-                so the firmware treats it exactly like the C790. A full-size HDMI
-                input, and a 15-pin Raspberry&nbsp;Pi camera connector that also
-                powers it. A user confirmed it on the
-                ESP32-P4-WIFI6-POE-ETH: 1080p over H.264 at 23&nbsp;fps.
-              </p>
-              <a href="https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter" rel="noopener">Waveshare wiki page &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/board-m5-addon-display-in.webp" width="1200" height="1200" loading="lazy"
-                   alt="M5Stack Add-on Display In: an LT6911D capture module with an HDMI socket and a 24-pin flat cable" />
-            </div>
-            <div class="hw-body">
-              <div class="role">The capture &mdash; one board only</div>
-              <h3>M5Stack Add-on Display In</h3>
-              <p>
-                Not a TC358743: a Lontium LT6911D, and a microSD slot with it. It
-                plugs onto the 24-pin flat cable on M5Stack&rsquo;s Unit PoE-P4 and
-                PoE-P4X &mdash; that is the ribbon in the picture, not the 15-pin
-                Raspberry&nbsp;Pi camera cable every other board here uses, so it
-                fits none of them and none of them drives it. Together
-                they are the smallest complete KVM of the lot: 23&nbsp;fps at
-                1280&times;720 over MJPEG, H.264 as well, power, network and video
-                on two cables.
-              </p>
-              <a href="https://shop.m5stack.com/products/add-on-display-in-for-poe-p4-lt6911d" rel="noopener">M5Stack shop page &rarr;</a>
-            </div>
-          </div>
+        <p class="hw-lead">Turns the target's HDMI into a camera stream the ESP32-P4 reads. The two TC358743 boards fit every board above with the 15-pin camera connector; M5Stack's module fits only its own PoE-P4 units.</p>
+        <div class="cat-grid">
+<!-- catalog:capture -->
         </div>
 
         <h3 class="hw-head">Power control (optional)</h3>
         <p class="hw-lead">Two wires to the machine's front-panel header let the console press its power and reset buttons. A relay module does the same job - the firmware only pulses a pin, and which way round it triggers is a setting. Reading the power LED back is the one part a relay cannot do: that input wants an optocoupler.</p>
-        <div class="hw">
+        <div class="hw hw-compact">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/817.webp" width="680" height="680" loading="lazy"
@@ -1238,7 +932,7 @@ output: index.html
 
         <h3 class="hw-head">Status display (optional)</h3>
         <p class="hw-lead">A small screen on the box, so you can see its address and link without opening a browser.</p>
-        <div class="hw">
+        <div class="hw hw-compact">
           <div class="hw-card">
             <div class="hw-photo">
               <img src="assets/SSD1306.jpg" width="700" height="700" loading="lazy"
@@ -1293,60 +987,10 @@ output: index.html
           </div>
         </div>
 
-        <h3 class="hw-head">A case (optional)</h3>
-        <p class="hw-lead">Printed by people who built one. All three models are published.</p>
-        <div class="hw">
-          <div class="hw-card">
-            <div class="hw-photo is-photo">
-              <img src="assets/case-p4eth.webp" width="900" height="506" loading="lazy"
-                   alt="A 3D-printed case holding the ESP32-P4-ETH and the C790, with HDMI, Ethernet and the USB cable coming out of one side" />
-            </div>
-            <div class="hw-body">
-              <div class="role">A case (optional)</div>
-              <h3>ESP32-P4-ETH KVM Case</h3>
-              <p>
-                A printed box for the ESP32-P4-ETH and the C790 together, published
-                by Colin Hickey. It keeps the two boards and the OTG cable to the
-                target tidy; HDMI, Ethernet and that cable all come out of one side.
-                The P4 board is held tightly, so take care when you take it out
-                again. Photo by the author, CC&nbsp;BY-NC.
-              </p>
-              <a href="https://www.printables.com/model/1824874-esp32-p4-eth-kvm-case" rel="noopener">Model on Printables &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo is-photo">
-              <img src="assets/case-p4eth-makerworld.webp" width="810" height="607" loading="lazy"
-                   alt="A second 3D-printed case for the same two boards: a black box with a hex-vented side, an orange lid and cutouts for HDMI and Ethernet" />
-            </div>
-            <div class="hw-body">
-              <div class="role">A case (optional)</div>
-              <h3>KVM case for ESP32-P4-ETH and C790</h3>
-              <p>
-                A second box for the same pair of boards, adapted for this project
-                by Fabrion365 after a user asked. Vented along one side, with the
-                ports coming out of the ends. Photo by the author.
-              </p>
-              <a href="https://makerworld.com/en/models/3238485-kvm-case-for-esp32-p4-eth-and-c790" rel="noopener">Model on MakerWorld &rarr;</a>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo is-photo">
-              <img src="assets/case-nano-c6.webp" width="900" height="583" loading="lazy"
-                   alt="A small black 3D-printed case for the ESP32-P4-NANO and the C790, with Ethernet, USB and HDMI coming out of one end" />
-            </div>
-            <div class="hw-body">
-              <div class="role">A case (optional)</div>
-              <h3>ESP32-P4-NANO / C6 KVM case</h3>
-              <p>
-                A compact box for the ESP32-P4-NANO with its ESP32-C6 and the C790,
-                by Crisspii. Ethernet, USB and HDMI come out of one end, the sides are
-                vented, and there is room for a small heatsink. Five M2 screws close
-                it. A version with a display is planned. Photo by the author.
-              </p>
-              <a href="https://makerworld.com/de/models/3317162-esp32-p4-nano-c6-kvm-case" rel="noopener">Model on MakerWorld &rarr;</a>
-            </div>
-          </div>
+        <h3 class="hw-head" id="cases">A case (optional)</h3>
+        <p class="hw-lead">Printed by people who built one. All of them are published.</p>
+        <div class="cat-grid">
+<!-- catalog:cases -->
         </div>
       </section>
 

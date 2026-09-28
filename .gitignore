@@ -16,6 +16,8 @@ _site/
 /press/index.html
 /compare/index.html
 /blog/
+/boards/
+/cases/
 /sitemap.xml
 
 # Posts that are written but not published yet. Move one back into _posts/ to

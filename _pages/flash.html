@@ -395,7 +395,7 @@ output: flash/index.html
         {
           id: "p4-eth",
           label: "Waveshare ESP32-P4-ETH",
-          image: "../assets/board-p4.webp",
+          image: "/boards/p4-eth/board.webp",
           // The root manifest mirrors the default board (p4-eth), so this works
           // both before and after the per-board layout lands.
           manifest: RELEASES + "manifest.json",
@@ -405,14 +405,14 @@ output: flash/index.html
         {
           id: "funcev",
           label: "Espressif ESP32-P4 Function EV",
-          image: "../assets/board-funcev.webp",
+          image: "/boards/funcev/board.webp",
           manifest: RELEASES + "funcev/manifest.json",
           released: true,
         },
         {
           id: "p4-poe",
           label: "Waveshare ESP32-P4-WIFI6-POE-ETH",
-          image: "../assets/board-poe.jpg",
+          image: "/boards/p4-poe/board.jpg",
           manifest: RELEASES + "p4-poe/manifest.json",
           manifestRev3: RELEASES + "p4-poe-rev3/manifest.json",
           released: true,
@@ -421,7 +421,7 @@ output: flash/index.html
         {
           id: "p4-nano",
           label: "Waveshare ESP32-P4-NANO",
-          image: "../assets/board-nano.jpg",
+          image: "/boards/p4-nano/board.jpg",
           manifest: RELEASES + "p4-nano/manifest.json",
           manifestRev3: RELEASES + "p4-nano-rev3/manifest.json",
           released: true,
@@ -429,7 +429,7 @@ output: flash/index.html
         {
           id: "p4-guition",
           label: "Guition ESP32-P4-M3-Dev",
-          image: "../assets/board-guition.webp",
+          image: "/boards/p4-guition/board.webp",
           manifest: RELEASES + "p4-guition/manifest.json",
           manifestRev3: RELEASES + "p4-guition-rev3/manifest.json",
           released: true,
@@ -441,7 +441,15 @@ output: flash/index.html
       const REV_NOTE =
         "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. Almost every board on sale today is rev 1.x - pick rev 3.x only if you know yours is. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
 
-      const IMAGES = Object.fromEntries(BOARDS.map((b) => [b.id, b.image]));
+      // Every board's photo from the site's own catalog (_boards/), filled in by
+      // the site build, so a board added there shows its picture here too.
+      const IMAGES = {
+        ...Object.fromEntries(BOARDS.map((b) => [b.id, b.image])),
+        .../* catalog:images */ {},
+      };
+      // /flash/?board=<id> opens with that board chosen - the "Install" button on
+      // a board's page links here.
+      const WANTED = new URLSearchParams(location.search).get("board");
 
       let shown = BOARDS.filter((b) => b.released);
       const btn = document.getElementById("install");
@@ -548,7 +556,9 @@ output: flash/index.html
 
           card.addEventListener("click", () => select(b, card));
           grid.appendChild(card);
-          if (i === 0) select(b, card, true);
+          const wanted = shown.some((x) => x.id === WANTED);
+          if (wanted ? b.id === WANTED : i === 0) select(b, card, true);
+          if (wanted && b.id === WANTED) card.scrollIntoView({ block: "nearest" });
         });
         // And one tile that is not a board: the way to ask for the one missing.
         const ask = document.createElement("a");

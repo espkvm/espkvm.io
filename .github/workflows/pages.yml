@@ -38,7 +38,7 @@ jobs:
         run: |
           mkdir -p _site
           # Ship what the step above rendered (index.html, flash/, serial/,
-          # tools/, blog/, sitemap.xml) together with the files that are
+          # tools/, blog/, boards/, cases/, sitemap.xml) together with the files that are
           # committed as they are: CNAME, .nojekyll, robots/llms, the favicon,
           # flash/flash.js, demo/ (the redirect) and assets/. Repo docs and the
           # page sources are not site content.
@@ -54,6 +54,8 @@ jobs:
             --exclude='README.md' \
             --exclude='docs' \
             --exclude='_posts' \
+            --exclude='_boards' \
+            --exclude='_cases' \
             --exclude='_pages' \
             --exclude='_partials' \
             --exclude='_templates' \

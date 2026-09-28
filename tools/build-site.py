@@ -13,8 +13,9 @@ that fetches nothing.
     python3 tools/build-site.py [--drafts]
 
 Writes index.html, flash/index.html, blog/index.html, blog/<slug>/index.html,
-blog/tags/<tag>/index.html and blog/feed.xml, and rewrites sitemap.xml. All of
-those are generated and none of them are committed.
+blog/tags/<tag>/index.html, blog/feed.xml, boards/ and cases/ (from _boards/
+and _cases/), and rewrites sitemap.xml. All of those are generated and none of
+them are committed.
 """
 
 import argparse
@@ -140,6 +141,429 @@ def read_posts(include_drafts):
     return posts
 
 
+# ---------------------------------------------------------------- catalog
+#
+# One folder per board in _boards/ and per case in _cases/: an index.md (front
+# matter, then prose) and its photos. The build copies the photos next to the
+# page it writes, /boards/<id>/ or /cases/<id>/, and draws the tiles on the
+# front page and on /boards/ from the same data, so a board is described once.
+#
+# Front matter a board takes: title, kind (device or capture), status (tested
+# or untested), order, role, summary, photo, photo_style (product or photo),
+# flasher (its id in the firmware's boards.json), capture (ids of the capture
+# boards it takes), and any number of "spec.<Label>: value" rows and
+# "link.<Label>: url" links, shown in the order written. A case takes title,
+# author, summary, boards (ids it fits), photo, photo_credit and links.
+
+BOARDS_DIR = os.path.join(ROOT, "_boards")
+CASES_DIR = os.path.join(ROOT, "_cases")
+# The firmware's own list of boards, when the two repos sit side by side. A
+# flasher id here that the firmware does not publish is a dead install button.
+FIRMWARE_BOARDS = os.path.join(os.path.dirname(ROOT), "espkvm", "boards", "boards.json")
+
+
+def image_size(path):
+    """Width and height of a WebP, JPEG or PNG, read from its header."""
+    with open(path, "rb") as fh:
+        d = fh.read(256 * 1024)
+    if d[:4] == b"RIFF" and d[8:12] == b"WEBP":
+        chunk = d[12:16]
+        if chunk == b"VP8 ":
+            w, h = int.from_bytes(d[26:28], "little"), int.from_bytes(d[28:30], "little")
+            return w & 0x3FFF, h & 0x3FFF
+        if chunk == b"VP8L":
+            v = int.from_bytes(d[21:25], "little")
+            return (v & 0x3FFF) + 1, ((v >> 14) & 0x3FFF) + 1
+        if chunk == b"VP8X":
+            return (int.from_bytes(d[24:27], "little") + 1,
+                    int.from_bytes(d[27:30], "little") + 1)
+    if d[:8] == b"\x89PNG\r\n\x1a\n":
+        return int.from_bytes(d[16:20], "big"), int.from_bytes(d[20:24], "big")
+    if d[:2] == b"\xff\xd8":
+        i = 2
+        while i + 9 < len(d):
+            marker, length = d[i + 1], int.from_bytes(d[i + 2:i + 4], "big")
+            if marker in (0xC0, 0xC1, 0xC2):
+                return int.from_bytes(d[i + 7:i + 9], "big"), int.from_bytes(d[i + 5:i + 7], "big")
+            i += 2 + length
+    sys.exit("%s: cannot read the picture's size" % path)
+
+
+def read_folder_items(base, section):
+    items = []
+    names = sorted(os.listdir(base)) if os.path.isdir(base) else []
+    for name in names:
+        folder = os.path.join(base, name)
+        index = os.path.join(folder, "index.md")
+        if not os.path.isfile(index):
+            continue
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
+            sys.exit("%s: a folder name must be lowercase letters, digits and dashes" % folder)
+        with open(index, encoding="utf-8") as fh:
+            meta, body = split_front_matter(fh.read(), index)
+        for required in ("title", "summary", "photo"):
+            if required not in meta:
+                sys.exit("%s: front matter needs a %s" % (index, required))
+        photo = os.path.join(folder, meta["photo"])
+        if not os.path.isfile(photo):
+            sys.exit("%s: no such photo: %s" % (index, meta["photo"]))
+        w, h = image_size(photo)
+        items.append({
+            "id": name,
+            "section": section,
+            "url": "/%s/%s/" % (section, name),
+            "folder": folder,
+            "path": index,
+            "meta": meta,
+            "body": body,
+            "photo": "/%s/%s/%s" % (section, name, meta["photo"]),
+            "photo_w": w,
+            "photo_h": h,
+            "specs": [(k[5:], v) for k, v in meta.items() if k.startswith("spec.")],
+            "links": [(k[5:], v) for k, v in meta.items() if k.startswith("link.")],
+            "order": int(meta.get("order", "999")),
+        })
+    return items
+
+
+def id_list(value):
+    return [v.strip() for v in (value or "").split(",") if v.strip()]
+
+
+def read_catalog():
+    boards = read_folder_items(BOARDS_DIR, "boards")
+    cases = read_folder_items(CASES_DIR, "cases")
+    ids = {b["id"] for b in boards}
+    for b in boards:
+        m = b["meta"]
+        if m.get("kind") not in ("device", "capture"):
+            sys.exit("%s: kind must be device or capture" % b["path"])
+        if m.get("status") not in ("tested", "untested"):
+            sys.exit("%s: status must be tested or untested" % b["path"])
+        for c in id_list(m.get("capture")):
+            if c not in ids:
+                sys.exit("%s: capture names a board that is not in _boards/: %s" % (b["path"], c))
+    for c in cases:
+        for b in id_list(c["meta"].get("boards")):
+            if b not in ids:
+                sys.exit("%s: boards names a board that is not in _boards/: %s" % (c["path"], b))
+
+    if os.path.isfile(FIRMWARE_BOARDS):
+        import json
+        with open(FIRMWARE_BOARDS, encoding="utf-8") as fh:
+            firmware = {b["id"]: b for b in json.load(fh)}
+        for b in boards:
+            fid = b["meta"].get("flasher")
+            if fid and fid not in firmware:
+                sys.exit("%s: flasher id %s is not in the firmware's boards.json" % (b["path"], fid))
+            if fid and firmware[fid].get("untested", False) != (b["meta"]["status"] == "untested"):
+                print("warning: %s is %s here but not in the firmware's boards.json"
+                      % (b["id"], b["meta"]["status"]))
+        listed = {b["meta"].get("flasher") for b in boards}
+        for fid in firmware:
+            if fid not in listed:
+                print("warning: the firmware publishes %s, which has no folder in _boards/" % fid)
+
+    key = lambda i: (i["order"], i["meta"]["title"])
+    return {
+        "tested": sorted([b for b in boards if b["meta"]["kind"] == "device"
+                          and b["meta"]["status"] == "tested"], key=key),
+        "untested": sorted([b for b in boards if b["meta"]["kind"] == "device"
+                            and b["meta"]["status"] == "untested"], key=key),
+        "capture": sorted([b for b in boards if b["meta"]["kind"] == "capture"], key=key),
+        "cases": sorted(cases, key=key),
+        "all": boards + cases,
+        "by_id": {b["id"]: b for b in boards},
+    }
+
+
+def features(item):
+    """Short labels for a card and the catalog's filters, read off the specs so
+    nothing is written twice: (filter key, label)."""
+    m = item["meta"]
+    specs = dict(item["specs"])
+    out = []
+    if m.get("kind") == "device":
+        net = specs.get("Network", "")
+        if "Ethernet" in net:
+            out.append(("ethernet", "Ethernet"))
+        if "Wi-Fi" in net:
+            out.append(("wifi", "Wi-Fi"))
+        if "PoE" in net:
+            out.append(("poe", "PoE"))
+        chip = specs.get("Chip", "")
+        has1, has3 = "rev 1" in chip, "rev 3" in chip
+        if has1 and has3:
+            out.append(("rev3", "rev 1.x + 3.x"))
+        elif has3:
+            out.append(("rev3", "rev 3.x"))
+        elif has1:
+            out.append(("rev1", "rev 1.x"))
+    elif m.get("kind") == "capture":
+        if m.get("bridge"):
+            out.append(("bridge", m["bridge"]))
+    return out
+
+
+def split_title(item):
+    """"Waveshare ESP32-P4-NANO" -> ("Waveshare", "ESP32-P4-NANO"); a case is
+    shown under its author."""
+    m = item["meta"]
+    if item["section"] == "cases":
+        return m.get("author", ""), m["title"]
+    maker, _, model = m["title"].partition(" ")
+    return (maker, model) if model else ("", m["title"])
+
+
+def tile(item):
+    m = item["meta"]
+    maker, model = split_title(item)
+    feats = features(item)
+    untested = m.get("status") == "untested"
+    status = ""
+    if m.get("kind") == "device":
+        status = ('<span class="cat-status untested">Untested</span>' if untested
+                  else '<span class="cat-status">Tested</span>')
+    chips = "".join('<span class="cat-chip">%s</span>' % html.escape(label)
+                    for _, label in feats)
+    keys = " ".join([k for k, _ in feats] + ([] if untested else ["tested"]))
+    fit = " cat-photo-cover" if m.get("photo_style") == "photo" else ""
+    return """          <a class="cat-card" href="{url}" data-f="{keys}">
+            <span class="cat-photo{fit}"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></span>
+            <span class="cat-body">
+              <span class="cat-maker">{maker}{status}</span>
+              <span class="cat-model">{model}</span>
+              <span class="cat-chips">{chips}</span>
+            </span>
+          </a>""".format(
+        url=item["url"], keys=keys, fit=fit, photo=item["photo"],
+        w=item["photo_w"], h=item["photo_h"], maker=html.escape(maker),
+        status=status, model=html.escape(model), chips=chips)
+
+
+def tiles(items):
+    return "\n".join(tile(i) for i in items)
+
+
+def fill_catalog(body, catalog):
+    """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
+    def swap(match):
+        group = match.group(1)
+        if group not in ("tested", "untested", "capture", "cases"):
+            sys.exit("unknown catalog group: %s" % group)
+        return tiles(catalog[group])
+    body = re.sub(r"<!-- catalog:(\w+) -->", swap, body)
+    # The flasher's board photos: flasher id -> the photo in _boards/.
+    import json
+    images = {b["meta"]["flasher"]: b["photo"] for b in catalog["all"]
+              if b["meta"].get("flasher")}
+    return body.replace("/* catalog:images */ {}", json.dumps(images, sort_keys=True))
+
+
+def spec_table(item):
+    rows = list(item["specs"])
+    m = item["meta"]
+    if m.get("kind") == "device":
+        rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
+                        else "Built from the schematic, not run on one yet"))
+    if not rows:
+        return ""
+    return ('<div class="table-scroll"><table class="board-specs"><tbody>\n%s\n'
+            "</tbody></table></div>" % "\n".join(
+                "<tr><th>%s</th><td>%s</td></tr>" % (html.escape(k), inline(v, item["path"]))
+                for k, v in rows))
+
+
+def item_page(shell, item, catalog):
+    m = item["meta"]
+    kind = m.get("kind")
+    actions = []
+    if m.get("flasher"):
+        actions.append('<a class="btn btn-primary" href="/flash/?board=%s">Install from the browser</a>'
+                       % quote(m["flasher"]))
+    for label, url in item["links"]:
+        actions.append('<a class="btn" href="%s" rel="noopener">%s</a>'
+                       % (html.escape(url), html.escape(label)))
+
+    related = []
+    if kind == "device":
+        caps = [catalog["by_id"][c] for c in id_list(m.get("capture"))]
+        if caps:
+            related.append(("Capture board" if len(caps) == 1 else "Capture boards", caps))
+        cases = [c for c in catalog["cases"] if item["id"] in id_list(c["meta"].get("boards"))]
+        if cases:
+            related.append(("Cases for it", cases))
+    elif kind == "capture":
+        users = [b for b in catalog["tested"] + catalog["untested"]
+                 if item["id"] in id_list(b["meta"].get("capture"))]
+        related.append(("Boards it works with", users))
+    else:
+        fits = [catalog["by_id"][b] for b in id_list(m.get("boards"))]
+        related.append(("Fits", fits))
+
+    extra = "".join(
+        '\n      <h2 class="cat-head">%s</h2>\n      <div class="cat-grid">\n%s\n      </div>'
+        % (html.escape(title), tiles(items)) for title, items in related)
+
+    back = ('<a href="/boards/#cases">&larr; All cases</a>' if item["section"] == "cases"
+            else '<a href="/boards/">&larr; All boards</a>')
+    untested = " untested" if m.get("status") == "untested" else ""
+    role = m.get("role") or ("A case by " + m["author"] if m.get("author") else "")
+    credit = ('<p class="board-credit">%s</p>' % html.escape(m["photo_credit"])
+              if m.get("photo_credit") else "")
+    is_photo = " is-photo" if m.get("photo_style") == "photo" else ""
+
+    # Someone who lands here from a search for the board has never heard of the
+    # project: say in two lines what it is before the specs.
+    name = html.escape(m["title"])
+    if kind == "device":
+        intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns the "
+                 "%s into an IP-KVM: the screen, keyboard and mouse of another computer "
+                 "in your browser, from the BIOS up. Add an HDMI capture board, flash it "
+                 "from the browser, and it runs with no Linux, no app and no cloud." % name)
+    elif kind == "capture":
+        intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
+                 "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
+                 "mouse in your browser, from the BIOS up. The %s is the part that "
+                 "brings the computer's HDMI in." % name)
+    else:
+        intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
+                 "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
+                 "mouse in your browser, from the BIOS up. This is a printed case for one, "
+                 "made by someone who built it.")
+    intro = ('<p class="board-intro">%s <a href="/">What it does &rarr;</a> '
+             '<a href="https://demo.espkvm.io/" rel="noopener">Try the demo &rarr;</a></p>'
+             % intro)
+
+    content = """
+    <article class="board-page">
+      <p class="post-back">{back}</p>
+      {intro}
+      <div class="board-top">
+        <div class="hw-photo board-photo{is_photo}">
+          <img src="{photo}" width="{w}" height="{h}" alt="{alt}" />
+        </div>
+        <div class="board-head">
+          <div class="role{untested}">{role}</div>
+          <h1>{title}</h1>
+          <p class="lead">{summary}</p>
+          {specs}
+          <p class="board-actions">{actions}</p>
+          {credit}
+        </div>
+      </div>
+      <div class="post-body">
+{body}
+      </div>{extra}
+    </article>
+""".format(back=back, intro=intro, is_photo=is_photo, photo=item["photo"], w=item["photo_w"],
+           h=item["photo_h"], alt=safe(m["title"]), untested=untested,
+           role=html.escape(role), title=html.escape(m["title"]),
+           summary=html.escape(m["summary"]), specs=spec_table(item),
+           actions=" ".join(actions), credit=credit,
+           body=render_markdown(item["body"], item["path"]), extra=extra)
+
+    what = "an IP-KVM" if kind == "device" else ("capture for an IP-KVM" if kind == "capture"
+                                                 else "a case for an IP-KVM")
+    return render_page(shell, {
+        "title": "%s - %s with ESP-KVM" % (m["title"], what),
+        "og_title": m["title"],
+        "description": m.get("description") or m["summary"],
+        "canonical": SITE + item["url"],
+        "image": SITE + item["photo"],
+        "image_alt": m["title"],
+        "og_type": "article",
+    }, content)
+
+
+def catalog_page(shell, catalog):
+    devices = catalog["tested"] + catalog["untested"]
+    filters = [("all", "All"), ("tested", "Tested"), ("ethernet", "Ethernet"),
+               ("wifi", "Wi-Fi"), ("poe", "PoE"), ("rev3", "rev 3.x")]
+    buttons = "".join(
+        '<button type="button" class="cat-filter" data-filter="%s" aria-pressed="%s">%s</button>'
+        % (key, "true" if key == "all" else "false", label) for key, label in filters)
+
+    content = """
+    <article class="board-page">
+      <h1>Boards</h1>
+      <p class="lead">
+        The ESP32-P4 boards ESP-KVM runs on, the HDMI capture boards that feed
+        them, and printed cases. "Untested" means built from the vendor's
+        schematic and not yet run by anyone.
+      </p>
+
+      <h2 class="cat-head" id="devices">ESP32-P4 boards <span class="cat-count" id="cat-count">{n}</span></h2>
+      <div class="cat-filters" id="cat-filters" hidden>{buttons}</div>
+      <div class="cat-grid" id="cat-devices">
+{devices}
+      </div>
+
+      <h2 class="cat-head" id="capture">HDMI capture <span class="cat-count">{n_capture}</span></h2>
+      <div class="cat-grid">
+{capture}
+      </div>
+
+      <h2 class="cat-head" id="cases">Cases <span class="cat-count">{n_cases}</span></h2>
+      <div class="cat-grid">
+{cases}
+      </div>
+
+      <p class="cat-note">
+        Not the board you have? <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">Open an issue</a>
+        with a link to its schematic. Printed a case? Post it in
+        <a href="https://github.com/orgs/espkvm/discussions" rel="noopener">Discussions</a>.
+      </p>
+    </article>
+    <script>
+      (function () {{
+        var bar = document.getElementById("cat-filters"),
+          grid = document.getElementById("cat-devices"),
+          count = document.getElementById("cat-count");
+        if (!bar || !grid) return;
+        bar.hidden = false;
+        bar.addEventListener("click", function (e) {{
+          var b = e.target.closest("button");
+          if (!b) return;
+          var f = b.dataset.filter, shown = 0;
+          bar.querySelectorAll("button").forEach(function (x) {{
+            x.setAttribute("aria-pressed", String(x === b));
+          }});
+          grid.querySelectorAll(".cat-card").forEach(function (c) {{
+            var on = f === "all" || (" " + c.dataset.f + " ").indexOf(" " + f + " ") >= 0;
+            c.hidden = !on;
+            if (on) shown++;
+          }});
+          count.textContent = shown;
+        }});
+      }})();
+    </script>
+""".format(n=len(devices), buttons=buttons, devices=tiles(devices),
+           n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
+           n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
+
+    return render_page(shell, {
+        "title": "Supported boards and cases - ESP-KVM, an open-source ESP32-P4 IP-KVM",
+        "og_title": "ESP-KVM boards and cases",
+        "description": "The ESP32-P4 boards ESP-KVM runs on, which ones have been run on "
+                       "hardware, the HDMI capture boards and printed cases for them.",
+        "canonical": SITE + "/boards/",
+        "og_type": "website",
+    }, content)
+
+
+def write_catalog(shell, catalog):
+    import shutil
+    for item in catalog["all"]:
+        out = os.path.join(ROOT, item["section"], item["id"])
+        os.makedirs(out, exist_ok=True)
+        for name in os.listdir(item["folder"]):
+            if name != "index.md":
+                shutil.copy2(os.path.join(item["folder"], name), os.path.join(out, name))
+        write(os.path.join(out, "index.html"), item_page(shell, item, catalog))
+    write(os.path.join(ROOT, "boards", "index.html"), catalog_page(shell, catalog))
+
+
 # ---------------------------------------------------------------- page shell
 
 def read_partial(name):
@@ -202,7 +626,7 @@ def render_page(shell, meta, content, page_head=""):
 # <style> block, because rules belong in the head, and a JSON-LD block, because
 # that is where a search engine goes looking for it.
 
-def build_pages(shell):
+def build_pages(shell, catalog):
     written = []
     for name in sorted(os.listdir(PAGES_DIR)):
         if not name.endswith(".html"):
@@ -226,6 +650,7 @@ def build_pages(shell):
         url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
         # A page asks for a share row by leaving this comment where it goes.
         body = body.replace("<!-- share -->", share_links(SITE + url, meta["title"]))
+        body = fill_catalog(body, catalog)
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
@@ -722,12 +1147,17 @@ def page_urls(pages):
     return urls
 
 
-def sitemap(posts, tags=None, pages=None):
+def sitemap(posts, tags=None, pages=None, catalog=None):
     entries = "".join(
         "  <url>\n    <loc>%s%s</loc>\n    <priority>%s</priority>\n  </url>\n"
         % (SITE, path, priority)
         for path, priority in page_urls(pages)
     )
+    if catalog:
+        entries += "  <url>\n    <loc>%s/boards/</loc>\n    <priority>0.8</priority>\n  </url>\n" % SITE
+        entries += "".join(
+            "  <url>\n    <loc>%s%s</loc>\n    <priority>0.7</priority>\n  </url>\n"
+            % (SITE, item["url"]) for item in catalog["all"])
     entries += "".join(
         "  <url>\n    <loc>%s/blog/%s/</loc>\n    <lastmod>%s</lastmod>\n"
         "    <priority>0.6</priority>\n  </url>\n"
@@ -763,7 +1193,9 @@ def main():
     posts = read_posts(args.drafts)
     shell = load_shell()
 
-    pages = build_pages(shell)
+    catalog = read_catalog()
+    pages = build_pages(shell, catalog)
+    write_catalog(shell, catalog)
 
     for post in posts:
         write(os.path.join(OUT_DIR, post["slug"], "index.html"),
@@ -778,11 +1210,13 @@ def main():
     write(os.path.join(OUT_DIR, "index.html"),
           index_page(shell, posts, all_tags=tags))
     write(os.path.join(OUT_DIR, "feed.xml"), feed(posts))
-    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags, pages))
+    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags, pages, catalog))
 
     print("pages:")
     for output in pages:
         print("  /%s" % output)
+    print("catalog: %d boards, %d cases" % (
+        len(catalog["all"]) - len(catalog["cases"]), len(catalog["cases"])))
     print("blog: %d post%s, %d tag%s"
           % (len(posts), "" if len(posts) == 1 else "s",
              len(tags), "" if len(tags) == 1 else "s"))
