@@ -452,7 +452,7 @@ output: index.html
 
         <p class="note" style="margin-top: 20px">
           <strong>Virtual media, honestly.</strong> Images live on a microSD
-          card, FAT32 or exFAT, up to 4&nbsp;GB each, and the console uploads them.
+          card, FAT32 or exFAT (on exFAT an image can be over 4&nbsp;GB), and the console uploads them.
           How fast the card runs depends on the board, and the device finds that
           out per card. On the Function EV and the P4-ETH the card runs at
           40&nbsp;MHz: it reads at about 8.5&nbsp;MB/s, and an upload over Ethernet
@@ -954,8 +954,9 @@ output: index.html
               <p>
                 A display board (4.3&Prime; MIPI-DSI touch, unused by the KVM) that
                 also carries Ethernet and an ESP32-C6; 32&nbsp;MB PSRAM, 16&nbsp;MB
-                flash. Two USB-C ports &mdash; the target goes on the OTG-HS one. A
-                contributor confirmed capture, USB and Ethernet (on pre-3.0 silicon).
+                flash. Two USB-C ports &mdash; the target goes on the OTG-HS one, and
+                the capture board&rsquo;s ribbon goes into <strong>J3</strong>, not J2.
+                A contributor confirmed capture, USB and Ethernet (on pre-3.0 silicon).
               </p>
             </div>
           </div>
