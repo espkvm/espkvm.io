@@ -48,7 +48,7 @@ smoothness. A rev 3.x chip does 22-24 fps at 1080p.
 
 - The BOOT button (GPIO 35) is also an Ethernet pin, so the device reads it once, early in start-up. For the password reset: press reset, release, then hold BOOT.
 - The microSD writes at 40 MHz because the slot's power comes from the chip's LDO 4.
-- Waveshare ships rev 1.3 today, and the product code does not tell the revision. The boot log prints `Chip rev:`.
+- Waveshare ships rev 1.3 today, and the product code does not tell the revision. The boot log prints `chip revision:`.
 
 Another ESP32-P4 board with Ethernet and the same camera connector can run it
 too. The pins are set in

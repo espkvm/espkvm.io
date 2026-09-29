@@ -381,8 +381,8 @@ def rev_note(item):
     if "rev 1" not in chip or "rev 3" not in chip:
         return ""
     return ('<p class="board-revnote"><strong>Which revision?</strong> Read the chip: '
-            "<strong>ESP32-P4NRW32X</strong> or <strong>P4NRW16X</strong>, with an X at "
-            "the end, is rev 3.x; <strong>ESP32-P4NRW32</strong> without it is rev 1.x. "
+            "<strong>ESP32-P4NRW32X</strong>, with an X at the end, is rev 3.x; "
+            "<strong>ESP32-P4NRW32</strong> without it is rev 1.x. "
             "The product code does not tell. "
             '<a href="/#faq">More in the FAQ</a>.</p>')
 
@@ -575,6 +575,8 @@ def catalog_page(shell, catalog):
 # "-POE-ETH" is the PoE board, so a trailing hyphen or letter rules a match out.
 BOARD_NAMES = [
     (r"(?:Waveshare )?(?:ESP32-P4-)?NANO-WIFI6-DB", "p4-nano-wifi6-db"),
+    (r"(?:Espressif )?ESP32-P4X-C5[- ]Function[- ]EV(?:[- ]Board)?", "funcev-c5"),
+    (r"(?:Waveshare )?ESP32-P4-WIFI6-DB", "p4-wifi6-db"),
     (r"(?:Waveshare )?(?:ESP32-P4-)?WIFI6-POE-ETH", "p4-poe"),
     (r"(?:Waveshare )?(?:ESP32-P4-)?WIFI6-DEV-KIT", "p4-wifi6-devkit"),
     (r"(?:Waveshare )?(?:ESP32-P4-)?Module-DEV-KIT", "p4-module-devkit"),

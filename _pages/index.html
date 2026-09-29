@@ -515,18 +515,29 @@ output: index.html
           <div class="prose">
             <p>
               Look at the marking on the ESP32-P4 itself, or on the lid of the
-              module it sits in. <strong>ESP32-P4NRW32X</strong> or
-              <strong>ESP32-P4NRW16X</strong> &mdash; an <strong>X</strong> at the
-              end &mdash; is revision 3.x. <strong>ESP32-P4NRW32</strong> without
-              the X is revision 1.x. The same board can come with either: the
-              product code does not tell, so check the chip, or ask the seller.
+              module it sits in. <strong>ESP32-P4NRW32X</strong> &mdash; an
+              <strong>X</strong> at the end &mdash; is revision 3.x.
+              <strong>ESP32-P4NRW32</strong> without the X is revision 1.x. On the chip
+              itself, Espressif put the revision in the manufacturing code: its second
+              character is <strong>C</strong> for v1.0, <strong>E</strong> for v1.3,
+              and <strong>F</strong>, <strong>G</strong>, <strong>H</strong> for v3.0,
+              v3.1, v3.2
+              (<a href="https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32p4/01-chip-identification/index.html" rel="noopener">their table</a>).
+              The same board can come with either: the product code does not tell,
+              so check the chip, or ask the seller.
+            </p>
+            <p>
+              The number in the part name is the PSRAM in megabytes. ESP-KVM is built
+              for 32; an <strong>NRW16</strong> or <strong>NRW16X</strong> chip has 16,
+              and nobody has tried the firmware on one.
             </p>
             <p>
               It matters for two reasons. An image built for one revision does not
               start on the other, so the flasher asks which one you have (a wrong
               pick damages nothing; flash the other one). And revision 3.x is much
-              faster at H.264: about 22-24&nbsp;fps at 1080p against 5-7. Once the
-              firmware runs, the boot log prints it as <code>Chip rev:</code>.
+              faster at H.264: about 22-24&nbsp;fps at 1080p against 5-7. The boot log of
+              any ESP-IDF firmware says it too, as <code>chip revision: v3.1</code>
+              &mdash; the <a href="/serial/">serial monitor</a> here shows it.
             </p>
           </div>
         </details>
@@ -617,6 +628,29 @@ output: index.html
               co-processor), so if Espressif ever ships a P-series successor with the
               radio built in, that would be the dream chip for this &mdash; but for now
               the P4 is the one with the CSI-2 + H.264 combination it needs.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>How do I update the firmware?</summary>
+          <div class="prose">
+            <p>
+              From the console, over the network. Turn on
+              <strong>Settings &rarr; System &rarr; Offer firmware updates</strong>
+              &mdash; it is off by default &mdash; and the console tells you when a
+              newer build is published and installs it in one click. Your browser
+              does the checking and the download; the device itself never reaches
+              the internet. An update that fails to start rolls back to the version
+              that worked.
+            </p>
+            <p>
+              To go back to an older release, turn on <strong>Let the device fetch
+              releases itself</strong> in the same place; that one does let the
+              device talk to GitHub, which is why it is off too. Or download that
+              release&rsquo;s <code>-merged.bin</code> for your board from
+              <a href="https://github.com/espkvm/espkvm/releases">GitHub</a> and
+              flash it over USB: the <a href="/flash/">web flasher</a> takes a file
+              under &ldquo;Install another version from a file&rdquo;.
             </p>
           </div>
         </details>

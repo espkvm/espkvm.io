@@ -26,5 +26,5 @@ Wi-Fi on rev 3.1.
 - The OTG port is a USB-A socket that drives its own 5 V.
 - So the lead to the target is an **A-to-A cable with the 5 V wire cut**. A plain A-to-A cable joins two 5 V supplies.
 
-It ships as either chip revision under one product code; check `Chip rev:` in
+It ships as either chip revision under one product code; check `chip revision:` in
 the boot log and pick the image to match.

@@ -17,7 +17,7 @@ one yet - the same footing the NANO and Guition targets started from.
 silicon, and neither will start on the other's image, because the header carries
 both a minimum and a maximum revision. A product code does not tell you which
 chip is in the box. So both are published: `p4-eth` and `p4-eth-rev3`, `p4-poe`
-and `p4-poe-rev3`. Check the boot log, which prints `Chip rev:`. On rev 3.x you
+and `p4-poe-rev3`. Check the boot log, which prints `chip revision:`. On rev 3.x you
 also get the faster capture path and a writable microSD card.
 
 The round LCD's pins default per board now, instead of five numbers that were

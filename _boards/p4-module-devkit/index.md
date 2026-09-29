@@ -7,7 +7,7 @@ role: Not tested on hardware
 summary: The P4, an ESP32-C6 and flash in one module, on a carrier with Ethernet and a card slot.
 flasher: p4-module-devkit
 capture: c790, waveshare-19137
-spec.Chip: ESP32-P4, rev 1.x
+spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-A (jumper; A-to-A cable, 5 V wire cut)

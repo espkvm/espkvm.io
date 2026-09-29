@@ -28,5 +28,5 @@ with the `p4-poe-rev3` image, through Waveshare's HDMI to CSI adapter: 1080p ove
 H.264 at 23 fps ([#51](https://github.com/espkvm/espkvm/issues/51)).
 
 Waveshare said in August 2026 that these ship rev 1.3, but the one tested was
-rev 3.x. **Check the boot log before flashing**: it prints `Chip rev:`. The
+rev 3.x. **Check the boot log before flashing**: it prints `chip revision:`. The
 pre-3.0 image has not been run on this board yet.
