@@ -14,8 +14,8 @@ have a card slot, and I did not know how they were wired.
 
 I read the schematics. On the NANO, the NANO-WIFI6-DB, the WIFI6, the
 WIFI6-DEV-KIT, the Module-DEV-KIT, the WIFI6-POE-ETH, the Guition M3-Dev, the
-FireBeetle 2 and the VIEWE P4-Pi, the slot's pins are fed from the chip's LDO 4
-- the same as on the Function EV and the P4-ETH. So they all start at 40 MHz
+FireBeetle 2 and the VIEWE P4-Pi, the slot's pins are fed from the chip's LDO 4 -
+the same as on the Function EV and the P4-ETH. So they all start at 40 MHz
 now, and the ones with a rev 1.3 chip can write the card as well.
 
 I have not run this on any of those nine. A schematic is not a measurement. But

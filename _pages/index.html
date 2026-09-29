@@ -511,6 +511,26 @@ output: index.html
           </div>
         </details>
         <details class="faq-item">
+          <summary>Which chip revision does my board have?</summary>
+          <div class="prose">
+            <p>
+              Look at the marking on the ESP32-P4 itself, or on the lid of the
+              module it sits in. <strong>ESP32-P4NRW32X</strong> or
+              <strong>ESP32-P4NRW16X</strong> &mdash; an <strong>X</strong> at the
+              end &mdash; is revision 3.x. <strong>ESP32-P4NRW32</strong> without
+              the X is revision 1.x. The same board can come with either: the
+              product code does not tell, so check the chip, or ask the seller.
+            </p>
+            <p>
+              It matters for two reasons. An image built for one revision does not
+              start on the other, so the flasher asks which one you have (a wrong
+              pick damages nothing; flash the other one). And revision 3.x is much
+              faster at H.264: about 22-24&nbsp;fps at 1080p against 5-7. Once the
+              firmware runs, the boot log prints it as <code>Chip rev:</code>.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item">
           <summary>What USB cable connects the device to the target (Waveshare ESP32-P4-ETH)?</summary>
           <div class="prose">
             <p>

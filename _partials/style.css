@@ -976,6 +976,11 @@
         margin-left: 6px;
         font-weight: 500;
       }
+      .board-revnote {
+        margin: 12px 0 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
       .board-credit {
         color: var(--faint);
         font-size: 13px;

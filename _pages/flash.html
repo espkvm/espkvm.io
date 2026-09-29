@@ -439,7 +439,7 @@ output: flash/index.html
       const UNTESTED_NOTE =
         "Nobody has run this firmware on this board. It was configured from the vendor's schematic: the pins should be right, the image builds and boots in theory, and that is all anyone can promise. It cannot damage the board - the worst case is an image that does not start, which a reflash undoes. Tell us how it goes either way.";
       const REV_NOTE =
-        "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. Almost every board on sale today is rev 1.x - pick rev 3.x only if you know yours is. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
+        "The ESP32-P4 comes in two silicon revisions and an image for one will not start on the other. To tell which you have, read the marking on the chip (or on the module's lid): ESP32-P4NRW32X or P4NRW16X, with an X at the end, is rev 3.x; ESP32-P4NRW32 without the X is rev 1.x. If you cannot read it, pick rev 1.x. A board flashed with the wrong one stays dark until the other image is installed; nothing is damaged.";
 
       // Every board's photo from the site's own catalog (_boards/), filled in by
       // the site build, so a board added there shows its picture here too.

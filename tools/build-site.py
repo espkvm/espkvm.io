@@ -374,6 +374,19 @@ def spec_table(item):
                 for k, v in rows))
 
 
+def rev_note(item):
+    """For a board sold with either chip revision: how to tell which one it has
+    before choosing an image."""
+    chip = dict(item["specs"]).get("Chip", "")
+    if "rev 1" not in chip or "rev 3" not in chip:
+        return ""
+    return ('<p class="board-revnote"><strong>Which revision?</strong> Read the chip: '
+            "<strong>ESP32-P4NRW32X</strong> or <strong>P4NRW16X</strong>, with an X at "
+            "the end, is rev 3.x; <strong>ESP32-P4NRW32</strong> without it is rev 1.x. "
+            "The product code does not tell. "
+            '<a href="/#faq">More in the FAQ</a>.</p>')
+
+
 def item_page(shell, item, catalog):
     m = item["meta"]
     kind = m.get("kind")
@@ -448,6 +461,7 @@ def item_page(shell, item, catalog):
           <h1>{title}</h1>
           <p class="lead">{summary}</p>
           {specs}
+          {revnote}
           <p class="board-actions">{actions}</p>
           {credit}
         </div>
@@ -460,8 +474,11 @@ def item_page(shell, item, catalog):
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
            role=html.escape(role), title=html.escape(m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),
+           revnote=rev_note(item),
            actions=" ".join(actions), credit=credit,
-           body=render_markdown(item["body"], item["path"]), extra=extra)
+           body=link_boards(render_markdown(item["body"], item["path"]),
+                            set(catalog["by_id"]), skip={item["id"]}),
+           extra=extra)
 
     what = "an IP-KVM" if kind == "device" else ("capture for an IP-KVM" if kind == "capture"
                                                  else "a case for an IP-KVM")
@@ -550,6 +567,73 @@ def catalog_page(shell, catalog):
         "canonical": SITE + "/boards/",
         "og_type": "website",
     }, content)
+
+
+# Board names as they are written in posts and pages, and the page each one
+# means. Longest first: "ESP32-P4-NANO-WIFI6-DB" must not become a link to the
+# NANO. A name only counts as a whole name - "ESP32-P4-WIFI6" followed by
+# "-POE-ETH" is the PoE board, so a trailing hyphen or letter rules a match out.
+BOARD_NAMES = [
+    (r"(?:Waveshare )?(?:ESP32-P4-)?NANO-WIFI6-DB", "p4-nano-wifi6-db"),
+    (r"(?:Waveshare )?(?:ESP32-P4-)?WIFI6-POE-ETH", "p4-poe"),
+    (r"(?:Waveshare )?(?:ESP32-P4-)?WIFI6-DEV-KIT", "p4-wifi6-devkit"),
+    (r"(?:Waveshare )?(?:ESP32-P4-)?Module-DEV-KIT", "p4-module-devkit"),
+    (r"(?:Waveshare )?(?:ESP32-P4-)?WIFI6", "p4-wifi6"),
+    (r"(?:Waveshare )?(?:ESP32-P4-)?NANO", "p4-nano"),
+    (r"(?:Waveshare )?(?:ESP32-)?P4-ETH", "p4-eth"),
+    (r"(?:Espressif )?(?:ESP32-P4X? )?Function EV(?: Board)?", "funcev"),
+    (r"Guition (?:ESP32-P4-)?M3-Dev", "p4-guition"),
+    (r"(?:DFRobot )?FireBeetle 2(?: ESP32-P4)?", "firebeetle2-p4"),
+    (r"(?:VIEWE )?ESP32-P4-Pi", "viewe-p4-pi"),
+    (r"(?:M5Stack )?(?:Unit )?PoE-P4X", "m5-poe-p4x"),
+    (r"(?:M5Stack )?(?:Unit )?PoE-P4", "m5-poe-p4"),
+    (r"(?:Geekworm )?C790", "c790"),
+    (r"(?:Waveshare )?HDMI to CSI Adapter", "waveshare-19137"),
+    (r"(?:M5Stack )?Add-on Display In", "m5-addon-display-in"),
+]
+BOARD_NAME_RE = re.compile(
+    r"(?<![\w-])(?:%s)(?![\w-])" % "|".join("(%s)" % p for p, _ in BOARD_NAMES))
+# Text inside these is never linked: a link inside a link is invalid, and a
+# heading, code or a script should read exactly as written.
+NO_LINK_TAGS = {"a", "h1", "h2", "h3", "h4", "h5", "h6", "code", "pre", "script",
+                "style", "title", "button", "label", "select", "option", "textarea",
+                "summary", "th"}
+
+
+def link_boards(body, known, skip=()):
+    """Link the first mention of each board to its page. `known` is the set of
+    board ids that have a page; `skip` holds ids not to link (the page's own)."""
+    done = set(skip)
+    depth = []
+    out = []
+    for part in re.split(r"(<[^>]+>)", body):
+        if part.startswith("<"):
+            m = re.match(r"<(/?)([a-zA-Z][a-zA-Z0-9]*)", part)
+            if m:
+                tag = m.group(2).lower()
+                if tag in NO_LINK_TAGS and not part.endswith("/>"):
+                    if m.group(1):
+                        if tag in depth:
+                            depth.reverse()
+                            depth.remove(tag)
+                            depth.reverse()
+                    else:
+                        depth.append(tag)
+            out.append(part)
+            continue
+        if depth or not part.strip():
+            out.append(part)
+            continue
+
+        def swap(match):
+            idx = next(i for i, g in enumerate(match.groups()) if g is not None)
+            bid = BOARD_NAMES[idx][1]
+            if bid in done or bid not in known:
+                return match.group(0)
+            done.add(bid)
+            return '<a href="/boards/%s/">%s</a>' % (bid, match.group(0))
+        out.append(BOARD_NAME_RE.sub(swap, part))
+    return "".join(out)
 
 
 def write_catalog(shell, catalog):
@@ -651,6 +735,7 @@ def build_pages(shell, catalog):
         # A page asks for a share row by leaving this comment where it goes.
         body = body.replace("<!-- share -->", share_links(SITE + url, meta["title"]))
         body = fill_catalog(body, catalog)
+        body = link_boards(body, set(catalog["by_id"]))
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
@@ -907,7 +992,7 @@ def share_links(url, text):
             % (items, html.escape(url)))
 
 
-def post_page(shell, post):
+def post_page(shell, post, known=frozenset()):
     hero = ""
     if post["image"]:
         hero = ('<figure class="post-hero"><img src="%s" alt="" loading="lazy" />'
@@ -946,7 +1031,7 @@ def post_page(shell, post):
         human=human_date(post["date"]),
         hero=hero,
         tags=tag_links(post["tags"]),
-        body=render_markdown(post["body"], post["path"]),
+        body=link_boards(render_markdown(post["body"], post["path"]), known),
         share=share_links("%s/blog/%s/" % (SITE, post["slug"]), post["title"] + " - ESP-KVM"),
     )
 
@@ -1199,7 +1284,7 @@ def main():
 
     for post in posts:
         write(os.path.join(OUT_DIR, post["slug"], "index.html"),
-              post_page(shell, post))
+              post_page(shell, post, set(catalog["by_id"])))
         write_redirects(post["redirect_from"], "/blog/%s/" % post["slug"])
 
     tags = tags_index(posts)
