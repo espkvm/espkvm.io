@@ -706,9 +706,11 @@ output: index.html
             <p>
               One thing worth checking with the schematic rather than a product
               photo: <strong>which</strong> camera connector. The 15-pin, 1.0&nbsp;mm
-              one is the Raspberry&nbsp;Pi camera connector, and the ribbon that
-              comes with a C790 plugs into it as it is. The 22-pin, 0.5&nbsp;mm one
-              carries the same signals but needs an adapter ribbon. And on either,
+              one is the Raspberry&nbsp;Pi 4 camera connector; the 22-pin, 0.5&nbsp;mm
+              one (on the P4-ETH, for one) is the Pi&nbsp;5 kind and carries the same
+              signals. The C790 has both and comes with a ribbon for each; a capture
+              board with only the 15-pin one needs an adapter ribbon for a 22-pin
+              board. And on either,
               3.3&nbsp;V and a 3.3&nbsp;V I2C have to be on the connector.
             </p>
             <p>
@@ -956,7 +958,7 @@ output: index.html
         </div>
 
         <h3 class="hw-head">The capture board</h3>
-        <p class="hw-lead">Turns the target's HDMI into a camera stream the ESP32-P4 reads. The two TC358743 boards fit every board above with the 15-pin camera connector; M5Stack's module fits only its own PoE-P4 units.</p>
+        <p class="hw-lead">Turns the target's HDMI into a camera stream the ESP32-P4 reads. The C790 has both camera connectors, 15-pin and 22-pin, and fits every board above; Waveshare's adapter has only the 15-pin one, so the P4-ETH (22-pin) needs an adapter ribbon for it. M5Stack's module fits only its own PoE-P4 units.</p>
         <div class="cat-grid">
 <!-- catalog:capture -->
         </div>
