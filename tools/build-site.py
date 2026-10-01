@@ -1265,7 +1265,31 @@ def sitemap(posts, tags=None, pages=None, catalog=None):
 
 # ---------------------------------------------------------------- main
 
+# Links that leave the site open in a new tab, so the page they came from stays
+# where it was. Scripts are left alone: links they build are theirs to mark.
+OWN_HOSTS = ("espkvm.io", "www.espkvm.io")
+EXT_LINK = re.compile(r'<a\b([^>]*?)\bhref="https?://([^/"?#:]+)[^"]*"[^>]*>')
+SCRIPT = re.compile(r"(<script\b.*?</script>)", re.S)
+
+
+def mark_external(html):
+    def one(m):
+        tag = m.group(0)
+        if m.group(2).lower() in OWN_HOSTS or "target=" in tag:
+            return tag
+        rel = re.search(r'\brel="([^"]*)"', tag)
+        if rel:
+            if "noopener" not in rel.group(1).split():
+                tag = tag.replace(rel.group(0), 'rel="%s noopener"' % rel.group(1))
+            return tag[:-1] + ' target="_blank">'
+        return tag[:-1] + ' target="_blank" rel="noopener">'
+    parts = SCRIPT.split(html)
+    return "".join(p if i % 2 else EXT_LINK.sub(one, p) for i, p in enumerate(parts))
+
+
 def write(path, text):
+    if path.endswith(".html"):
+        text = mark_external(text)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(text)

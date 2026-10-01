@@ -75,6 +75,10 @@ output: index.html
         <p class="hero-star">
           <a href="https://github.com/espkvm/espkvm" rel="noopener"><img
             src="assets/star-on-github.svg" width="127" height="44" alt="Star us on GitHub"></a>
+          <a href="https://www.producthunt.com/products/esp-kvm?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-esp-kvm"
+            rel="noopener noreferrer"><img
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1266650&amp;theme=dark&amp;t=1790857313780"
+            width="204" height="44" alt="ESP-KVM on Product Hunt"></a>
         </p>
       </header>
 
@@ -1243,6 +1247,7 @@ output: index.html
         a.className = "btn btn-sm";
         a.href = href;
         a.rel = "noopener";
+        a.target = "_blank";
         a.textContent = text;
         return a;
       }
@@ -1258,6 +1263,7 @@ output: index.html
             a.href = c.html_url;
             a.title = c.login;
             a.rel = "noopener";
+            a.target = "_blank";
             var img = document.createElement("img");
             img.src = c.avatar_url + "&s=80";
             img.width = img.height = 40;

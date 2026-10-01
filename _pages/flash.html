@@ -746,6 +746,7 @@ output: flash/index.html
         ask.className = "board-card board-card-add";
         ask.href = "https://github.com/espkvm/espkvm/issues/new";
         ask.rel = "noopener";
+        ask.target = "_blank";
         ask.addEventListener("click", () => track("flash_board_request"));
         const askImg = document.createElement("img");
         askImg.src = "../assets/board-add.svg";
