@@ -20,6 +20,7 @@ them are committed.
 
 import argparse
 import html
+import json
 import os
 import re
 import sys
@@ -482,6 +483,10 @@ def item_page(shell, item, catalog):
 
     what = "an IP-KVM" if kind == "device" else ("capture for an IP-KVM" if kind == "capture"
                                                  else "a case for an IP-KVM")
+    section = (("Cases", SITE + "/boards/#cases") if item["section"] == "cases"
+               else ("Boards", SITE + "/boards/"))
+    ld = json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), section,
+                             (html.unescape(m["title"]), SITE + item["url"])))
     return render_page(shell, {
         "title": "%s - %s with ESP-KVM" % (m["title"], what),
         "og_title": m["title"],
@@ -490,7 +495,7 @@ def item_page(shell, item, catalog):
         "image": SITE + item["photo"],
         "image_alt": m["title"],
         "og_type": "article",
-    }, content)
+    }, content, ld)
 
 
 def catalog_page(shell, catalog):
@@ -566,7 +571,7 @@ def catalog_page(shell, catalog):
                        "hardware, the HDMI capture boards and printed cases for them.",
         "canonical": SITE + "/boards/",
         "og_type": "website",
-    }, content)
+    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"))))
 
 
 # Board names as they are written in posts and pages, and the page each one
@@ -667,6 +672,39 @@ def load_shell():
         "nav": read_partial("nav.html"),
         "footer": read_partial("footer.html"),
     }
+
+
+
+# ---------------------------------------------------------------- search
+
+# A release post's title leads with its version, and nobody searches for a
+# version number: the tab and the search result lead with the subject instead.
+VERSION_LEAD = re.compile(r"^(\d+\.\d+\.\d+(?:\s*(?:to|and|,)\s*\d+\.\d+\.\d+)*)\s+-\s+(.+)$")
+
+
+def post_title_tag(title):
+    m = VERSION_LEAD.match(title)
+    if m:
+        return "%s - ESP-KVM %s" % (m.group(2), m.group(1))
+    return "%s - ESP-KVM" % title
+
+
+def json_ld(*objs):
+    """Structured data for search engines, one <script> per object."""
+    return "".join(
+        '    <script type="application/ld+json">%s</script>\n'
+        % json.dumps(dict({"@context": "https://schema.org"}, **o), ensure_ascii=False)
+        .replace("</", "<\\/") for o in objs)
+
+
+def breadcrumbs(*crumbs):
+    return {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": name, "item": url}
+        for i, (name, url) in enumerate(crumbs)]}
+
+
+PUBLISHER = {"@type": "Organization", "name": "ESP-KVM", "url": SITE + "/",
+             "logo": {"@type": "ImageObject", "url": SITE + "/assets/icon-192.png"}}
 
 
 def safe(text):
@@ -1037,14 +1075,25 @@ def post_page(shell, post, known=frozenset()):
         share=share_links("%s/blog/%s/" % (SITE, post["slug"]), post["title"] + " - ESP-KVM"),
     )
 
+    url = "%s/blog/%s/" % (SITE, post["slug"])
+    image = SITE + post["thumb"] if post["thumb"].startswith("/") else ""
+    plain_title = html.unescape(re.sub(r"<[^>]+>", "", post["title"]))
+    ld = json_ld(
+        {"@type": "BlogPosting", "headline": plain_title,
+         "description": html.unescape(post["description"]),
+         "datePublished": post["date"].strftime("%Y-%m-%d"),
+         "url": url, "mainEntityOfPage": url, "image": image or OG_IMAGE,
+         "author": PUBLISHER, "publisher": PUBLISHER,
+         "keywords": ", ".join(post["tags"])},
+        breadcrumbs(("ESP-KVM", SITE + "/"), ("Blog", SITE + "/blog/"), (plain_title, url)))
     return render_page(shell, {
-        "title": "%s - ESP-KVM" % post["title"],
+        "title": post_title_tag(post["title"]),
         "og_title": post["title"],
         "description": post["description"],
-        "canonical": "%s/blog/%s/" % (SITE, post["slug"]),
-        "image": SITE + post["thumb"] if post["thumb"].startswith("/") else "",
+        "canonical": url,
+        "image": image,
         "og_type": "article",
-    }, content)
+    }, content, ld)
 
 
 def index_page(shell, posts, tag=None, all_tags=None):
