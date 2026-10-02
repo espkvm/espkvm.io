@@ -1,10 +1,16 @@
 ---
-title: When remote desktop cannot help: what an IP-KVM is, and why you might want one
+title: What is an IP-KVM? Remote control of a computer from the BIOS up
 description: Remote desktop needs the computer to be working. An IP-KVM does not. It is a small box on the computer's video and USB, and it gives you the screen, the keyboard and the mouse in a browser - even when the computer is stuck, empty or switched off.
 tags: explainer, hardware
 date: 2026-09-07
 image:
 ---
+
+**An IP-KVM is a small box that gives you another computer's screen, keyboard
+and mouse over the network, in a browser.** It plugs into the computer's video
+output and a USB port, so nothing has to be installed on the computer, and it
+keeps working when remote desktop cannot: in the BIOS, at a boot menu, on a
+machine that does not start, or with no operating system at all.
 
 Most people know remote desktop. You sit at one computer and see the screen of
 another one. It is very useful. It also has one weak point: the far computer

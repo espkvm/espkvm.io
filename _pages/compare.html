@@ -1,5 +1,5 @@
 ---
-title: ESP-KVM vs PiKVM, JetKVM, NanoKVM and GL.iNet Comet - an honest IP-KVM comparison
+title: PiKVM vs JetKVM vs NanoKVM vs ESP-KVM - an honest IP-KVM comparison
 description: How an open-source IP-KVM with no Linux - firmware on an ESP32-P4 microcontroller - compares with PiKVM, JetKVM, JetKVM Mini, Sipeed NanoKVM and GL.iNet Comet - what each does better, and when to pick something else.
 canonical: https://espkvm.io/compare/
 og_type: article
@@ -180,7 +180,7 @@ output: compare/index.html
     {
       "@type": "Question",
       "name": "How is ESP-KVM different from JetKVM Mini?",
-      "acceptedAnswer": { "@type": "Answer", "text": "They use the same ESP32-P4 chip. JetKVM Mini is a finished product announced in September 2026, with its firmware promised to be open. ESP-KVM is open-source firmware available today for a dozen off-the-shelf ESP32-P4 boards that you connect to an HDMI capture board yourself." }
+      "acceptedAnswer": { "@type": "Answer", "text": "They use the same ESP32-P4 chip. JetKVM Mini is a finished product announced in September 2026, with its firmware promised to be open. ESP-KVM is open-source firmware available today for fifteen off-the-shelf ESP32-P4 boards that you connect to an HDMI capture board yourself." }
     },
     {
       "@type": "Question",
@@ -264,7 +264,7 @@ output: compare/index.html
         </tr>
         <tr>
           <td>What you get</td>
-          <td class="us win">Firmware for <a href="/#boards">a dozen off-the-shelf boards</a> from several makers (six run on hardware so far), plus an HDMI capture board you connect</td>
+          <td class="us win">Firmware for <a href="/boards/">fifteen off-the-shelf boards</a> from several makers (nine run on hardware so far), plus an HDMI capture board you connect</td>
           <td>Finished appliance</td>
           <td>Finished appliance</td>
           <td>Finished appliance, shipping from late October 2026</td>
@@ -365,9 +365,22 @@ output: compare/index.html
     <li><strong>No vendor cloud, ever.</strong> Tailscale and WireGuard run inside the firmware: the device joins your own tailnet and is reached directly. There is no account with me to create and no service of mine in the path - nothing that can be switched off, changed or bought out from under you. Several others build remote access around their own service: JetKVM's goes through JetKVM Cloud with a Google sign-in, GL.iNet has its own cloud and app. Both are optional, and JetKVM's cloud is open source and can be self-hosted.</li>
     <li><strong>Nothing to administer.</strong> No Linux, no package updates, no operating system on an SD card. It is ready about 15 seconds after power-on and does one job.</li>
     <li><strong>Automation on the device.</strong> Runbooks wait for words on a text screen (<code>wait Press F2</code>) and press keys, on the device itself, with the browser closed. The device can watch a BIOS or console for phrases while nobody is looking. Home Assistant picks everything up by itself over MQTT.</li>
-    <li><strong>Hardware you choose.</strong> <a href="/#boards">A dozen ESP32-P4 boards</a> are supported (six of them run on hardware so far), from a small Ethernet board to PoE and Wi-Fi ones, and the M5Stack Unit PoE-P4 with its HDMI add-on. If one maker stops selling a board, another one works.</li>
+    <li><strong>Hardware you choose.</strong> <a href="/boards/">Fifteen ESP32-P4 boards</a> are supported (nine of them run on hardware so far), from a small Ethernet board to PoE and Wi-Fi ones, and the M5Stack Unit PoE-P4 with its HDMI add-on. If one maker stops selling a board, another one works.</li>
     <li><strong>Everything is open.</strong> The firmware and the web console are Apache-2.0, published and building in public CI.</li>
   </ul>
+
+  <h2>JetKVM vs PiKVM</h2>
+  <p>
+    Both are finished Linux appliances, and both do 1080p at 60 fps. PiKVM V4
+    runs on a Raspberry Pi CM4, goes up to 1920x1200, has Gigabit Ethernet and
+    Wi-Fi, includes ATX power control and reads text off the screen with OCR;
+    it is the older project with the larger community, under GPL-3.0. JetKVM
+    runs on a Rockchip chip, claims 30-60 ms of latency over H.264, has 100 Mbit
+    Ethernet, sells ATX control as an add-on, comes with its own JetKVM Cloud
+    for access from outside, and has Home Assistant built in; its code is under
+    GPL-2.0. Where ESP-KVM fits beside them: no operating system at all, at a
+    lower frame rate - see the next section.
+  </p>
 
   <h2>ESP-KVM as a PiKVM alternative</h2>
   <p>
