@@ -65,7 +65,12 @@ Key facts:
   a code a phone scans to join the rescue hotspot, and fills a ring while the
   recovery button is held. Either can be mounted upside down and turned over in
   the settings.
-- Security: HTTPS with a certificate the device issues itself, plus a login. It is
+- An optional battery-backed clock: a DS3231 module on the capture chip's I2C bus
+  (a "DS3231 for Pi" module plugs onto pins 1-9 of a Raspberry Pi header) keeps
+  the time across a restart with no network. Without one the device learns the
+  time from NTP or from a browser signing in.
+- Security: HTTPS with a certificate the device issues itself, plus a login with
+  optional two-factor sign-in (a TOTP app, with recovery codes). It is
   not meant for the public internet - keep it on a trusted network, or reach it over
   the built-in WireGuard client (split-tunnel, generates its own key).
 - Updates install over the network into a spare slot, with rollback. The console

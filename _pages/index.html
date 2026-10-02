@@ -304,8 +304,9 @@ output: index.html
             </span>
             <h3>HTTPS and a login</h3>
             <p>
-              A certificate the device issues itself on first boot, and a
-              password you can clear with the board button if you forget it.
+              A certificate the device issues itself on first boot, a
+              password you can clear with the board button if you forget it,
+              and an optional code from an authenticator app.
             </p>
           </div>
 
@@ -843,7 +844,11 @@ output: index.html
                 <td class="yes">works</td>
               </tr>
               <tr>
-                <td>HTTPS, login, physical password reset</td>
+                <td>HTTPS, login, two-factor sign-in, physical password reset</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Battery-backed clock (an optional DS3231 module)</td>
                 <td class="yes">works</td>
               </tr>
               <tr>
@@ -941,8 +946,8 @@ output: index.html
       <section id="hardware">
         <h2>What you need</h2>
         <p class="lead">
-          Two boards and three cables, plus optional modules &mdash; power control
-          and a little status display. Everything is off-the-shelf; any equivalent
+          Two boards and three cables, plus optional modules &mdash; power control,
+          a little status display and a clock. Everything is off-the-shelf; any equivalent
           works, these are the ones this project is built and tested on.
         </p>
 
@@ -990,61 +995,16 @@ output: index.html
           </div>
         </div>
 
-        <h3 class="hw-head">Status display (optional)</h3>
+        <h3 class="hw-head" id="display">Status display (optional)</h3>
         <p class="hw-lead">A small screen on the box, so you can see its address and link without opening a browser.</p>
-        <div class="hw hw-compact">
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/SSD1306.jpg" width="700" height="700" loading="lazy"
-                   alt="SSD1306/SH1106 I2C OLED module" />
-            </div>
-            <div class="hw-body">
-              <div class="role">Status display (optional)</div>
-              <h3>I2C OLED &mdash; SSD1306 / SH1106</h3>
-              <p>
-                A mono OLED on four wires, in any of its usual sizes from
-                0.96&Prime; 128&times;64 down to 0.49&Prime; 64&times;32. It shares
-                the capture chip&rsquo;s I2C bus, so it needs no pins of its own
-                &mdash; the device draws its IP, link, capture status and health
-                across a few pages, fewer of them on shorter glass. Mount it
-                either way up; the picture turns over in the settings. SSD1315
-                panels work too.
-              </p>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/m5-mini-oled.webp" width="800" height="800" loading="lazy"
-                   alt="M5Stack Mini OLED Unit, a 0.42-inch 72x40 display with a Grove connector" />
-            </div>
-            <div class="hw-body">
-              <div class="role">Status display (optional)</div>
-              <h3>M5Stack Mini OLED Unit</h3>
-              <p>
-                On the M5Stack Unit PoE-P4 this 0.42&Prime; 72&times;40 panel plugs
-                into the Grove port with the cable it comes with &mdash; nothing to
-                solder and nothing to set, since that board&rsquo;s firmware already
-                knows those pins. The Grove port is an I2C bus of its own, and any
-                board can use one: name the two pins under Settings &rarr; Display.
-              </p>
-            </div>
-          </div>
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/GC9A01.webp" width="1500" height="1500" loading="lazy"
-                   alt="GC9A01 240x240 round colour SPI LCD module" />
-            </div>
-            <div class="hw-body">
-              <div class="role">Status display (optional)</div>
-              <h3>Round LCD &mdash; GC9A01</h3>
-              <p>
-                A 1.28&Prime; 240&times;240 round colour SPI LCD, e.g. the Waveshare
-                module. Wire its SPI pins to any free GPIOs and choose them in the
-                console; the same status pages, in colour &mdash; plus the hotspot
-                join code and the recovery-button ring, which need the room.
-              </p>
-            </div>
-          </div>
+        <div class="cat-grid">
+<!-- catalog:displays -->
+        </div>
+
+        <h3 class="hw-head" id="clock">Clock (optional)</h3>
+        <p class="hw-lead">The ESP32-P4 forgets the time when it loses power, and learns it again from NTP or from a browser signing in. A battery-backed clock module keeps it, so file names on the card and two-factor codes are right after a restart with no network. A DS3231 or a PCF8563 is found by itself; a PCF85063 or PCF8523 can be named in Settings &rarr; System &rarr; Clock. A DS1307 is not supported.</p>
+        <div class="cat-grid">
+<!-- catalog:clocks -->
         </div>
 
         <h3 class="hw-head" id="cases">A case (optional)</h3>

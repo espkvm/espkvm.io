@@ -155,9 +155,16 @@ def read_posts(include_drafts):
 # boards it takes), and any number of "spec.<Label>: value" rows and
 # "link.<Label>: url" links, shown in the order written. A case takes title,
 # author, summary, boards (ids it fits), photo, photo_credit and links.
+# A module in _modules/ (a status display or a clock) takes title, kind
+# (display or clock), status, order, role, summary, photo, chip (the label on
+# its tile), boards (ids it plugs straight into), specs and links, and
+# tile_maker / tile_model when the title does not split at its first space.
 
 BOARDS_DIR = os.path.join(ROOT, "_boards")
 CASES_DIR = os.path.join(ROOT, "_cases")
+MODULES_DIR = os.path.join(ROOT, "_modules")
+MODULE_KINDS = {"display": ("Status displays", "displays", "a status display for an IP-KVM"),
+                "clock": ("Clocks", "clocks", "a clock for an IP-KVM")}
 # The firmware's own list of boards, when the two repos sit side by side. A
 # flasher id here that the firmware does not publish is a dead install button.
 FIRMWARE_BOARDS = os.path.join(os.path.dirname(ROOT), "espkvm", "boards", "boards.json")
@@ -234,7 +241,17 @@ def id_list(value):
 def read_catalog():
     boards = read_folder_items(BOARDS_DIR, "boards")
     cases = read_folder_items(CASES_DIR, "cases")
+    modules = read_folder_items(MODULES_DIR, "modules")
     ids = {b["id"] for b in boards}
+    for mod in modules:
+        m = mod["meta"]
+        if m.get("kind") not in MODULE_KINDS:
+            sys.exit("%s: kind must be one of %s" % (mod["path"], ", ".join(MODULE_KINDS)))
+        if m.get("status") not in ("tested", "untested"):
+            sys.exit("%s: status must be tested or untested" % mod["path"])
+        for b in id_list(m.get("boards")):
+            if b not in ids:
+                sys.exit("%s: boards names a board that is not in _boards/: %s" % (mod["path"], b))
     for b in boards:
         m = b["meta"]
         if m.get("kind") not in ("device", "capture"):
@@ -273,7 +290,9 @@ def read_catalog():
                             and b["meta"]["status"] == "untested"], key=key),
         "capture": sorted([b for b in boards if b["meta"]["kind"] == "capture"], key=key),
         "cases": sorted(cases, key=key),
-        "all": boards + cases,
+        "displays": sorted([m for m in modules if m["meta"]["kind"] == "display"], key=key),
+        "clocks": sorted([m for m in modules if m["meta"]["kind"] == "clock"], key=key),
+        "all": boards + cases + modules,
         "by_id": {b["id"]: b for b in boards},
     }
 
@@ -303,6 +322,8 @@ def features(item):
     elif m.get("kind") == "capture":
         if m.get("bridge"):
             out.append(("bridge", m["bridge"]))
+    elif m.get("chip"):
+        out.append(("chip", m["chip"]))
     return out
 
 
@@ -312,6 +333,8 @@ def split_title(item):
     m = item["meta"]
     if item["section"] == "cases":
         return m.get("author", ""), m["title"]
+    if m.get("tile_model"):
+        return m.get("tile_maker", ""), m["tile_model"]
     maker, _, model = m["title"].partition(" ")
     return (maker, model) if model else ("", m["title"])
 
@@ -322,7 +345,7 @@ def tile(item):
     feats = features(item)
     untested = m.get("status") == "untested"
     status = ""
-    if m.get("kind") == "device":
+    if m.get("kind") == "device" or item["section"] == "modules":
         status = ('<span class="cat-status untested">Untested</span>' if untested
                   else '<span class="cat-status">Tested</span>')
     chips = "".join('<span class="cat-chip">%s</span>' % html.escape(label)
@@ -350,7 +373,7 @@ def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
         group = match.group(1)
-        if group not in ("tested", "untested", "capture", "cases"):
+        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
     body = re.sub(r"<!-- catalog:(\w+) -->", swap, body)
@@ -367,6 +390,9 @@ def spec_table(item):
     if m.get("kind") == "device":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Built from the schematic, not run on one yet"))
+    elif item["section"] == "modules":
+        rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
+                        else "Written from the datasheet, not run on one yet"))
     if not rows:
         return ""
     return ('<div class="table-scroll"><table class="board-specs"><tbody>\n%s\n'
@@ -407,10 +433,18 @@ def item_page(shell, item, catalog):
         cases = [c for c in catalog["cases"] if item["id"] in id_list(c["meta"].get("boards"))]
         if cases:
             related.append(("Cases for it", cases))
+        mods = [x for x in catalog["displays"] + catalog["clocks"]
+                if item["id"] in id_list(x["meta"].get("boards"))]
+        if mods:
+            related.append(("Modules that fit it", mods))
     elif kind == "capture":
         users = [b for b in catalog["tested"] + catalog["untested"]
                  if item["id"] in id_list(b["meta"].get("capture"))]
         related.append(("Boards it works with", users))
+    elif item["section"] == "modules":
+        fits = [catalog["by_id"][b] for b in id_list(m.get("boards"))]
+        if fits:
+            related.append(("Fits these boards", fits))
     else:
         fits = [catalog["by_id"][b] for b in id_list(m.get("boards"))]
         related.append(("Fits", fits))
@@ -419,8 +453,14 @@ def item_page(shell, item, catalog):
         '\n      <h2 class="cat-head">%s</h2>\n      <div class="cat-grid">\n%s\n      </div>'
         % (html.escape(title), tiles(items)) for title, items in related)
 
-    back = ('<a href="/boards/#cases">&larr; All cases</a>' if item["section"] == "cases"
-            else '<a href="/boards/">&larr; All boards</a>')
+    if item["section"] == "cases":
+        back = '<a href="/boards/#cases">&larr; All cases</a>'
+    elif item["section"] == "modules":
+        back = '<a href="/boards/#%s">&larr; All %s</a>' % (
+            MODULE_KINDS[kind][1], MODULE_KINDS[kind][0].lower())
+    else:
+        back = '<a href="/boards/">&larr; All boards</a>'
+
     untested = " untested" if m.get("status") == "untested" else ""
     role = m.get("role") or ("A case by " + m["author"] if m.get("author") else "")
     credit = ('<p class="board-credit">%s</p>' % html.escape(m["photo_credit"])
@@ -440,6 +480,14 @@ def item_page(shell, item, catalog):
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
                  "mouse in your browser, from the BIOS up. The %s is the part that "
                  "brings the computer's HDMI in." % name)
+    elif item["section"] == "modules":
+        part = ("a small screen on the box that shows its address and health"
+                if kind == "display" else
+                "a battery-backed clock that keeps the time across a power cut")
+        intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
+                 "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
+                 "mouse in your browser, from the BIOS up. The %s is an optional extra: "
+                 "%s." % (name, part))
     else:
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
@@ -481,10 +529,14 @@ def item_page(shell, item, catalog):
                             set(catalog["by_id"]), skip={item["id"]}),
            extra=extra)
 
-    what = "an IP-KVM" if kind == "device" else ("capture for an IP-KVM" if kind == "capture"
-                                                 else "a case for an IP-KVM")
-    section = (("Cases", SITE + "/boards/#cases") if item["section"] == "cases"
-               else ("Boards", SITE + "/boards/"))
+    if item["section"] == "modules":
+        what = MODULE_KINDS[kind][2]
+        section = (MODULE_KINDS[kind][0], SITE + "/boards/#" + MODULE_KINDS[kind][1])
+    else:
+        what = "an IP-KVM" if kind == "device" else ("capture for an IP-KVM" if kind == "capture"
+                                                     else "a case for an IP-KVM")
+        section = (("Cases", SITE + "/boards/#cases") if item["section"] == "cases"
+                   else ("Boards", SITE + "/boards/"))
     ld = json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), section,
                              (html.unescape(m["title"]), SITE + item["url"])))
     return render_page(shell, {
@@ -511,8 +563,9 @@ def catalog_page(shell, catalog):
       <h1>Boards</h1>
       <p class="lead">
         The ESP32-P4 boards ESP-KVM runs on, the HDMI capture boards that feed
-        them, and printed cases. "Untested" means built from the vendor's
-        schematic and not yet run by anyone.
+        them, the optional status displays and clocks, and printed cases.
+        "Untested" means built from the vendor's schematic or the chip's
+        datasheet and not yet run by anyone.
       </p>
 
       <h2 class="cat-head" id="devices">ESP32-P4 boards <span class="cat-count" id="cat-count">{n}</span></h2>
@@ -524,6 +577,16 @@ def catalog_page(shell, catalog):
       <h2 class="cat-head" id="capture">HDMI capture <span class="cat-count">{n_capture}</span></h2>
       <div class="cat-grid">
 {capture}
+      </div>
+
+      <h2 class="cat-head" id="displays">Status displays <span class="cat-count">{n_displays}</span></h2>
+      <div class="cat-grid">
+{displays}
+      </div>
+
+      <h2 class="cat-head" id="clocks">Clocks <span class="cat-count">{n_clocks}</span></h2>
+      <div class="cat-grid">
+{clocks}
       </div>
 
       <h2 class="cat-head" id="cases">Cases <span class="cat-count">{n_cases}</span></h2>
@@ -562,13 +625,16 @@ def catalog_page(shell, catalog):
     </script>
 """.format(n=len(devices), buttons=buttons, devices=tiles(devices),
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
+           n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
+           n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
            n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
 
     return render_page(shell, {
         "title": "Supported boards and cases - ESP-KVM, an open-source ESP32-P4 IP-KVM",
         "og_title": "ESP-KVM boards and cases",
         "description": "The ESP32-P4 boards ESP-KVM runs on, which ones have been run on "
-                       "hardware, the HDMI capture boards and printed cases for them.",
+                       "hardware, the HDMI capture boards, status displays, clocks and "
+                       "printed cases for them.",
         "canonical": SITE + "/boards/",
         "og_type": "website",
     }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"))))

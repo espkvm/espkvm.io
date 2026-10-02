@@ -19,6 +19,7 @@ _site/
 /blog/
 /boards/
 /cases/
+/modules/
 /sitemap.xml
 
 # Posts that are written but not published yet. Move one back into _posts/ to

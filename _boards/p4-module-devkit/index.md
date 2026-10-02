@@ -29,3 +29,5 @@ and -C kits are the same board with a different screen in the box.
 - That socket drives its own 5 V, so the lead to the target is an **A-to-A cable with the 5 V wire cut**.
 
 Built from the schematic, not yet run on one.
+
+Its 40-pin header has the Raspberry Pi layout, with the capture chip's I2C bus on pins 3 and 5, so a "DS3231 for Pi" clock module should plug straight onto pins 1-9 (read from the vendor pinout, not tried on this board).

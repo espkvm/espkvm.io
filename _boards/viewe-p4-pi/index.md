@@ -30,3 +30,5 @@ firmware's defaults.
 - PoE is only half wired: the magjack's centre taps reach a 4-pin header, but the module's 5 V has to go back in through the expansion header.
 
 Built from the schematic, not yet run on one.
+
+Its 40-pin header has the Raspberry Pi layout, with the capture chip's I2C bus on pins 3 and 5, so a "DS3231 for Pi" clock module should plug straight onto pins 1-9 (read from the vendor pinout, not tried on this board).
