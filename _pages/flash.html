@@ -345,7 +345,7 @@ output: flash/index.html
         </div>
         <esp-web-install-button
           id="install"
-          manifest="https://espkvm.github.io/espkvm/flash/manifest.json"
+          manifest="https://fw.espkvm.io/flash/manifest.json"
         >
           <button slot="activate" class="btn">Install ESP-KVM</button>
           <span slot="unsupported" class="unsupported">
@@ -487,7 +487,7 @@ output: flash/index.html
       // manifestRev3 gives a board its rev 3.x twin: the ESP32-P4 ships in two
       // silicon families and an image built for one refuses to start on the other,
       // so those boards get a revision switch instead of a second card.
-      const RELEASES = "https://espkvm.github.io/espkvm/flash/";
+      const RELEASES = "https://fw.espkvm.io/flash/";
       const BOARDS = [
         {
           id: "p4-eth",

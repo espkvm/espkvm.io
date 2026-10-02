@@ -72,7 +72,7 @@ vendored rather than linked - see [vendor.md](docs/vendor.md) for what it is and
 to rebuild it.
 
 The firmware images the flasher writes are not stored here. They are published
-by the firmware repository's CI to `espkvm.github.io/espkvm/flash/` and fetched
+by the firmware repository's CI to `fw.espkvm.io/flash/` (GitHub Pages under our own name; the old `espkvm.github.io/espkvm/` addresses redirect there) and fetched
 from there, so this site cannot go stale.
 
 ## Writing a post

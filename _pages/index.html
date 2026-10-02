@@ -1169,7 +1169,7 @@ output: index.html
       /* Show the newest published version in the hero badge, read from the same
          manifest the console's update check uses (served with CORS, no API rate
          limit). Falls back to "latest" if it cannot be reached. */
-      fetch("https://espkvm.github.io/espkvm/firmware/manifest.json", { cache: "no-store" })
+      fetch("https://fw.espkvm.io/firmware/manifest.json", { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((m) => {
           if (m && m.version) document.getElementById("latest-version").textContent = m.version;
