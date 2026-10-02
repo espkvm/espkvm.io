@@ -10,7 +10,7 @@ capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 3.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Network: 100M Ethernet (PoE header), dual-band Wi-Fi 6 (ESP32-C5)
-spec.To the target: USB-A
+spec.To the target: USB-A (A-to-A cable, 5 V wire cut)
 spec.Capture: 15-pin Raspberry Pi camera connector
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-nano-wifi6-db.htm
 photo: board.webp
@@ -23,5 +23,10 @@ twin.
 
 Its right-hand header also brings out the high-speed USB pair, so the target
 can be wired there instead of the Type-A socket.
+
+## Wiring
+
+- The Type-A socket for the target always carries 5 V, as on the NANO.
+- So the lead to the target is an **A-to-A cable with the 5 V wire cut**. A plain A-to-A cable joins two 5 V supplies.
 
 Built from the schematic, not yet run on one.
