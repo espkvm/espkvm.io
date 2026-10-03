@@ -31,6 +31,20 @@ I tried it with a Steam Deck in its official dock. The name, the remote keys
 in the Steam menus and Sleep work. Wake does not: SteamOS does not wake up on
 a CEC message, only on a controller.
 
+What it is for:
+
+- **Your parents' TV box stopped working** and they do not know what to do.
+  They move its HDMI cable from the TV to the KVM, and you fix it from your
+  own browser: an update, a sign-in, a setting.
+- **The same for a kid's game console at home:** the account, a stuck update,
+  parental settings.
+- **A media box with no keyboard**, Kodi or Plex on a Raspberry Pi: drive it
+  with a remote from the browser.
+
+While the KVM has the cable, the TV shows nothing. To keep both, put an HDMI
+splitter in front; the [C792](https://wiki.geekworm.com/C792) has one built
+in, though I have not run it yet.
+
 Only TV boxes, consoles, a Raspberry Pi and the like speak CEC. An ordinary
 PC does not, and then there is simply no remote button. Boards with an LT6911
 capture chip have no CEC.
