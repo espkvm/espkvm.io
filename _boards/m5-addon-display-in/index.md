@@ -10,6 +10,7 @@ spec.Bridge: Lontium LT6911D
 spec.Input: HDMI
 spec.Connector: 24-pin flat cable (M5Stack's own)
 spec.microSD: yes
+spec.HDMI-CEC: no, the LT6911D has no CEC controller
 spec.Measured: 720p MJPEG at 23 fps
 link.M5Stack shop page: https://shop.m5stack.com/products/add-on-display-in-for-poe-p4-lt6911d
 photo: board.webp

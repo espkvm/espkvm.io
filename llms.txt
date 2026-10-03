@@ -35,6 +35,12 @@ Key facts:
   or a timelapse. The device sets its clock over SNTP (a LAN time server works
   with no internet) or takes the browser's time when you sign in; the time zone
   is picked from a list of cities in Settings.
+- HDMI-CEC, on boards with a TC358743 capture chip: the device sits on the
+  HDMI cable as a TV would, shows what the source says it is (name, CEC
+  version, on or in standby) and gives a remote for it - arrows, OK, Back,
+  volume, playback keys, standby and wake. Also in the API, in runbooks
+  (`hdmi standby`, `hdmi key up`) and in Home Assistant. TV boxes, consoles
+  and a Raspberry Pi speak CEC; ordinary PCs do not.
 - Push notifications: when a watched phrase appears or the screen goes blank,
   the device sends a message to Telegram (with a screenshot on the MJPEG codec)
   or to a webhook. Off by default.
