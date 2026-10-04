@@ -340,8 +340,9 @@ output: index.html
             <h3>WiFi, with a rescue hotspot</h3>
             <p>
               Join a network or be the access point, on boards with an ESP32-C6.
-              Out of range, a rescue hotspot and a captive portal put the console
-              on your phone.
+              Or keep WiFi as the backup for the cable: pull it, and the device
+              moves to WiFi and back on its own. Out of range, a rescue hotspot
+              and a captive portal put the console on your phone.
             </p>
           </div>
 
@@ -913,6 +914,10 @@ output: index.html
               </tr>
               <tr>
                 <td>WiFi &mdash; station or access point, with a rescue hotspot and captive portal (boards with an ESP32-C6)</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>Ethernet with WiFi as the backup, switching both ways on its own (boards with both)</td>
                 <td class="yes">works</td>
               </tr>
               <tr>
