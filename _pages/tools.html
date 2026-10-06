@@ -223,6 +223,50 @@ output: tools/index.html
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     background: var(--accent-soft);
   }
+  .bc-boards {
+    margin-top: 14px;
+  }
+  .bc-head {
+    margin: 12px 0 6px;
+    font-size: 0.95rem;
+  }
+  .bc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 6px;
+  }
+  .bc-list li {
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--bg-soft);
+    line-height: 1.35;
+  }
+  .bc-list a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px 8px 8px;
+    text-decoration: none;
+  }
+  .bc-list img {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .bc-list a:hover {
+    text-decoration: underline;
+  }
+  .bc-list .muted {
+    display: block;
+    font-size: 0.85em;
+    color: var(--muted);
+  }
 </style>
 
 <div class="wrap">
@@ -251,6 +295,24 @@ output: tools/index.html
     <p>
       <a class="btn btn-sm" href="/serial/">Open the serial monitor</a>
     </p>
+  </section>
+
+  <section class="tool" id="board-check">
+    <div class="tool-head">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M16 16l5 5" stroke-linecap="round" />
+      </svg>
+      <h2>Which chip is on my board?</h2>
+    </div>
+    <p>
+      Connect the board over USB and press the button: the page asks the chip for its
+      revision, reads the flash chip's size and names the USB bridge, then says which
+      image fits. It is a hint, not a verdict - the marking on the chip is the last
+      word. The board restarts when the reading is done. Chrome or Edge on a desktop.
+    </p>
+    <p><button type="button" class="btn btn-sm" id="bc-btn">Read the board</button></p>
+    <div id="bc-out"></div>
   </section>
 
   <section class="tool">
@@ -357,6 +419,92 @@ output: tools/index.html
 
 <script>
   (function () {
+    /* ---- which chip is on my board ------------------------------------------ */
+
+    // Flash and PSRAM per board, from the site's board catalog.
+    var BOARD_MEMORY = /* catalog:memory */ {};
+
+    (function () {
+      var btn = document.getElementById("bc-btn");
+      var out = document.getElementById("bc-out");
+      function esc(t) {
+        return String(t).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+      btn.addEventListener("click", async function () {
+        btn.disabled = true;
+        out.innerHTML = '<p class="out">Pick the board\'s port in the browser\'s list...</p>';
+        try {
+          var mod = await import("/assets/js/board-check.js");
+          var d = await mod.checkBoard(function (s) {
+            out.innerHTML = '<p class="out">Reading: ' + esc(String(s).trim()) + "</p>";
+          });
+          var rows = [
+            ["Chip", d.chip + (d.revText ? " rev " + d.revText : "")],
+            ["Flash", d.flashMB ? d.flashMB + " MB (ID " + d.flashId + ")" : "not read"],
+            ["USB bridge", d.bridge || "unknown"],
+            ["MAC", d.mac || "not read"],
+          ];
+          if (d.psramCap !== undefined) {
+            rows.push(["PSRAM", d.psramMB
+              ? d.psramMB + " MB (eFuse value " + d.psramCap + ")"
+              : "eFuse value " + d.psramCap + " - not seen on a 32 MB board yet"]);
+          }
+          var verdict;
+          if (!d.isP4) {
+            verdict = '<span class="badge badge-bad">not an ESP32-P4</span> ESP-KVM needs an ESP32-P4.';
+          } else {
+            verdict =
+              '<span class="badge badge-ok">rev ' + esc(d.revFamily || "?") + ".x</span> Take the " +
+              (d.revFamily === "3" ? "<strong>rev 3.x</strong> image (the board's -rev3 one, or funcev)" : "<strong>rev 1.x</strong> image");
+          }
+          // Boards in the catalog that match what was read: the revision, and the
+          // flash size where the catalog knows it.
+          var match = Object.keys(BOARD_MEMORY)
+            .map(function (k) { return BOARD_MEMORY[k]; })
+            .filter(function (b) {
+              if (d.revFamily === "3" && !b.rev3) return false;
+              if (d.revFamily === "1" && !b.rev1) return false;
+              return !d.flashMB || !b.flash || b.flash === d.flashMB;
+            })
+            .sort(function (a, b) { return a.label.localeCompare(b.label); });
+          function boardList(title, list) {
+            if (!list.length) return "";
+            return '<h3 class="bc-head">' + title + "</h3><ul class=\"bc-list\">" +
+              list.map(function (b) {
+                return '<li><a href="' + esc(b.url) + '"><img src="' + esc(b.photo) + '" alt="" loading="lazy" />' +
+                  "<span>" + esc(b.label) +
+                  (b.flash ? "" : ' <span class="muted">flash size not listed</span>') + "</span></a></li>";
+              }).join("") + "</ul>";
+          }
+          var what = [d.revFamily ? "rev " + d.revFamily + ".x" : "", d.flashMB ? d.flashMB + " MB flash" : ""]
+            .filter(Boolean).join(", ");
+          var boards = d.isP4 && match.length
+            ? '<div class="bc-boards"><p>Boards that match' + (what ? " (" + esc(what) + ")" : "") +
+              ". The board in your hands is one of these, or one not listed yet:</p>" +
+              boardList("Run on hardware", match.filter(function (b) { return b.tested; })) +
+              boardList("Not tried yet", match.filter(function (b) { return !b.tested; })) + "</div>"
+            : "";
+          out.innerHTML =
+            '<div class="verdict">' + verdict + "</div>" +
+            '<table class="kv"><tbody>' +
+            rows.map(function (r) { return "<tr><th>" + esc(r[0]) + "</th><td class=\"mono\">" + esc(r[1]) + "</td></tr>"; }).join("") +
+            "</tbody></table>" +
+            boards +
+            '<p><a class="btn btn-sm" href="/flash/">Open the flasher</a></p>';
+          track("tools_board_check", { rev: d.revText, flash: d.flashMB || 0 });
+        } catch (e) {
+          var msg = e && e.message ? e.message : String(e);
+          out.innerHTML = '<p class="out bad">' + (/No port selected|cancel/i.test(msg)
+            ? "No port chosen."
+            : "Could not read the board: " + esc(msg) + ". Hold BOOT while pressing RESET, then try again.") + "</p>";
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    })();
+
     /* ---- firmware image ---------------------------------------------------- */
 
     var CHIPS = {

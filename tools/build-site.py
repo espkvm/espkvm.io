@@ -155,8 +155,8 @@ def read_posts(include_drafts):
 # boards it takes), and any number of "spec.<Label>: value" rows and
 # "link.<Label>: url" links, shown in the order written. A case takes title,
 # author, summary, boards (ids it fits), photo, photo_credit and links.
-# A module in _modules/ (a status display or a clock) takes title, kind
-# (display or clock), status, order, role, summary, photo, chip (the label on
+# A module in _modules/ (a status display, a clock or a serial adapter) takes
+# title, kind (display, clock or serial), status, order, role, summary, photo, chip (the label on
 # its tile), boards (ids it plugs straight into), specs and links, and
 # tile_maker / tile_model when the title does not split at its first space.
 
@@ -164,7 +164,8 @@ BOARDS_DIR = os.path.join(ROOT, "_boards")
 CASES_DIR = os.path.join(ROOT, "_cases")
 MODULES_DIR = os.path.join(ROOT, "_modules")
 MODULE_KINDS = {"display": ("Status displays", "displays", "a status display for an IP-KVM"),
-                "clock": ("Clocks", "clocks", "a clock for an IP-KVM")}
+                "clock": ("Clocks", "clocks", "a clock for an IP-KVM"),
+                "serial": ("Serial adapters", "serial", "a serial adapter for an IP-KVM")}
 # The firmware's own list of boards, when the two repos sit side by side. A
 # flasher id here that the firmware does not publish is a dead install button.
 FIRMWARE_BOARDS = os.path.join(os.path.dirname(ROOT), "espkvm", "boards", "boards.json")
@@ -292,6 +293,7 @@ def read_catalog():
         "cases": sorted(cases, key=key),
         "displays": sorted([m for m in modules if m["meta"]["kind"] == "display"], key=key),
         "clocks": sorted([m for m in modules if m["meta"]["kind"] == "clock"], key=key),
+        "serial": sorted([m for m in modules if m["meta"]["kind"] == "serial"], key=key),
         "all": boards + cases + modules,
         "by_id": {b["id"]: b for b in boards},
     }
@@ -373,15 +375,39 @@ def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
         group = match.group(1)
-        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks"):
+        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
     body = re.sub(r"<!-- catalog:(\w+) -->", swap, body)
+    # A module the page imports carries a hash of its content, so a browser that
+    # cached the old one takes the new one after a change.
+    import hashlib
+    for js in ("board-check.js",):
+        with open(os.path.join(ROOT, "assets", "js", js), "rb") as fh:
+            tag = hashlib.sha256(fh.read()).hexdigest()[:10]
+        body = body.replace('"/assets/js/%s"' % js, '"/assets/js/%s?v=%s"' % (js, tag))
     # The flasher's board photos: flasher id -> the photo in _boards/.
     import json
     images = {b["meta"]["flasher"]: b["photo"] for b in catalog["all"]
               if b["meta"].get("flasher")}
-    return body.replace("/* catalog:images */ {}", json.dumps(images, sort_keys=True))
+    body = body.replace("/* catalog:images */ {}", json.dumps(images, sort_keys=True))
+    # What a board's chip and memory are, for the "check my board" hints on the
+    # flasher and the tools page: flasher id -> flash and PSRAM in MB.
+    memory = {}
+    for b in catalog["all"]:
+        fid = b["meta"].get("flasher")
+        mem = dict(b["specs"]).get("Memory", "")
+        if not fid:
+            continue
+        fl = re.search(r"(\d+)\s*MB flash", mem)
+        ps = re.search(r"(\d+)\s*MB PSRAM", mem)
+        chip = dict(b["specs"]).get("Chip", "")
+        memory[fid] = {"label": b["meta"].get("title", fid), "url": b["url"], "photo": b["photo"],
+                       "rev1": "rev 1" in chip, "rev3": "rev 3" in chip,
+                       "tested": b["meta"].get("status") == "tested",
+                       "flash": int(fl.group(1)) if fl else None,
+                       "psram": int(ps.group(1)) if ps else None}
+    return body.replace("/* catalog:memory */ {}", json.dumps(memory, sort_keys=True))
 
 
 def spec_table(item):
@@ -410,8 +436,9 @@ def rev_note(item):
     return ('<p class="board-revnote"><strong>Which revision?</strong> Read the chip: '
             "<strong>ESP32-P4NRW32X</strong>, with an X at the end, is rev 3.x; "
             "<strong>ESP32-P4NRW32</strong> without it is rev 1.x. "
-            "The product code does not tell. "
-            '<a href="/#faq">More in the FAQ</a>.</p>')
+            "The product code does not tell. Or plug the board in and "
+            '<a href="/tools/#board-check">read it in the browser</a>: it shows the '
+            "revision, the flash and the PSRAM.</p>")
 
 
 def item_page(shell, item, catalog):
@@ -433,7 +460,7 @@ def item_page(shell, item, catalog):
         cases = [c for c in catalog["cases"] if item["id"] in id_list(c["meta"].get("boards"))]
         if cases:
             related.append(("Cases for it", cases))
-        mods = [x for x in catalog["displays"] + catalog["clocks"]
+        mods = [x for x in catalog["displays"] + catalog["clocks"] + catalog["serial"]
                 if item["id"] in id_list(x["meta"].get("boards"))]
         if mods:
             related.append(("Modules that fit it", mods))
@@ -481,9 +508,10 @@ def item_page(shell, item, catalog):
                  "mouse in your browser, from the BIOS up. The %s is the part that "
                  "brings the computer's HDMI in." % name)
     elif item["section"] == "modules":
-        part = ("a small screen on the box that shows its address and health"
-                if kind == "display" else
-                "a battery-backed clock that keeps the time across a power cut")
+        part = {"display": "a small screen on the box that shows its address and health",
+                "clock": "a battery-backed clock that keeps the time across a power cut",
+                "serial": "it puts a computer's RS-232 serial port on the device's pins, "
+                          "for the serial console in the browser"}[kind]
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
                  "mouse in your browser, from the BIOS up. The %s is an optional extra: "
@@ -563,7 +591,9 @@ def catalog_page(shell, catalog):
       <h1>Boards</h1>
       <p class="lead">
         The ESP32-P4 boards ESP-KVM runs on, the HDMI capture boards that feed
-        them, the optional status displays and clocks, and printed cases.
+        them, the optional status displays, clocks and serial adapters, and printed cases.
+        Have a board already? <a href="/tools/#board-check">Read it in the browser</a>
+        to see its chip revision, flash and PSRAM, and which of these it matches.
         "Untested" means built from the vendor's schematic or the chip's
         datasheet and not yet run by anyone.
       </p>
@@ -587,6 +617,11 @@ def catalog_page(shell, catalog):
       <h2 class="cat-head" id="clocks">Clocks <span class="cat-count">{n_clocks}</span></h2>
       <div class="cat-grid">
 {clocks}
+      </div>
+
+      <h2 class="cat-head" id="serial">Serial adapters <span class="cat-count">{n_serial}</span></h2>
+      <div class="cat-grid">
+{serial}
       </div>
 
       <h2 class="cat-head" id="cases">Cases <span class="cat-count">{n_cases}</span></h2>
@@ -627,13 +662,15 @@ def catalog_page(shell, catalog):
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
            n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
+           n_serial=len(catalog["serial"]), serial=tiles(catalog["serial"]),
            n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
 
     return render_page(shell, {
         "title": "Supported boards and cases - ESP-KVM, an open-source ESP32-P4 IP-KVM",
         "og_title": "ESP-KVM boards and cases",
         "description": "The ESP32-P4 boards ESP-KVM runs on, which ones have been run on "
-                       "hardware, the HDMI capture boards, status displays, clocks and "
+                       "hardware, the HDMI capture boards, status displays, clocks, "
+                       "serial adapters and "
                        "printed cases for them.",
         "canonical": SITE + "/boards/",
         "og_type": "website",

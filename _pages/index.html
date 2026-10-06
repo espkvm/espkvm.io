@@ -283,6 +283,21 @@ output: index.html
               A rescue or live image, handed to the target as a USB drive it can
               boot from &mdash; from a microSD card, or a small one kept in the
               device&rsquo;s own flash with no card at all.
+              <a href="#faq-netboot">netboot.xyz</a> goes into that flash slot in
+              one click, and any link downloads onto the card by the device itself.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3"/><path d="M12 15h5"/></svg>
+            </span>
+            <h3>A serial console</h3>
+            <p>
+              For a NAS, a router or a server with no screen: two pins wired to the
+              target&rsquo;s console give a terminal in the browser, with the last
+              64&nbsp;KB kept. The target&rsquo;s kernel log can come over the
+              network too, with an alert on a panic. <a href="#faq-serial">How to wire it</a>.
             </p>
           </div>
 
@@ -469,7 +484,9 @@ output: index.html
           40&nbsp;MHz too; they have not been run on hardware yet. For the rescue case there is
           another option that sidesteps the card entirely: a small image (iPXE,
           memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served from
-          memory and writable from the browser.
+          memory and writable from the browser. The Media panel puts
+          <a href="#faq-netboot">netboot.xyz</a> there in one click, downloaded by
+          the device straight from its site.
         </p>
       </section>
 
@@ -520,17 +537,37 @@ output: index.html
           <summary>Which chip revision does my board have?</summary>
           <div class="prose">
             <p>
-              Look at the marking on the ESP32-P4 itself, or on the lid of the
-              module it sits in. <strong>ESP32-P4NRW32X</strong> &mdash; an
-              <strong>X</strong> at the end &mdash; is revision 3.x.
-              <strong>ESP32-P4NRW32</strong> without the X is revision 1.x. On the chip
-              itself, Espressif put the revision in the manufacturing code: its second
-              character is <strong>C</strong> for v1.0, <strong>E</strong> for v1.3,
-              and <strong>F</strong>, <strong>G</strong>, <strong>H</strong> for v3.0,
-              v3.1, v3.2
-              (<a href="https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32p4/01-chip-identification/index.html" rel="noopener">their table</a>).
-              The same board can come with either: the product code does not tell,
-              so check the chip, or ask the seller.
+              The easiest: plug the board in and press <strong>Read the board</strong> on the
+              <a href="/tools/#board-check">tools page</a> (Chrome or Edge). Without a
+              browser that can, three ways to tell:
+            </p>
+            <ul>
+              <li>
+                <strong>The marking</strong> on the ESP32-P4 itself, or on the lid of
+                the module it sits in. <strong>ESP32-P4NRW32X</strong> &mdash; an
+                <strong>X</strong> at the end &mdash; is revision 3.x;
+                <strong>ESP32-P4NRW32</strong> without the X is revision 1.x. On the
+                chip itself the second character of the manufacturing code is the
+                revision: <strong>C</strong> for v1.0, <strong>E</strong> for v1.3,
+                <strong>F</strong>, <strong>G</strong>, <strong>H</strong> for v3.0,
+                v3.1, v3.2
+                (<a href="https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32p4/01-chip-identification/index.html" rel="noopener">Espressif&rsquo;s table</a>).
+              </li>
+              <li>
+                <strong>Ask the chip</strong> over USB with esptool:
+                <code>esptool --chip esp32p4 chip-id</code>. It prints
+                <code>Chip type: ESP32-P4 (revision v3.1)</code>, changes nothing on
+                the board and restarts it.
+              </li>
+              <li>
+                <strong>The boot log</strong> of any ESP-IDF firmware says
+                <code>chip revision: v3.1</code> &mdash; the
+                <a href="/serial/">serial monitor</a> here shows it.
+              </li>
+            </ul>
+            <p>
+              The same board can come with either revision: the product code does
+              not tell, so check the chip, or ask the seller.
             </p>
             <p>
               The number in the part name is the PSRAM in megabytes. ESP-KVM is built
@@ -541,9 +578,7 @@ output: index.html
               It matters for two reasons. An image built for one revision does not
               start on the other, so the flasher asks which one you have (a wrong
               pick damages nothing; flash the other one). And revision 3.x is much
-              faster at H.264: about 22-24&nbsp;fps at 1080p against 5-7. The boot log of
-              any ESP-IDF firmware says it too, as <code>chip revision: v3.1</code>
-              &mdash; the <a href="/serial/">serial monitor</a> here shows it.
+              faster at H.264: about 22-24&nbsp;fps at 1080p against 5-7.
             </p>
           </div>
         </details>
@@ -660,6 +695,65 @@ output: index.html
             </p>
           </div>
         </details>
+        <details class="faq-item" id="faq-netboot">
+          <summary>How do I install or rescue an OS with no USB stick?</summary>
+          <div class="prose">
+            <p>
+              Open Media (the disc button on the left) and press
+              <em>Download it to the rescue slot</em>. The device fetches
+              <a href="https://netboot.xyz" rel="noopener">netboot.xyz</a> from
+              its site into a 4&nbsp;MB partition in its own flash &mdash; no card
+              needed. Pick <em>Rescue image</em>, turn on
+              <em>Expose virtual media</em>, and boot the target from the USB drive
+              it now sees. netboot.xyz shows a menu of installers and rescue
+              systems (Debian, Ubuntu, Fedora, Clonezilla, memtest and more) and
+              loads the one you pick over the network, so the target needs
+              internet access, not the device.
+            </p>
+            <p>
+              For a full installer ISO, use a microSD card: upload the file from the
+              browser, or paste a link under the card list and the device
+              downloads it itself. On exFAT an image can be over 4&nbsp;GB.
+            </p>
+          </div>
+        </details>
+
+        <details class="faq-item" id="faq-serial">
+          <summary>How do I connect the target's serial console?</summary>
+          <div class="prose">
+            <p>
+              Three wires: the target's TX to the device's RX, the target's RX to
+              the device's TX, and ground to ground. Then turn it on in Settings
+              &rarr; Power &rarr; Serial console, pick the two pins and the speed
+              (115200 for Linux, often 9600 or 115200 for a PC BIOS), and open it
+              with the terminal button at the bottom left. Any two free GPIOs work;
+              avoid 37 and 38, which many boards wire to their own USB-to-serial
+              chip. On the Function EV board GPIO 5 and GPIO 4 are free.
+            </p>
+            <ul>
+              <li>
+                <strong>3.3 V logic</strong> &mdash; a Raspberry Pi (GPIO 14 and 15,
+                with <code>enable_uart=1</code> in <code>config.txt</code>), a
+                router's 4-pin header, most single-board computers: wire it straight in.
+              </li>
+              <li>
+                <strong>RS-232</strong> &mdash; the 9-pin COM port of a PC or a
+                server: &plusmn;12&nbsp;V, which destroys a 3.3&nbsp;V pin. Put a
+                <a href="/modules/max3232-db9/">MAX3232 module</a> in between.
+              </li>
+              <li>
+                <strong>5 V TTL</strong> &mdash; a level shifter, or at least a
+                divider on the device's RX.
+              </li>
+            </ul>
+            <p>
+              Nothing comes through? Swap TX and RX first, then check the speed.
+              To test the device alone, join its TX and RX pins with one wire:
+              whatever you type comes straight back.
+            </p>
+          </div>
+        </details>
+
         <details class="faq-item">
           <summary>Which ESP32-P4 boards do <em>not</em> work?</summary>
           <div class="prose">
@@ -698,6 +792,11 @@ output: index.html
                 the board, or an onboard ESP32-C6.
               </li>
             </ul>
+            <p>
+              Not sure about a board you already have? Plug it in and
+              <a href="/tools/#board-check">read it in the browser</a>: it shows the
+              chip revision, the flash size and the PSRAM.
+            </p>
             <p>
               A worked example: the <strong>LILYGO T-Halow P4</strong> is an
               ESP32-P4 with a camera FPC, an ESP32-C6 and Wi-Fi HaLow, and it fails
@@ -881,6 +980,18 @@ output: index.html
                 <td class="yes">works (card or on-flash)</td>
               </tr>
               <tr>
+                <td>Download an image from a link onto the device &mdash; netboot.xyz in one click</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
+                <td>The target&rsquo;s serial console in the browser</td>
+                <td class="yes">works &mdash; <a href="#faq-serial">wiring</a></td>
+              </tr>
+              <tr>
+                <td>The target&rsquo;s kernel log over the network (netconsole, syslog), with alerts</td>
+                <td class="yes">works</td>
+              </tr>
+              <tr>
                 <td>Guessing the target&rsquo;s OS from how it enumerates USB</td>
                 <td class="yes">works</td>
               </tr>
@@ -965,7 +1076,7 @@ output: index.html
         </p>
 
         <h3 class="hw-head" id="boards">The board</h3>
-        <p class="hw-lead">Any of these does the whole job. "Untested" ones were built from the vendor's schematic and nobody has run them yet; flashing one cannot damage it. Each card opens the board's page. <a href="/boards/">All boards, with filters &rarr;</a></p>
+        <p class="hw-lead">Any of these does the whole job. "Untested" ones were built from the vendor's schematic and nobody has run them yet; flashing one cannot damage it. Each card opens the board's page. <a href="/boards/">All boards, with filters &rarr;</a> Have one already? <a href="/tools/#board-check">Read it in the browser</a> to see which of these it matches.</p>
         <div class="cat-grid">
 <!-- catalog:tested -->
 <!-- catalog:untested -->
@@ -1018,6 +1129,12 @@ output: index.html
         <p class="hw-lead">The ESP32-P4 forgets the time when it loses power, and learns it again from NTP or from a browser signing in. A battery-backed clock module keeps it, so file names on the card and two-factor codes are right after a restart with no network. A DS3231 or a PCF8563 is found by itself; a PCF85063 or PCF8523 can be named in Settings &rarr; System &rarr; Clock. A DS1307 is not supported.</p>
         <div class="cat-grid">
 <!-- catalog:clocks -->
+        </div>
+
+        <h3 class="hw-head" id="serial">Serial adapter (optional)</h3>
+        <p class="hw-lead">For the serial console. A 3.3&nbsp;V console, like a Raspberry Pi's or a router's header, wires straight to two free pins. A PC's 9-pin COM port is RS-232 at &plusmn;12&nbsp;V and needs a MAX3232 module in between. No supported board has RS-232 on it.</p>
+        <div class="cat-grid">
+<!-- catalog:serial -->
         </div>
 
         <h3 class="hw-head" id="cases">A case (optional)</h3>

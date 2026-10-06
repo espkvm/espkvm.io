@@ -150,6 +150,36 @@ output: flash/index.html
         background: none;
         opacity: 0.75;
       }
+      /* "Check my board": a button, what it does, and what it read. */
+      .detect {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 12px;
+      }
+      .detect-note {
+        font-size: 13px;
+        color: var(--faint);
+        flex: 1 1 260px;
+      }
+      .detect-out {
+        flex-basis: 100%;
+        margin: 0;
+        font-size: 13px;
+        padding: 10px 12px;
+        background: var(--bg-raised);
+        border-left: 3px solid var(--accent, #4c9aff);
+      }
+      .detect-out.warn {
+        border-left-color: var(--warn);
+      }
+      /* A board the read says does not fit: still clickable, only quieter. */
+      .board-card.board-mismatch {
+        opacity: 0.55;
+      }
+      .board-card.board-mismatch[aria-pressed="true"] {
+        opacity: 1;
+      }
       .board-note {
         margin: 0;
         font-size: 13px;
@@ -318,6 +348,14 @@ output: flash/index.html
       </header>
 
       <div class="install">
+        <div class="detect">
+          <button type="button" class="btn btn-sm" id="detect-btn">Check my board</button>
+          <span class="detect-note">
+            Optional. Reads the chip revision and the flash size over USB and suggests
+            the image that fits. The board restarts afterwards.
+          </span>
+          <p class="detect-out" id="detect-out" hidden></p>
+        </div>
         <div class="board-grid" id="board-grid" hidden role="group" aria-label="Choose your board"></div>
         <p class="rev-help" id="rev-help" hidden>
           This board ships with either chip revision, and each needs its own image.
@@ -326,7 +364,8 @@ output: flash/index.html
           and not on rev 1.x (<strong>ESP32-P4NRW32</strong>). On the chip itself the
           second character of the manufacturing code says it exactly:
           <strong>E</strong> is rev 1.3; <strong>F</strong>, <strong>G</strong> or
-          <strong>H</strong> is rev 3.0, 3.1 or 3.2.
+          <strong>H</strong> is rev 3.0, 3.1 or 3.2. Or press
+          <strong>Check my board</strong> above and let the chip say it.
         </p>
         <div
           class="rev-row"
@@ -540,6 +579,9 @@ output: flash/index.html
       const REV_NOTE =
         "Cannot read the marking? Pick rev 1.x. A board flashed with the wrong image stays dark until the other one is installed; nothing is damaged.";
 
+      // Flash and PSRAM per board from the same catalog, for the hints below.
+      const MEMORY = /* catalog:memory */ {};
+
       // Every board's photo from the site's own catalog (_boards/), filled in by
       // the site build, so a board added there shows its picture here too.
       const IMAGES = {
@@ -559,6 +601,8 @@ output: flash/index.html
 
       let board = null;
       let rev = "1";
+      // What "Check my board" read, if it was pressed: a suggestion, never a lock.
+      let detected = null;
 
       // The install button reads its manifest when it is pressed, so swapping the
       // attribute is all a board or revision change has to do.
@@ -581,9 +625,9 @@ output: flash/index.html
 
       const select = (b, card, auto) => {
         board = b;
-        // A board is always offered on the older silicon first: that is what
-        // people have, and it is the safer guess if they have not checked.
-        rev = "1";
+        // A board is offered on the older silicon first: that is what people
+        // have, and it is the safer guess - unless the chip was read.
+        rev = detected && detected.revFamily ? detected.revFamily : "1";
         for (const c of grid.children) {
           /* The "ask for a board" tile is a link, not one of the choices. */
           if (c.classList.contains("board-card-add")) continue;
@@ -735,6 +779,9 @@ output: flash/index.html
             card.appendChild(tag);
           }
 
+          card.dataset.id = b.id;
+          card.dataset.rev3 = b.manifestRev3 ? "1" : "";
+          card.dataset.rev1 = b.manifest ? "1" : "";
           card.addEventListener("click", () => select(b, card));
           grid.appendChild(card);
           const wanted = shown.some((x) => x.id === WANTED);
@@ -771,6 +818,76 @@ output: flash/index.html
         note.textContent = ("Board: " + board.label + " " + note.textContent).trim();
       }
       };
+
+      // ---- check my board -------------------------------------------------------
+      //
+      // Reads the chip over USB (esptool-js, loaded on the click) and marks what
+      // fits. Only hints: a board whose flash size differs gets a note, the
+      // revision switch is set for you, and every choice stays open - the read
+      // could be wrong, and a wrong image damages nothing.
+      const detectBtn = document.getElementById("detect-btn");
+      const detectOut = document.getElementById("detect-out");
+      const markCards = () => {
+        for (const c of grid.children) {
+          if (!c.dataset.id) continue;
+          c.querySelector(".tag-hint")?.remove();
+          c.classList.remove("board-mismatch");
+          const mem = MEMORY[c.dataset.id];
+          const why = [];
+          if (detected.flashMB && mem && mem.flash && mem.flash !== detected.flashMB) {
+            why.push(mem.flash + " MB flash, yours " + detected.flashMB);
+          }
+          // Which silicon the board's images are for: the catalog knows (a board
+          // with one image may be rev 3.x only); the published list is the fallback.
+          const has3 = mem && "rev3" in mem ? mem.rev3 : !!c.dataset.rev3;
+          const has1 = mem && "rev1" in mem ? mem.rev1 : !!c.dataset.rev1;
+          if (detected.revFamily === "3" && !has3) why.push("no rev 3.x image");
+          if (detected.revFamily === "1" && !has1) why.push("rev 3.x only");
+          if (!why.length) continue;
+          c.classList.add("board-mismatch");
+          const tag = document.createElement("span");
+          tag.className = "tag tag-hint";
+          tag.textContent = why.join(", ");
+          tag.title = "From the board check above. Only a hint: choose it anyway if you know better.";
+          c.appendChild(tag);
+        }
+      };
+      detectBtn.addEventListener("click", async () => {
+        detectBtn.disabled = true;
+        detectOut.hidden = false;
+        detectOut.classList.remove("warn");
+        detectOut.textContent = "Pick the board's port in the browser's list...";
+        try {
+          const mod = await import("/assets/js/board-check.js");
+          const d = await mod.checkBoard((s) => (detectOut.textContent = "Reading: " + String(s).trim()));
+          detected = d;
+          if (!d.isP4) {
+            detectOut.classList.add("warn");
+            detectOut.textContent = "This is an " + d.chip + ", not an ESP32-P4: ESP-KVM needs a P4.";
+            return;
+          }
+          const fit = [];
+          if (d.revFamily) fit.push("the rev " + d.revFamily + ".x image");
+          if (d.flashMB) fit.push("a board with " + d.flashMB + " MB flash");
+          detectOut.textContent =
+            mod.describe(d) + ". Suggested: " + (fit.join(", ") || "nothing to go on") +
+            ". Boards that differ are marked. These are hints - if they look wrong, choose by hand.";
+          markCards();
+          if (board) {
+            rev = d.revFamily || rev;
+            apply();
+          }
+          track("flash_detect", { rev: d.revText, flash: d.flashMB || 0 });
+        } catch (e) {
+          detectOut.classList.add("warn");
+          const msg = e && e.message ? e.message : String(e);
+          detectOut.textContent = /No port selected|cancel/i.test(msg)
+            ? "No port chosen."
+            : "Could not read the board: " + msg + ". Hold BOOT while pressing RESET, then try again - or just choose by hand.";
+        } finally {
+          detectBtn.disabled = false;
+        }
+      });
 
       // Take the published list when it answers, and keep the built-in one when
       // it does not: a flasher that shows nothing because a fetch failed would be
