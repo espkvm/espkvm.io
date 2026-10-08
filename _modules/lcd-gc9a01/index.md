@@ -16,7 +16,7 @@ photo: module.webp
 photo_style: product
 ---
 
-For example the Waveshare module. Wire its SPI pins to any free GPIOs and pick
+Any GC9A01 board, such as the common one in the photo or the [Waveshare 1.28inch LCD Module](/modules/waveshare-lcd-128/). Wire its SPI pins to any free GPIOs and pick
 them in the console. Each build offers a set of pins known to work on that
 board, so you only change them if you wired it differently.
 

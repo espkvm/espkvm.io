@@ -1097,29 +1097,7 @@ output: index.html
         </div>
 
         <h3 class="hw-head">Power control (optional)</h3>
-        <p class="hw-lead">Two wires to the machine's front-panel header let the console press its power and reset buttons. A relay module does the same job - the firmware only pulses a pin, and which way round it triggers is a setting. Reading the power LED back is the one part a relay cannot do: that input wants an optocoupler.</p>
-        <div class="hw hw-compact">
-          <div class="hw-card">
-            <div class="hw-photo">
-              <img src="assets/817.webp" width="680" height="680" loading="lazy"
-                   alt="PC817 two-channel optocoupler isolation module" />
-            </div>
-            <div class="hw-body">
-              <div class="role">Power control (optional)</div>
-              <h3>PC817 optocoupler module</h3>
-              <p>
-                A pair of these cheap two-channel boards lets ESP-KVM press the
-                target&rsquo;s power and reset buttons and read its power LED,
-                electrically isolated from the machine. A relay board does the
-                two buttons just as well, but cannot sense the LED. Skip it all
-                and everything else still works. Wiring is in
-                <a href="https://github.com/espkvm/espkvm/blob/main/docs/wiring.md">docs/wiring.md</a>.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <p class="hw-lead">Or the M5Stack units on a Grove cable: a relay that presses a button, and a button for the box itself.</p>
+        <p class="hw-lead">Two wires to the machine's front-panel header let the console press its power and reset buttons. A relay module does the same job - the firmware only pulses a pin, and which way round it triggers is a setting. Reading the power LED back is the one part a relay cannot do: that input wants an optocoupler. The M5Stack units plug in on a Grove cable, and one of them is a button for the box itself.</p>
         <div class="cat-grid">
 <!-- catalog:control -->
         </div>
