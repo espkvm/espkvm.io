@@ -32,6 +32,55 @@
         evs.forEach(function (e) { addEventListener(e, load, { once: true, passive: true }); });
         addEventListener("load", function () { setTimeout(load, 4000); });
       })();
+      /* GA4's shop reports, borrowed: a board (or module, or case) is an item.
+         A catalog grid shown is view_item_list, a card opened select_item, a
+         board's page view_item. The flasher does the rest: starting an install
+         is add_to_cart, finishing it a purchase at no price, an error or a
+         closed dialog remove_from_cart. Nothing is sold. */
+      function gaItem(id, name, category, extra) {
+        var it = { item_id: id, item_name: name || id, item_category: category || "", price: 0, quantity: 1 };
+        for (var k in extra || {}) it[k] = extra[k];
+        return it;
+      }
+      function gaShop(event, items, extra) {
+        var p = { currency: "USD", value: 0, items: items };
+        for (var k in extra || {}) p[k] = extra[k];
+        track(event, p);
+      }
+      function gaCard(a, i) {
+        return gaItem(a.dataset.itemId, a.dataset.itemName, a.dataset.itemCategory, i === undefined ? {} : { index: i });
+      }
+      /* A list's name: its own data-list, or the heading above it (its id, or
+         its words when it has none). */
+      function gaListName(el) {
+        var l = el.closest("[data-list]");
+        if (l) return l.dataset.list;
+        var g = el.closest(".cat-grid") || el;
+        for (var p = g.previousElementSibling; p; p = p.previousElementSibling) {
+          if (/^H[1-4]$/.test(p.tagName)) {
+            return location.pathname + "#" + (p.id || p.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+          }
+        }
+        return location.pathname;
+      }
+      function gaList(root) {
+        var cards = [].slice.call(root.querySelectorAll("[data-item-id]"));
+        if (!cards.length) return;
+        var name = gaListName(root);
+        gaShop("view_item_list", cards.map(gaCard), { item_list_id: name, item_list_name: name });
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".cat-grid").forEach(gaList);
+        var page = document.querySelector("[data-item-page]");
+        if (page) gaShop("view_item", [gaCard(page)]);
+      });
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("a[data-item-id]");
+        if (a) gaShop("select_item", [gaCard(a)], { item_list_name: gaListName(a) });
+        var install = e.target.closest && e.target.closest("[data-install]");
+        var page = install && document.querySelector("[data-item-page]");
+        if (page) gaShop("select_item", [gaCard(page)], { item_list_name: "board page" });
+      });
       /* Every way into the demo, on every page: from is the link's data-demo,
          or the page it was on. */
       document.addEventListener("click", function (e) {

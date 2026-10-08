@@ -341,6 +341,13 @@ def split_title(item):
     return (maker, model) if model else ("", m["title"])
 
 
+def item_category(item):
+    """The GA4 item category: board, capture, module or case."""
+    if item["section"] == "boards":
+        return "board" if item["meta"].get("kind") == "device" else "capture"
+    return "module" if item["section"] == "modules" else "case"
+
+
 def tile(item):
     m = item["meta"]
     maker, model = split_title(item)
@@ -354,7 +361,7 @@ def tile(item):
                     for _, label in feats)
     keys = " ".join([k for k, _ in feats] + ([] if untested else ["tested"]))
     fit = " cat-photo-cover" if m.get("photo_style") == "photo" else ""
-    return """          <a class="cat-card" href="{url}" data-f="{keys}">
+    return """          <a class="cat-card" href="{url}" data-f="{keys}" data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
             <span class="cat-photo{fit}"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></span>
             <span class="cat-body">
               <span class="cat-maker">{maker}{status}</span>
@@ -363,6 +370,7 @@ def tile(item):
             </span>
           </a>""".format(
         url=item["url"], keys=keys, fit=fit, photo=item["photo"],
+        iid=html.escape(item["id"]), iname=html.escape(html.unescape(m["title"])), icat=item_category(item),
         w=item["photo_w"], h=item["photo_h"], maker=html.escape(maker),
         status=status, model=html.escape(model), chips=chips)
 
@@ -446,7 +454,7 @@ def item_page(shell, item, catalog):
     kind = m.get("kind")
     actions = []
     if m.get("flasher"):
-        actions.append('<a class="btn btn-primary" href="/flash/?board=%s">Install from the browser</a>'
+        actions.append('<a class="btn btn-primary" href="/flash/?board=%s" data-install>Install from the browser</a>'
                        % quote(m["flasher"]))
     for label, url in item["links"]:
         actions.append('<a class="btn" href="%s" rel="noopener">%s</a>'
@@ -526,7 +534,7 @@ def item_page(shell, item, catalog):
              % intro)
 
     content = """
-    <article class="board-page">
+    <article class="board-page" data-item-page data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
       <p class="post-back">{back}</p>
       {intro}
       <div class="board-top">
@@ -547,7 +555,9 @@ def item_page(shell, item, catalog):
 {body}
       </div>{extra}
     </article>
-""".format(back=back, intro=intro, is_photo=is_photo, photo=item["photo"], w=item["photo_w"],
+""".format(iid=html.escape(item["id"]), iname=html.escape(html.unescape(m["title"])),
+           icat=item_category(item),
+           back=back, intro=intro, is_photo=is_photo, photo=item["photo"], w=item["photo_w"],
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
            role=html.escape(role), title=html.escape(m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),

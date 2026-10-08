@@ -636,7 +636,9 @@ output: flash/index.html
         apply();
         if (!auto) {
           track("flash_board", { board: b.id });
-          track("view_item", shopItem(b, rev));
+          const it = shopItem(b, rev);
+          track("select_item", Object.assign({ item_list_name: "flasher" }, it));
+          track("view_item", it);
         }
       };
 
@@ -648,17 +650,18 @@ output: flash/index.html
         });
       }
 
-      // GA4's shop reports, borrowed for the flasher: picking a board is
-      // "view_item", starting the install "begin_checkout", a finished install a
-      // "purchase" at no price. That gives a funnel and a count per board for
-      // free, in reports that already exist. Nothing is sold.
+      // The shop events (see gaShop in the page template): the grid is a list
+      // and picking a board views it; starting the install puts it in the cart
+      // (and opens the checkout), a finished install is the purchase at no
+      // price, and an error or a dialog closed mid-way takes it out again.
       function shopItem(b, r) {
         return {
           currency: "USD",
           value: 0,
-          items: [{ item_id: b.id, item_name: b.label || b.id, item_variant: "rev" + r, price: 0, quantity: 1 }],
+          items: [gaItem(b.id, b.label, "board", { item_variant: "rev" + r, item_list_name: "flasher" })],
         };
       }
+      let listed = false;
 
       // How installs end, counted per board: the flasher is the one place a
       // real device shows up. esp-web-tools keeps the progress on its dialog,
@@ -677,7 +680,13 @@ output: flash/index.html
           if (st === "preparing") {
             this._trackedAt = Date.now();
             track("flash_start", p);
+            track("add_to_cart", item);
             track("begin_checkout", item);
+          } else if (st === "erasing") {
+            // The checkout journey's middle steps: erasing, then writing.
+            track("add_shipping_info", item);
+          } else if (st === "writing") {
+            track("add_payment_info", item);
           } else if (st === "finished") {
             p.seconds = Math.round((Date.now() - (this._trackedAt || Date.now())) / 1000);
             track("flash_done", p);
@@ -686,6 +695,23 @@ output: flash/index.html
           } else if (st === "error") {
             p.reason = String(this._installState.message || "").slice(0, 100);
             track("flash_error", p);
+            // An install that failed leaves the cart: GA counts it per board.
+            track("remove_from_cart", Object.assign({ reason: "error: " + p.reason }, item));
+          }
+        };
+        // The dialog removes itself when closed. Closed in the middle of an
+        // install is an abandoned checkout; closed before one began is just a
+        // look, and not counted.
+        const disconnected = proto.disconnectedCallback;
+        proto.disconnectedCallback = function () {
+          if (disconnected) disconnected.call(this);
+          const st = this._trackedState;
+          if (board && (st === "preparing" || st === "erasing" || st === "writing")) {
+            this._trackedState = "closed";
+            const p = fromFile ? { board: "file", rev: "file" } : { board: board.id, rev };
+            track("flash_abort", Object.assign({ stage: st }, p));
+            const item = fromFile ? shopItem({ id: "file", label: "Image from a file" }, "file") : shopItem(board, rev);
+            track("remove_from_cart", Object.assign({ reason: "closed while " + st }, item));
           }
         };
       });
@@ -829,6 +855,11 @@ output: flash/index.html
         ask.appendChild(askTag);
         grid.appendChild(ask);
         grid.hidden = false;
+        if (!listed) {
+          listed = true;
+          gaShop("view_item_list", shown.map((b, i) => gaItem(b.id, b.label, "board", { index: i })),
+            { item_list_id: "flasher", item_list_name: "flasher" });
+        }
       } else if (shown.length === 1) {
         // Only one board: name it, no picker, but the revision switch still
         // applies if that board has a rev 3.x twin.

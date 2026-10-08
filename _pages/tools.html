@@ -473,7 +473,9 @@ output: tools/index.html
             if (!list.length) return "";
             return '<h3 class="bc-head">' + title + "</h3><ul class=\"bc-list\">" +
               list.map(function (b) {
-                return '<li><a href="' + esc(b.url) + '"><img src="' + esc(b.photo) + '" alt="" loading="lazy" />' +
+                var id = b.url.split("/").filter(Boolean).pop();
+                return '<li><a href="' + esc(b.url) + '" data-item-id="' + esc(id) + '" data-item-name="' + esc(b.label) +
+                  '" data-item-category="board"><img src="' + esc(b.photo) + '" alt="" loading="lazy" />' +
                   "<span>" + esc(b.label) +
                   (b.flash ? "" : ' <span class="muted">flash size not listed</span>') + "</span></a></li>";
               }).join("") + "</ul>";
@@ -481,7 +483,7 @@ output: tools/index.html
           var what = [d.revFamily ? "rev " + d.revFamily + ".x" : "", d.flashMB ? d.flashMB + " MB flash" : ""]
             .filter(Boolean).join(", ");
           var boards = d.isP4 && match.length
-            ? '<div class="bc-boards"><p>Boards that match' + (what ? " (" + esc(what) + ")" : "") +
+            ? '<div class="bc-boards" data-list="board check"><p>Boards that match' + (what ? " (" + esc(what) + ")" : "") +
               ". The board in your hands is one of these, or one not listed yet:</p>" +
               boardList("Run on hardware", match.filter(function (b) { return b.tested; })) +
               boardList("Not tried yet", match.filter(function (b) { return !b.tested; })) + "</div>"
@@ -496,6 +498,8 @@ output: tools/index.html
           var params = mod.trackParams(d);
           params.matches = d.isP4 ? match.length : 0;
           track("tools_board_check", params);
+          var bcList = out.querySelector(".bc-boards");
+          if (bcList) gaList(bcList);
           // Which of the suggested boards people open: a hint at what they own.
           out.querySelectorAll(".bc-list a").forEach(function (a) {
             a.addEventListener("click", function () {
