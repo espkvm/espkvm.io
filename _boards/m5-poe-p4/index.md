@@ -37,7 +37,14 @@ One viewer, a screen playing video, 2026-09-23:
 
 **720p is the mode to give this board.** The byte reordering its bridge needs
 costs four times less there, and over a network H.264 at 720p gives 17 fps at a
-fifteenth of MJPEG's bandwidth.
+fifteenth of MJPEG's bandwidth. Pick 720p in the target's own display settings:
+the bridge holds its own EDID, so ESP-KVM cannot offer fewer modes. The console
+suggests 720p, or MJPEG, when it sees H.264 above 720p on this board.
+
+If it has to be 1080p, give it **30 Hz, not 60**. The bridge writes every frame
+it receives into memory, whether or not it gets encoded, and at 60 Hz that alone
+takes most of the memory's bandwidth. Measured 2026-10-08: H.264 at 1080p went
+from 5-6 fps at 60 Hz to 8 fps at 30 Hz.
 
 ## Good to know
 

@@ -23,6 +23,10 @@ Not a TC358743. It plugs onto the 24-pin flat cable on M5Stack's Unit PoE-P4
 and PoE-P4X - not the 15-pin camera cable every other board here uses, so it
 fits none of them and none of them drives it.
 
+Give it 720p, or 1080p at 30 Hz: the bridge writes every frame it receives into
+memory, and on the PoE-P4 1080p at 60 Hz leaves little for the encoder. See
+[the PoE-P4 page](/boards/m5-poe-p4/) for the numbers.
+
 The LT6911D cannot tell whether the source is switched on, so after a long "No
 signal" the console offers a Reconnect HDMI button with a countdown.
 
