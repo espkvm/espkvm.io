@@ -316,15 +316,6 @@ def families(catalog):
     return out
 
 
-def family_link(item):
-    name = item["meta"].get("family")
-    if not name:
-        return ""
-    return ('<p class="board-family">One of the %s parts ESP-KVM works with: '
-            '<a href="/boards/family/%s/">see them all together</a>.</p>'
-            % (html.escape(name), family_slug(name)))
-
-
 def family_page(shell, slug, name, items):
     """One family's parts on one page, in the catalog's own order of sections."""
     key = lambda i: (i["order"], i["meta"]["title"])
@@ -494,6 +485,10 @@ def spec_table(item):
     elif item["section"] == "modules":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Written from the datasheet, not run on one yet"))
+    fam = m.get("family")
+    if fam:
+        rows.insert(1 if rows and rows[0][0] == "Status" else 0,
+                    ("Family", "[All %s parts](/boards/family/%s/)" % (fam, family_slug(fam))))
     if not rows:
         return ""
     return ('<div class="table-scroll"><table class="board-specs"><tbody>\n%s\n'
@@ -616,7 +611,6 @@ def item_page(shell, item, catalog):
           <p class="lead">{summary}</p>
           {specs}
           {revnote}
-          {family}
           <p class="board-actions">{actions}</p>
           {credit}
         </div>
@@ -631,7 +625,7 @@ def item_page(shell, item, catalog):
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
            role=html.escape(role), title=html.escape(m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),
-           revnote=rev_note(item), family=family_link(item),
+           revnote=rev_note(item),
            actions=" ".join(actions), credit=credit,
            body=link_boards(render_markdown(item["body"], item["path"]),
                             set(catalog["by_id"]), skip={item["id"]}),
