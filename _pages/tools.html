@@ -493,8 +493,19 @@ output: tools/index.html
             "</tbody></table>" +
             boards +
             '<p><a class="btn btn-sm" href="/flash/">Open the flasher</a></p>';
-          track("tools_board_check", { rev: d.revText, flash: d.flashMB || 0 });
+          var params = mod.trackParams(d);
+          params.matches = d.isP4 ? match.length : 0;
+          track("tools_board_check", params);
+          // Which of the suggested boards people open: a hint at what they own.
+          out.querySelectorAll(".bc-list a").forEach(function (a) {
+            a.addEventListener("click", function () {
+              track("tools_board_pick", { board: a.getAttribute("href").split("/").filter(Boolean).pop() });
+            });
+          });
         } catch (e) {
+          import("/assets/js/board-check.js").then(function (m) {
+            track("tools_board_check_error", { reason: m.errorReason(e) });
+          });
           var msg = e && e.message ? e.message : String(e);
           out.innerHTML = '<p class="out bad">' + (/No port selected|cancel/i.test(msg)
             ? "No port chosen."
@@ -907,7 +918,12 @@ output: tools/index.html
       var out = el("img-out");
       out.textContent = "";
       var r = parseImage(await fileBytes(file));
-      track("tool_image", { ok: !r.error, merged: !!r.merged });
+      track("tool_image", {
+        ok: !r.error,
+        merged: !!r.merged,
+        version: (r.app && r.app.version) || "",
+        rev: r.header ? (r.header.minRev >= 300 ? "3" : "1") : "",
+      });
       if (r.error) {
         out.innerHTML = '<p class="out bad"></p>';
         out.querySelector("p").textContent = r.error;

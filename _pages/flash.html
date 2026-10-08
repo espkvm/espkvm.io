@@ -634,7 +634,10 @@ output: flash/index.html
           c.setAttribute("aria-pressed", String(c === card));
         }
         apply();
-        if (!auto) track("flash_board", { board: b.id });
+        if (!auto) {
+          track("flash_board", { board: b.id });
+          track("view_item", shopItem(b, rev));
+        }
       };
 
       for (const r of revBtns) {
@@ -643,6 +646,18 @@ output: flash/index.html
           apply();
           track("flash_rev", { board: board.id, rev });
         });
+      }
+
+      // GA4's shop reports, borrowed for the flasher: picking a board is
+      // "view_item", starting the install "begin_checkout", a finished install a
+      // "purchase" at no price. That gives a funnel and a count per board for
+      // free, in reports that already exist. Nothing is sold.
+      function shopItem(b, r) {
+        return {
+          currency: "USD",
+          value: 0,
+          items: [{ item_id: b.id, item_name: b.label || b.id, item_variant: "rev" + r, price: 0, quantity: 1 }],
+        };
       }
 
       // How installs end, counted per board: the flasher is the one place a
@@ -658,12 +673,16 @@ output: flash/index.html
           if (!board || !st || st === this._trackedState) return;
           this._trackedState = st;
           const p = fromFile ? { board: "file", rev: "file" } : { board: board.id, rev };
+          const item = fromFile ? shopItem({ id: "file", label: "Image from a file" }, "file") : shopItem(board, rev);
           if (st === "preparing") {
             this._trackedAt = Date.now();
             track("flash_start", p);
+            track("begin_checkout", item);
           } else if (st === "finished") {
             p.seconds = Math.round((Date.now() - (this._trackedAt || Date.now())) / 1000);
             track("flash_done", p);
+            item.transaction_id = "flash-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+            track("purchase", item);
           } else if (st === "error") {
             p.reason = String(this._installState.message || "").slice(0, 100);
             track("flash_error", p);
@@ -861,6 +880,7 @@ output: flash/index.html
           const mod = await import("/assets/js/board-check.js");
           const d = await mod.checkBoard((s) => (detectOut.textContent = "Reading: " + String(s).trim()));
           detected = d;
+          track("flash_detect", mod.trackParams(d));
           if (!d.isP4) {
             detectOut.classList.add("warn");
             detectOut.textContent = "This is an " + d.chip + ", not an ESP32-P4: ESP-KVM needs a P4.";
@@ -877,8 +897,8 @@ output: flash/index.html
             rev = d.revFamily || rev;
             apply();
           }
-          track("flash_detect", { rev: d.revText, flash: d.flashMB || 0 });
         } catch (e) {
+          import("/assets/js/board-check.js").then((m) => track("flash_detect_error", { reason: m.errorReason(e) }));
           detectOut.classList.add("warn");
           const msg = e && e.message ? e.message : String(e);
           detectOut.textContent = /No port selected|cancel/i.test(msg)

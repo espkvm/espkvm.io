@@ -301,6 +301,11 @@ output: serial/index.html
       if (atBottom) logEl.scrollTop = logEl.scrollHeight;
     }
 
+    /* How long a session lasted and whether anything came: the analytics get the
+       two numbers, never the text. */
+    var rxChars = 0;
+    var connectedAt = 0;
+
     async function readLoop() {
       var decoder = new TextDecoderStream();
       var closed = port.readable.pipeTo(decoder.writable).catch(function () {});
@@ -309,7 +314,10 @@ output: serial/index.html
         while (keepReading) {
           var r = await reader.read();
           if (r.done) break;
-          if (r.value) append(r.value);
+          if (r.value) {
+            rxChars += r.value.length;
+            append(r.value);
+          }
         }
       } catch (err) {
         append("\n--- the port stopped: " + err.message + " ---\n");
@@ -335,6 +343,8 @@ output: serial/index.html
         baudEl.disabled = true;
         setStatus("Connected at " + baudEl.value + " baud. Listening.", true);
         track("serial_connect", { baud: Number(baudEl.value) });
+        rxChars = 0;
+        connectedAt = Date.now();
         await readLoop();
       } catch (err) {
         if (err && err.name === "NotFoundError") return; /* the picker was dismissed */
@@ -350,6 +360,13 @@ output: serial/index.html
        the bland "not connected". */
     async function disconnect(keepStatus) {
       keepReading = false;
+      if (connectedAt) {
+        track("serial_session", {
+          seconds: Math.round((Date.now() - connectedAt) / 1000),
+          got_data: rxChars > 0,
+        });
+        connectedAt = 0;
+      }
       if (reader) {
         try {
           await reader.cancel();
@@ -376,6 +393,7 @@ output: serial/index.html
 
     document.getElementById("paste-go").addEventListener("click", function () {
       var text = document.getElementById("paste-in").value;
+      track("serial_paste");
       if (!text) return;
       logEl.textContent = "";
       carry = "";
@@ -390,6 +408,7 @@ output: serial/index.html
     });
 
     document.getElementById("copy").addEventListener("click", function () {
+      track("serial_copy");
       navigator.clipboard.writeText(logEl.textContent).then(
         function () {
           setStatus("Copied " + logEl.textContent.length + " characters.");
@@ -401,6 +420,7 @@ output: serial/index.html
     });
 
     document.getElementById("save").addEventListener("click", function () {
+      track("serial_save");
       var stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
       var blob = new Blob([logEl.textContent], { type: "text/plain" });
       var a = document.createElement("a");

@@ -67,3 +67,24 @@ export function describe(d) {
   if (d.bridge) parts.push(`USB bridge: ${d.bridge}`);
   return parts.join(" · ");
 }
+
+/** What the analytics get from a reading: no MAC, nothing that names one board. */
+export function trackParams(d) {
+  return {
+    chip: d.chip || "unknown",
+    rev: d.revText || "",
+    flash: d.flashMB || 0,
+    psram: d.psramMB || 0,
+    psram_cap: d.psramCap === undefined ? -1 : d.psramCap,
+    bridge: d.bridge || "unknown",
+  };
+}
+
+/** A failed reading, as a short reason for the analytics. */
+export function errorReason(e) {
+  const msg = e && e.message ? e.message : String(e);
+  if (/No port selected|cancel/i.test(msg)) return "no_port";
+  if (/cannot talk to serial/i.test(msg)) return "no_web_serial";
+  if (/timed? ?out|timeout/i.test(msg)) return "timeout";
+  return "read_failed";
+}
