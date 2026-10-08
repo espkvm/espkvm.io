@@ -1,5 +1,6 @@
 ---
 title: M5Stack Unit PoE-P4X
+family: M5Stack
 kind: device
 status: untested
 order: 160

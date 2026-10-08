@@ -165,7 +165,8 @@ CASES_DIR = os.path.join(ROOT, "_cases")
 MODULES_DIR = os.path.join(ROOT, "_modules")
 MODULE_KINDS = {"display": ("Status displays", "displays", "a status display for an IP-KVM"),
                 "clock": ("Clocks", "clocks", "a clock for an IP-KVM"),
-                "serial": ("Serial adapters", "serial", "a serial adapter for an IP-KVM")}
+                "serial": ("Serial adapters", "serial", "a serial adapter for an IP-KVM"),
+                "control": ("Power control and buttons", "control", "power control for an IP-KVM")}
 # The firmware's own list of boards, when the two repos sit side by side. A
 # flasher id here that the firmware does not publish is a dead install button.
 FIRMWARE_BOARDS = os.path.join(os.path.dirname(ROOT), "espkvm", "boards", "boards.json")
@@ -294,9 +295,73 @@ def read_catalog():
         "displays": sorted([m for m in modules if m["meta"]["kind"] == "display"], key=key),
         "clocks": sorted([m for m in modules if m["meta"]["kind"] == "clock"], key=key),
         "serial": sorted([m for m in modules if m["meta"]["kind"] == "serial"], key=key),
+        "control": sorted([m for m in modules if m["meta"]["kind"] == "control"], key=key),
         "all": boards + cases + modules,
         "by_id": {b["id"]: b for b in boards},
     }
+
+
+def family_slug(name):
+    """A maker's family as a URL part: "M5Stack" -> "m5stack"."""
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def families(catalog):
+    """Everything that names a family, by family: {slug: (name, [items])}."""
+    out = {}
+    for item in catalog["all"]:
+        name = item["meta"].get("family")
+        if name:
+            out.setdefault(family_slug(name), (name, []))[1].append(item)
+    return out
+
+
+def family_link(item):
+    name = item["meta"].get("family")
+    if not name:
+        return ""
+    return ('<p class="board-family">One of the %s parts ESP-KVM works with: '
+            '<a href="/boards/family/%s/">see them all together</a>.</p>'
+            % (html.escape(name), family_slug(name)))
+
+
+def family_page(shell, slug, name, items):
+    """One family's parts on one page, in the catalog's own order of sections."""
+    key = lambda i: (i["order"], i["meta"]["title"])
+    groups = [
+        ("ESP32-P4 boards", [i for i in items if i["meta"].get("kind") == "device"]),
+        ("HDMI capture", [i for i in items if i["meta"].get("kind") == "capture"]),
+    ]
+    for kind, (title, _, _) in MODULE_KINDS.items():
+        groups.append((title, [i for i in items if i["section"] == "modules"
+                               and i["meta"].get("kind") == kind]))
+    groups.append(("Cases", [i for i in items if i["section"] == "cases"]))
+    sections = "".join(
+        '\n      <h2 class="cat-head">%s <span class="cat-count">%d</span></h2>'
+        '\n      <div class="cat-grid">\n%s\n      </div>'
+        % (html.escape(title), len(group), tiles(sorted(group, key=key)))
+        for title, group in groups if group)
+    content = """
+    <article class="board-page">
+      <p class="post-back"><a href="/boards/">&larr; All boards</a></p>
+      <h1>{name} and ESP-KVM</h1>
+      <p class="lead">
+        Every {name} part on this site: the boards ESP-KVM runs on, the capture
+        that feeds them and the modules that plug in. "Untested" means built from
+        the maker's documentation and not yet run by anyone.
+      </p>{sections}
+    </article>
+""".format(name=html.escape(name), sections=sections)
+    url = SITE + "/boards/family/%s/" % slug
+    return render_page(shell, {
+        "title": "%s parts for ESP-KVM, an open-source ESP32-P4 IP-KVM" % name,
+        "og_title": "%s and ESP-KVM" % name,
+        "description": "The %s boards, HDMI capture and modules ESP-KVM works with, "
+                       "and which of them have been run on hardware." % name,
+        "canonical": url,
+        "og_type": "website",
+    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
+                                    (name, url))))
 
 
 def features(item):
@@ -326,6 +391,8 @@ def features(item):
             out.append(("bridge", m["bridge"]))
     elif m.get("chip"):
         out.append(("chip", m["chip"]))
+    if m.get("family"):
+        out.append(("family-" + family_slug(m["family"]), m["family"]))
     return out
 
 
@@ -383,7 +450,7 @@ def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
         group = match.group(1)
-        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial"):
+        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial", "control"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
     body = re.sub(r"<!-- catalog:(\w+) -->", swap, body)
@@ -468,7 +535,7 @@ def item_page(shell, item, catalog):
         cases = [c for c in catalog["cases"] if item["id"] in id_list(c["meta"].get("boards"))]
         if cases:
             related.append(("Cases for it", cases))
-        mods = [x for x in catalog["displays"] + catalog["clocks"] + catalog["serial"]
+        mods = [x for x in catalog["displays"] + catalog["clocks"] + catalog["serial"] + catalog["control"]
                 if item["id"] in id_list(x["meta"].get("boards"))]
         if mods:
             related.append(("Modules that fit it", mods))
@@ -519,7 +586,9 @@ def item_page(shell, item, catalog):
         part = {"display": "a small screen on the box that shows its address and health",
                 "clock": "a battery-backed clock that keeps the time across a power cut",
                 "serial": "it puts a computer's RS-232 serial port on the device's pins, "
-                          "for the serial console in the browser"}[kind]
+                          "for the serial console in the browser",
+                "control": "it presses the target's buttons, or gives the box a button "
+                           "of its own"}[kind]
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
                  "mouse in your browser, from the BIOS up. The %s is an optional extra: "
@@ -547,6 +616,7 @@ def item_page(shell, item, catalog):
           <p class="lead">{summary}</p>
           {specs}
           {revnote}
+          {family}
           <p class="board-actions">{actions}</p>
           {credit}
         </div>
@@ -561,7 +631,7 @@ def item_page(shell, item, catalog):
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
            role=html.escape(role), title=html.escape(m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),
-           revnote=rev_note(item),
+           revnote=rev_note(item), family=family_link(item),
            actions=" ".join(actions), credit=credit,
            body=link_boards(render_markdown(item["body"], item["path"]),
                             set(catalog["by_id"]), skip={item["id"]}),
@@ -606,7 +676,7 @@ def catalog_page(shell, catalog):
         to see its chip revision, flash and PSRAM, and which of these it matches.
         "Untested" means built from the vendor's schematic or the chip's
         datasheet and not yet run by anyone.
-      </p>
+      </p>{by_maker}
 
       <h2 class="cat-head" id="devices">ESP32-P4 boards <span class="cat-count" id="cat-count">{n}</span></h2>
       <div class="cat-filters" id="cat-filters" hidden>{buttons}</div>
@@ -632,6 +702,11 @@ def catalog_page(shell, catalog):
       <h2 class="cat-head" id="serial">Serial adapters <span class="cat-count">{n_serial}</span></h2>
       <div class="cat-grid">
 {serial}
+      </div>
+
+      <h2 class="cat-head" id="control">Power control and buttons <span class="cat-count">{n_control}</span></h2>
+      <div class="cat-grid">
+{control}
       </div>
 
       <h2 class="cat-head" id="cases">Cases <span class="cat-count">{n_cases}</span></h2>
@@ -668,11 +743,17 @@ def catalog_page(shell, catalog):
         }});
       }})();
     </script>
-""".format(n=len(devices), buttons=buttons, devices=tiles(devices),
+""".format(by_maker=(
+               '\n      <p class="cat-note">By maker: %s.</p>' % ", ".join(
+                   '<a href="/boards/family/%s/">%s</a>' % (slug, html.escape(name))
+                   for slug, (name, _) in sorted(families(catalog).items()))
+               if families(catalog) else ""),
+           n=len(devices), buttons=buttons, devices=tiles(devices),
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
            n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
            n_serial=len(catalog["serial"]), serial=tiles(catalog["serial"]),
+           n_control=len(catalog["control"]), control=tiles(catalog["control"]),
            n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
 
     return render_page(shell, {
@@ -766,6 +847,9 @@ def write_catalog(shell, catalog):
                 shutil.copy2(os.path.join(item["folder"], name), os.path.join(out, name))
         write(os.path.join(out, "index.html"), item_page(shell, item, catalog))
     write(os.path.join(ROOT, "boards", "index.html"), catalog_page(shell, catalog))
+    for slug, (name, items) in families(catalog).items():
+        write(os.path.join(ROOT, "boards", "family", slug, "index.html"),
+              family_page(shell, slug, name, items))
 
 
 # ---------------------------------------------------------------- page shell
@@ -1407,6 +1491,9 @@ def sitemap(posts, tags=None, pages=None, catalog=None):
         entries += "".join(
             "  <url>\n    <loc>%s%s</loc>\n    <priority>0.7</priority>\n  </url>\n"
             % (SITE, item["url"]) for item in catalog["all"])
+        entries += "".join(
+            "  <url>\n    <loc>%s/boards/family/%s/</loc>\n    <priority>0.6</priority>\n  </url>\n"
+            % (SITE, slug) for slug in families(catalog))
     entries += "".join(
         "  <url>\n    <loc>%s/blog/%s/</loc>\n    <lastmod>%s</lastmod>\n"
         "    <priority>0.6</priority>\n  </url>\n"

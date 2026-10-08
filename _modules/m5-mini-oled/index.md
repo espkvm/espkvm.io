@@ -1,5 +1,6 @@
 ---
 title: M5Stack Mini OLED Unit
+family: M5Stack
 kind: display
 status: tested
 order: 20

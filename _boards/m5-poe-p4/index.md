@@ -1,5 +1,6 @@
 ---
 title: M5Stack Unit PoE-P4
+family: M5Stack
 kind: device
 status: tested
 order: 70
