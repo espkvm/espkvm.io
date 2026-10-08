@@ -1,5 +1,6 @@
 ---
 title: Waveshare HDMI to CSI Adapter
+family: Waveshare
 kind: capture
 status: tested
 order: 20

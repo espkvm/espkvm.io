@@ -1,5 +1,6 @@
 ---
 title: Espressif ESP32-P4X-C5-Function-EV-Board
+family: Espressif
 kind: device
 status: untested
 order: 125

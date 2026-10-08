@@ -1,5 +1,6 @@
 ---
 title: Waveshare ESP32-P4-WIFI6-DEV-KIT
+family: Waveshare
 kind: device
 status: tested
 order: 65

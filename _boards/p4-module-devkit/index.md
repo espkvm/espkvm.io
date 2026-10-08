@@ -1,5 +1,6 @@
 ---
 title: Waveshare ESP32-P4-Module-DEV-KIT
+family: Waveshare
 kind: device
 status: untested
 order: 120

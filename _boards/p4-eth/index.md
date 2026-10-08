@@ -1,5 +1,6 @@
 ---
 title: Waveshare ESP32-P4-ETH
+family: Waveshare
 kind: device
 status: tested
 order: 10

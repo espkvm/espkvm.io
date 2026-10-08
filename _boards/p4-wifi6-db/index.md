@@ -1,5 +1,6 @@
 ---
 title: Waveshare ESP32-P4-WIFI6-DB
+family: Waveshare
 kind: device
 status: untested
 order: 135

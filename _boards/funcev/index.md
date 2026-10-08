@@ -1,5 +1,6 @@
 ---
 title: Espressif ESP32-P4 Function EV Board
+family: Espressif
 kind: device
 status: tested
 order: 20
