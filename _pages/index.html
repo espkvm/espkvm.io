@@ -855,14 +855,24 @@ output: index.html
             </thead>
             <tbody>
               <tr>
-                <td>Frame rate &mdash; Waveshare ESP32-P4-ETH (rev&nbsp;v1.3)</td>
+                <td>Frame rate &mdash; <a href="/boards/p4-eth/">Waveshare ESP32-P4-ETH</a> (rev&nbsp;v1.3)</td>
                 <td class="num">20 fps</td>
                 <td class="num">~7 fps</td>
               </tr>
               <tr>
-                <td>Frame rate &mdash; Function EV (rev&nbsp;v3.2)</td>
+                <td>Frame rate &mdash; <a href="/boards/funcev/">Function EV</a> (rev&nbsp;v3.2)</td>
                 <td class="num">23 fps</td>
                 <td class="num">22&ndash;24 fps</td>
+              </tr>
+              <tr>
+                <td>Mouse moved to picture shown &mdash; <a href="/boards/funcev/">Function EV</a></td>
+                <td class="num">~160 ms</td>
+                <td class="num">~155 ms</td>
+              </tr>
+              <tr>
+                <td>Mouse moved to picture shown &mdash; <a href="/boards/m5-poe-p4/">M5Stack Unit PoE-P4</a>, 720p</td>
+                <td class="num">&mdash;</td>
+                <td class="num">~185 ms</td>
               </tr>
               <tr>
                 <td>Idle screen</td>
@@ -893,6 +903,12 @@ output: index.html
             motion &mdash; and browsers decode it through WebCodecs, which they only
             offer on secure pages (one reason the device serves HTTPS). What differs
             between the two boards is the frame rate.
+          </p>
+          <p>
+            The delay is the whole way round: the pointer moved on the target until
+            the browser shows it, through USB, the target's own screen, capture,
+            the encoder, the network and the decoder. The console measures it
+            itself - the Video readout has a &ldquo;Measure the delay&rdquo; button.
           </p>
 
           <h3>The revision-3.x win we predicted actually landed</h3>

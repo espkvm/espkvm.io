@@ -13,7 +13,7 @@ spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Network: 100M Ethernet, 802.3at PoE
 spec.Capture: M5Stack Add-on Display In (LT6911D), 24-pin flat cable
 spec.microSD: on the capture module
-spec.Measured: 720p: MJPEG 21-23 fps, H.264 17 fps
+spec.Measured: 720p: MJPEG 21-23 fps, H.264 17 fps; about 185 ms from mouse to picture
 link.M5Stack documentation: https://docs.m5stack.com/en/unit/Unit_PoE-P4
 photo: board.webp
 photo_style: product
@@ -34,6 +34,9 @@ One viewer, a screen playing video, 2026-09-23 (the 1080p rows 2026-10-08, after
 | MJPEG | 720p | 21-23 | 21-23 Mbit/s |
 | H.264 | 1080p | 7 | 0.5-1.2 Mbit/s |
 | H.264 | 720p | 17 | 1-1.8 Mbit/s |
+
+From the pointer moved on the target to the browser showing it, at 720p over
+H.264: about 185 ms (2026-10-10, 0.62.0).
 
 **720p is the mode to give this board.** The byte reordering its bridge needs
 costs four times less there, and over a network H.264 at 720p gives 17 fps at a
