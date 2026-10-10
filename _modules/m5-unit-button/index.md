@@ -26,7 +26,9 @@ what holding it for a second and a half does:
 - Wake-on-LAN;
 - a runbook, by name;
 - save the dashcam's last seconds as a clip;
-- a screenshot to the card.
+- a screenshot to the card;
+- on a board with WiFi, the connection: hotspot on and off, the next network
+  mode, or Ethernet and WiFi swapped. Each restarts the device.
 
 These are the same actions a schedule can run. The hold fires as soon as it
 has been held long enough, so you know it took.

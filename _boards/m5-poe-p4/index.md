@@ -26,13 +26,13 @@ as the P4-ETH, and 802.3at PoE.
 
 ## Measured
 
-One viewer, a screen playing video, 2026-09-23:
+One viewer, a screen playing video, 2026-09-23 (the 1080p rows 2026-10-08, after the frame gate):
 
 | Codec | Mode | fps | Bitrate |
 |---|---|---|---|
-| MJPEG | 1080p | 9 | 17-18 Mbit/s |
+| MJPEG | 1080p | 11 | 17-18 Mbit/s |
 | MJPEG | 720p | 21-23 | 21-23 Mbit/s |
-| H.264 | 1080p | 6 | 0.5-1.2 Mbit/s |
+| H.264 | 1080p | 7 | 0.5-1.2 Mbit/s |
 | H.264 | 720p | 17 | 1-1.8 Mbit/s |
 
 **720p is the mode to give this board.** The byte reordering its bridge needs
@@ -43,8 +43,9 @@ suggests 720p, or MJPEG, when it sees H.264 above 720p on this board.
 
 If it has to be 1080p, give it **30 Hz, not 60**. The bridge writes every frame
 it receives into memory, whether or not it gets encoded, and at 60 Hz that alone
-takes most of the memory's bandwidth. Measured 2026-10-08: H.264 at 1080p went
-from 5-6 fps at 60 Hz to 8 fps at 30 Hz.
+takes most of the memory's bandwidth. Since 0.62.0 the firmware lets through
+only the frames it can use, so the gap is small now: H.264 at 1080p gives 7 fps
+at 60 Hz and 8 at 30 Hz.
 
 ## Good to know
 
