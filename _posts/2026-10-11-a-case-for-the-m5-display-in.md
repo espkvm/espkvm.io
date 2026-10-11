@@ -25,6 +25,9 @@ It is one printed part and needs no screws: four tabs along its edges go into
 the slots of the Unit PoE-P4 housing and hold it there. The tabs are thin, so
 press it on gently.
 
+The Add-on Display Out has the same outline, so the case
+should fit it too; I have only tried it with the Display In.
+
 It is the first printed case for an M5Stack board on the
 [hardware list](/#hardware).
 

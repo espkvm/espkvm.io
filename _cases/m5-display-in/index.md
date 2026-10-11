@@ -15,4 +15,6 @@ match the Unit PoE-P4 housing: same width, same corners.
 - HDMI comes out of one end, the USB-A port out of the other;
 - vent slots on top;
 - one printed part, no screws: four tabs clip into the slots of the Unit PoE-P4 housing. The tabs are thin, so press it on gently.
+
+The Add-on Display Out has the same outline, so the case should fit it too; I have only tried it with the Display In.
 - Ethernet, USB-C and the side ports of the Unit PoE-P4 stay free.
