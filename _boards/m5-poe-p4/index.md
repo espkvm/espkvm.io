@@ -10,9 +10,10 @@ flasher: m5-poe-p4
 capture: m5-addon-display-in
 spec.Chip: ESP32-P4, rev 1.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 64 x 24 x 20 mm, in its case
 spec.Network: 100M Ethernet, 802.3at PoE
-spec.Capture: M5Stack Add-on Display In (LT6911D), 24-pin flat cable
-spec.microSD: on the capture module
+spec.Capture connector: 24-pin flat cable to the Add-on Display In
+spec.microSD: yes, on the capture module the board needs anyway
 spec.Measured: 720p: MJPEG 21-23 fps, H.264 17 fps; about 185 ms from mouse to picture
 link.M5Stack documentation: https://docs.m5stack.com/en/unit/Unit_PoE-P4
 photo: board.webp

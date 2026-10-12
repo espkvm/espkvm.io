@@ -9,9 +9,10 @@ flasher: p4-guition
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 92 x 62 mm
 spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-C, the OTG-HS one
-spec.Capture: camera connector J3
+spec.Capture connector: camera connector J3
 photo: board.webp
 photo_style: product
 ---

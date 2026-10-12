@@ -981,6 +981,19 @@
         font-size: 13px;
         color: var(--muted);
       }
+      .board-try {
+        margin: 14px 0 0;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: var(--text);
+        background: var(--bg-raised);
+        border-left: 3px solid var(--warn);
+        border-radius: 0 8px 8px 0;
+      }
+      .board-try a {
+        white-space: nowrap;
+        font-weight: 600;
+      }
       .board-credit {
         color: var(--faint);
         font-size: 13px;
@@ -988,6 +1001,205 @@
       }
       .board-page .post-body {
         max-width: 70ch;
+      }
+
+      /* ---- board comparison --------------------------------------------- */
+
+      .cmp-diff {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .cmp-table th,
+      .cmp-table td {
+        font-size: 14px;
+        min-width: 150px;
+      }
+      .cmp-table tbody th {
+        position: sticky;
+        left: 0;
+        min-width: 110px;
+        background: var(--bg);
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .cmp-table thead th {
+        vertical-align: top; /* photos and outlines level, however long the name */
+      }
+      .cmp-head {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .cmp-table thead a {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-weight: 600;
+      }
+      .cmp-table thead img {
+        /* one size whatever the column's width, so the photos line up */
+        width: 128px;
+        height: 128px;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        background: #fff; /* some photos are cut out, most are on white */
+        border-radius: 6px;
+      }
+      .cmp-none {
+        color: var(--faint);
+      }
+      .cmp-head-size {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 4px;
+      }
+      .cmp-head-size small {
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .cmp-size rect {
+        fill: color-mix(in srgb, var(--accent) 22%, transparent);
+        stroke: var(--accent);
+        stroke-width: 1.5;
+      }
+      .cmp-table td.cmp-best {
+        background: color-mix(in srgb, var(--ok) 14%, transparent);
+        box-shadow: inset 3px 0 0 var(--ok);
+      }
+      .cat-teaser {
+        position: relative;
+        max-height: 460px;
+        overflow: hidden;
+        border-radius: 10px;
+      }
+      /* The fade is drawn over the cards, so it ends at the cut whatever
+         the number of rows behind it. */
+      .cat-teaser::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 65%;
+        background: linear-gradient(to bottom, transparent, var(--bg) 85%);
+        pointer-events: none;
+      }
+      .cat-teaser-link {
+        z-index: 1;
+      }
+      .cat-teaser-link {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 22px;
+        text-decoration: none;
+      }
+      .cat-teaser-link span {
+        padding: 12px 24px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--accent-text);
+        font-size: 16px;
+        font-weight: 600;
+        box-shadow: 0 0 0 8px var(--bg), 0 6px 20px rgba(0, 0, 0, 0.35);
+      }
+      .cat-teaser-link:hover span,
+      .cat-teaser-link:focus-visible span {
+        background: var(--accent-hover);
+      }
+      .cat-item {
+        position: relative;
+        display: flex;
+      }
+      .cat-item[hidden] {
+        display: none;
+      }
+      .cat-item > .cat-card {
+        flex: 1;
+      }
+      .cmp-add {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: var(--bg-raised);
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .cmp-add:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .cmp-add[aria-pressed="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--accent-text);
+      }
+      .cmp-float {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transform: translateX(-50%);
+      }
+      .cmp-float[hidden] {
+        display: none;
+      }
+      .cmp-float .btn {
+        border-radius: 999px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+        font-weight: 600;
+      }
+      .cmp-clear {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: var(--bg-raised);
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+      }
+      .cmp-cta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px 24px;
+        margin: 0 0 20px;
+        padding: 16px 20px;
+        border: 1px solid var(--accent);
+        border-radius: 10px;
+        background: var(--accent-soft);
+      }
+      .cmp-cta p {
+        flex: 1 1 320px;
+        margin: 0;
+        font-size: 15px;
+      }
+      .cmp-cta-btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
       }
 
       /* ---- tables -------------------------------------------------------- */
@@ -1015,8 +1227,103 @@
         font-family: var(--mono);
         white-space: nowrap;
       }
+      /* Roadmap: a line down the left, a dot per month, dashed for the future. */
+      .timeline {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+      }
+      .timeline > li {
+        position: relative;
+        padding: 0 0 22px 28px;
+        border-left: 2px solid var(--accent);
+        margin-left: 6px;
+      }
+      .timeline > li::before {
+        content: "";
+        position: absolute;
+        left: -7px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .timeline .tl-when {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .timeline ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .timeline ul li {
+        font-size: 14px;
+        padding: 3px 10px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-raised);
+      }
+      .timeline p {
+        margin: 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .timeline .tl-now::before {
+        width: 16px;
+        height: 16px;
+        left: -9px;
+        top: 2px;
+        background: var(--ok);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent);
+      }
+      .timeline .tl-now .tl-when {
+        color: var(--ok);
+      }
+      .timeline .tl-next {
+        border-left-style: dashed;
+        border-left-color: var(--border);
+      }
+      .timeline .tl-next::before {
+        background: var(--bg);
+        border: 2px solid var(--accent);
+        box-sizing: border-box;
+      }
+      .timeline .tl-next ul li {
+        background: transparent;
+        border-style: dashed;
+      }
+      .timeline .tl-maybe::before {
+        border-color: var(--border);
+      }
+      .timeline .tl-maybe ul li {
+        color: var(--muted);
+      }
+      .timeline .tl-maybe ul {
+        margin-bottom: 8px;
+      }
+      .timeline > li:last-child {
+        padding-bottom: 0;
+        border-left-color: transparent;
+      }
+      .status-all {
+        margin-top: 20px;
+      }
+      .status-all summary {
+        cursor: pointer;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      /* The feature gets most of the width; a long verdict wraps instead. */
+      .status td:first-child {
+        width: 75%;
+      }
       .status td:last-child {
-        white-space: nowrap;
         font-size: 14px;
       }
       .yes {

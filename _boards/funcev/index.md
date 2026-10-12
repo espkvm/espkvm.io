@@ -10,9 +10,10 @@ flasher: funcev
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); the unit here is rev 3.2
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 88 x 74 mm
 spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB OTG
-spec.Capture: 15-pin Raspberry Pi camera connector
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
 spec.Measured: 1080p H.264 at 22-24 fps, 720p at 28; about 155 ms from mouse to picture
 link.Espressif user guide: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html

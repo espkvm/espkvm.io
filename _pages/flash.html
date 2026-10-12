@@ -397,6 +397,7 @@ output: flash/index.html
           </span>
         </esp-web-install-button>
         <p class="board-note" id="board-note"></p>
+        <p class="board-note warn" id="flash-result" hidden></p>
         <p class="board-note">
           ESP-KVM comes with no warranty; you flash and use it at your own risk.
           <a href="/disclaimer/">Disclaimer</a>.
@@ -470,6 +471,12 @@ output: flash/index.html
           BOOT button, press Install, and keep holding until it starts writing.
           That forces the chip into its bootloader when the automatic reset
           does not take.
+        </div>
+
+        <div class="note">
+          <strong>If it still fails,</strong> ask in
+          <a href="https://github.com/espkvm/espkvm/discussions/new?category=q-a" rel="noopener">GitHub Discussions</a>.
+          Write the board name and the error text from the dialog.
         </div>
 
         <div class="note">
@@ -663,6 +670,42 @@ output: flash/index.html
       }
       let listed = false;
 
+      // After an install, ask how it went: a prefilled post in Discussions.
+      // A failure is the one I most need to hear about.
+      const DISCUSS = "https://github.com/espkvm/espkvm/discussions/new";
+      function report(how, error) {
+        const box = document.getElementById("flash-result");
+        box.hidden = !how;
+        if (!how) return;
+        const name = fromFile ? "an image from a file" : board.label + " (rev " + rev + ")";
+        const lines = ["Board: " + name, "Capture board: ", "Browser: " + navigator.userAgent];
+        let title, text, label, category;
+        if (how === "done") {
+          category = "show-and-tell";
+          title = "Installed on " + name;
+          lines.push("", "What works:", "", "What does not:", "");
+          text = "Installed. Tell me how it went: what works, what does not, what you use it for. ";
+          label = "Post your result";
+        } else {
+          category = "q-a";
+          title = "Install failed on " + name;
+          lines.push("Error: " + String(error || "").slice(0, 300), "", "What I tried:", "");
+          text = "The install failed. Try the tips below; if it still fails, post the error " +
+            "and I will look at it. A failed install is the report I need most. ";
+          label = "Post the error";
+        }
+        const url = DISCUSS + "?category=" + category + "&title=" + encodeURIComponent(title) +
+          "&body=" + encodeURIComponent(lines.join("\n"));
+        box.textContent = text;
+        const a = document.createElement("a");
+        a.href = url;
+        a.rel = "noopener";
+        a.target = "_blank";
+        a.textContent = label + " in Discussions \u2192";
+        a.addEventListener("click", () => track("flash_report", { how }));
+        box.appendChild(a);
+      }
+
       // How installs end, counted per board: the flasher is the one place a
       // real device shows up. esp-web-tools keeps the progress on its dialog,
       // so watch that property as the dialog renders.
@@ -678,6 +721,7 @@ output: flash/index.html
           const p = fromFile ? { board: "file", rev: "file" } : { board: board.id, rev };
           const item = fromFile ? shopItem({ id: "file", label: "Image from a file" }, "file") : shopItem(board, rev);
           if (st === "preparing") {
+            report(null);
             this._trackedAt = Date.now();
             track("flash_start", p);
             track("add_to_cart", item);
@@ -692,11 +736,13 @@ output: flash/index.html
             track("flash_done", p);
             item.transaction_id = "flash-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
             track("purchase", item);
+            report("done");
           } else if (st === "error") {
             p.reason = String(this._installState.message || "").slice(0, 100);
             track("flash_error", p);
             // An install that failed leaves the cart: GA counts it per board.
             track("remove_from_cart", Object.assign({ reason: "error: " + p.reason }, item));
+            report("error", this._installState.message);
           }
         };
         // The dialog removes itself when closed. Closed in the middle of an

@@ -214,6 +214,7 @@ output: index.html
         <p class="lead">
           What the firmware ships with. Anything the hardware cannot support, the
           device shows disabled with the reason &mdash; it does not pretend.
+          <a href="/features/">The full list</a>.
         </p>
 
         <div class="grid">
@@ -936,10 +937,69 @@ output: index.html
       </section>
 
       <!-- where it stands -->
-      <section>
+      <section id="roadmap">
         <h2>Where it stands</h2>
-        <p class="lead">An honest status board, the same one the device reports about itself.</p>
+        <p class="lead">What arrived when, and what comes next. The dates are releases; the plan is a guide, not a promise.</p>
 
+        <ol class="timeline">
+          <li class="tl-month">
+            <span class="tl-when">July 2026</span>
+            <ul>
+              <li>First release, installed from the browser; MJPEG and H.264</li>
+              <li>Virtual media, and a rescue image kept in flash</li>
+              <li>Wake-on-LAN, macros, a static address</li>
+              <li>ATX power control</li>
+              <li>Home Assistant over MQTT, a WireGuard client</li>
+            </ul>
+          </li>
+          <li class="tl-month">
+            <span class="tl-when">August 2026</span>
+            <ul>
+              <li>Native Tailscale, and a console that installs as an app</li>
+              <li>Wi-Fi, with a rescue hotspot</li>
+              <li>IPv6, a status screen on the device</li>
+              <li>Reading the screen as text, and watching it when nobody is</li>
+              <li>Going back to any earlier release</li>
+              <li>More boards: PoE, Wi-Fi 6, rev 3.x chips</li>
+            </ul>
+          </li>
+          <li class="tl-month">
+            <span class="tl-when">September 2026</span>
+            <ul>
+              <li>Runbooks, a scheduler, alerts to Telegram</li>
+              <li>Recording, screenshots, timelapse, a dashcam</li>
+              <li>M5Stack Unit PoE-P4 with its own HDMI bridge</li>
+              <li>exFAT cards, images over 4 GB, a real CD-ROM drive</li>
+            </ul>
+          </li>
+          <li class="tl-month">
+            <span class="tl-when">October 2026</span>
+            <ul>
+              <li>Two-factor sign-in, a battery-backed clock</li>
+              <li>HDMI-CEC, gamepads for a Switch and an original Xbox</li>
+              <li>Ethernet with Wi-Fi as the backup</li>
+              <li>The target's serial console and its kernel log</li>
+              <li>Several screens on one target, a delay meter</li>
+              <li>A Let's Encrypt certificate over Tailscale</li>
+            </ul>
+          </li>
+          <li class="tl-now">
+            <span class="tl-when">Now</span>
+            <p>About 110 releases in three months, fifteen boards. <a href="https://github.com/espkvm/espkvm/blob/main/CHANGELOG.md">Every change</a>.</p>
+          </li>
+          <li class="tl-next">
+            <span class="tl-when">Next</span>
+            <ul>
+              <li>HDMI audio</li>
+              <li>Your own EDID, from a monitor that works</li>
+              <li>More boards</li>
+            </ul>
+            <p>Missing something? <a href="https://github.com/espkvm/espkvm/discussions">Ask for it in Discussions</a>.</p>
+          </li>
+        </ol>
+
+        <details class="status-all">
+          <summary>Every feature and how well it works</summary>
         <div class="table-scroll">
           <table class="status">
             <tbody>
@@ -1024,8 +1084,8 @@ output: index.html
                 <td class="yes">works</td>
               </tr>
               <tr>
-                <td>A gamepad for a console &mdash; a HORI pad for a Switch, an Xbox 360 pad for Windows and a Steam Deck; buttons in a window or over the picture</td>
-                <td class="yes">works on a Switch; the Xbox pad not tried yet</td>
+                <td>A gamepad for a console &mdash; a HORI pad for a Switch, an original Xbox pad, an Xbox 360 pad for Windows and a Steam Deck; buttons in a window or over the picture</td>
+                <td class="yes">works on a Switch; the Xbox pads not tried here yet</td>
               </tr>
               <tr>
                 <td>HDMI-CEC &mdash; see the source, send it remote keys, standby and wake</td>
@@ -1070,6 +1130,7 @@ output: index.html
             </tbody>
           </table>
         </div>
+        </details>
 
         <p class="note" style="margin-top: 18px">
           <strong>Not for the public internet.</strong> There is a login and
@@ -1092,18 +1153,16 @@ output: index.html
         </p>
 
         <h3 class="hw-head" id="boards">The board</h3>
-        <p class="hw-lead">Any of these does the whole job. "Untested" ones were built from the vendor's schematic and nobody has run them yet; flashing one cannot damage it. Each card opens the board's page. <a href="/boards/">All boards, with filters &rarr;</a> Have one already? <a href="/tools/#board-check">Read it in the browser</a> to see which of these it matches.</p>
-        <div class="cat-grid">
-<!-- catalog:tested -->
-<!-- catalog:untested -->
-          <a class="cat-card cat-card-add" href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">
-            <span class="cat-photo"><img src="assets/board-add.svg" width="680" height="340" loading="lazy" alt="" /></span>
-            <span class="cat-body">
-              <span class="cat-maker">Yours, maybe</span>
-              <span class="cat-model">Not on the list?</span>
-              <span class="cat-chips"><span class="cat-chip">open an issue with its schematic</span></span>
-            </span>
-          </a>
+        <p class="hw-lead">Any board in the catalog does the whole job. Have one already? <a href="/tools/#board-check">Read it in the browser</a> to see which one it matches.</p>
+        <div class="cmp-cta">
+          <p><strong>Not sure which one?</strong> Put them side by side: chip, memory, Ethernet, PoE, Wi-Fi, microSD and the measured frame rate, with the best marked.</p>
+          <div class="cmp-cta-btns"><a class="btn btn-primary" href="/boards/compare/">Compare boards</a></div>
+        </div>
+        <div class="cat-teaser">
+          <div class="cat-grid" inert>
+<!-- catalog:teaser -->
+          </div>
+          <a class="cat-teaser-link" href="/boards/"><span>All <!-- catalog:count --> boards in the catalog &rarr;</span></a>
         </div>
 
         <h3 class="hw-head">The capture board</h3>

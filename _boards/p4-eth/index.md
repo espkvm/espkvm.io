@@ -10,9 +10,10 @@ flasher: p4-eth
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
+spec.Size: 78 x 21 mm
 spec.Network: 100M Ethernet
 spec.To the target: USB 2.0 OTG on an MX1.25 connector
-spec.Capture: 22-pin 0.5 mm camera connector (the Pi 5 / Zero kind)
+spec.Capture connector: 22-pin 0.5 mm camera connector (the Pi 5 / Zero kind)
 spec.microSD: yes
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-eth.htm
 spec.Measured: 1080p MJPEG 20 fps; 720p 45 fps

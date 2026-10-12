@@ -10,9 +10,10 @@ flasher: p4-wifi6-devkit
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); v1.2 boards carry rev 3.1
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 85 x 56.5 mm
 spec.Network: 100M Ethernet with PoE, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-A port 1 (A-to-A cable; jumper, see below)
-spec.Capture: camera connector
+spec.Capture connector: camera connector
 spec.microSD: yes
 spec.Measured: H.264 at about 23 fps (rev 3.1)
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm

@@ -1,0 +1,273 @@
+---
+title: ESP-KVM features - everything the firmware does today
+description: The full list of what ESP-KVM does - video, keyboard and mouse, text screens, virtual media, recording, automation, power control, networking, security and Home Assistant - and what it does not do yet.
+canonical: https://espkvm.io/features/
+og_type: article
+output: features/index.html
+---
+<!--
+  The full list, grouped. The source of truth is the Status table in the
+  firmware README: keep the two in step. A feature not tried on hardware says
+  so ("new"), and a missing one is listed as missing.
+-->
+<style>
+  .lede {
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+  .toc a {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .toc a:hover {
+    border-color: var(--accent);
+  }
+  .feat {
+    margin-top: 36px;
+  }
+  .feat-table td:first-child {
+    font-weight: 600;
+    width: 34%;
+  }
+  .feat-table td {
+    vertical-align: top;
+    font-size: 15px;
+  }
+  .tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    vertical-align: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .tag-new {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .tag-no {
+    border-color: var(--warn, #d29922);
+    color: var(--warn, #d29922);
+  }
+  @media (max-width: 720px) {
+    .feat-table td:first-child {
+      width: auto;
+    }
+    .feat-table tr {
+      display: block;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .feat-table td {
+      display: block;
+      border: 0;
+      padding: 2px 0;
+    }
+  }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>What ESP-KVM does</h1>
+    <p class="tagline">
+      Everything in the firmware today, in one list. Where something is new and
+      not tried on hardware yet, or needs a part you may not have, it says so.
+    </p>
+  </header>
+
+  <p class="lede">
+    ESP-KVM is open-source firmware for an ESP32-P4 board with an HDMI capture
+    chip: the target computer's screen, keyboard and mouse in a browser tab,
+    from the BIOS up. There is no Linux and no cloud. Anything a board cannot
+    do, the console shows switched off with the reason.
+  </p>
+
+  <ul class="toc">
+    <li><a href="#video">Video</a></li>
+    <li><a href="#input">Keyboard and mouse</a></li>
+    <li><a href="#text">Text screens</a></li>
+    <li><a href="#media">Virtual media</a></li>
+    <li><a href="#recording">Recording</a></li>
+    <li><a href="#automation">Automation</a></li>
+    <li><a href="#target">Power and the target</a></li>
+    <li><a href="#network">Network and VPN</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#device">The device</a></li>
+    <li><a href="#not-yet">Not yet</a></li>
+  </ul>
+
+  <section class="feat" id="video">
+    <h2>Video</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Follows the target's resolution</td><td>From an 800&times;600 firmware screen to a 1080p desktop, with nothing to set.</td></tr>
+        <tr><td>MJPEG and H.264</td><td>Both encoded by the chip's hardware. H.264 uses far less bandwidth on a screen that barely changes, and needs HTTPS in the browser.</td></tr>
+        <tr><td>Adapts to a slow link</td><td>Over WiFi or a VPN the stream lowers its quality instead of stuttering.</td></tr>
+        <tr><td>Measured delay</td><td>"Measure the delay" times the whole round trip, mouse to picture: about 155&nbsp;ms at 1080p H.264.</td></tr>
+        <tr><td>Several viewers</td><td>Anyone signed in can watch; one is in control at a time, and control can be taken over.</td></tr>
+        <tr><td>A viewing token for dashboards</td><td>Opens the stream and the figures, and nothing that can touch the target. Off until you make one.</td></tr>
+        <tr><td>EDID presets</td><td>The device tells the target which modes to offer, so a BIOS picks one that is easy to capture.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="input">
+    <h2>Keyboard and mouse</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Keyboard, mouse and media keys</td><td>The device is a USB keyboard and mouse to the target. Works in a BIOS, with no drivers.</td></tr>
+        <tr><td>Absolute and relative pointer</td><td>Absolute: the click lands where you aimed, whatever the target's mouse acceleration. Relative for the few programs that need it.</td></tr>
+        <tr><td>Alt+Tab, Ctrl+W, the Windows key</td><td>Reach the target in Chrome and Edge, in full screen with control taken. Firefox and Safari give a page no way to catch them.</td></tr>
+        <tr><td>Paste text</td><td>Typed out as key presses, with a keyboard layout: US English, Russian, Czech, Ukrainian, Lithuanian.</td></tr>
+        <tr><td>Phone and tablet</td><td>A touch trackpad and an on-screen keyboard, with a short tick under the finger on Android.</td></tr>
+        <tr><td>Key macros</td><td>Your own buttons for key sequences. <a href="https://github.com/espkvm/espkvm/blob/main/docs/SCRIPTS.md">The commands</a>.</td></tr>
+        <tr><td>Wake from the keyboard</td><td>Over USB, if the machine allows it. Otherwise Wake-on-LAN or the ATX power button.</td></tr>
+        <tr><td>Gamepad</td><td>The device can be a controller for a Nintendo Switch; a pad on your own computer drives it through the console. An original Xbox pad (XID) was tried on a real Xbox in a fork. The Xbox 360 pad mode for Windows and a Steam Deck is not tried on hardware yet.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="text">
+    <h2>Text screens</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Copy text off a BIOS screen</td><td>A BIOS, a boot loader or a console: select it with the mouse, or copy the whole screen. Not OCR - the characters are matched against the fonts these screens draw with, so text comes back exactly or not at all.</td></tr>
+        <tr><td>Text instead of video</td><td>On a character screen the device can send the text instead of a picture: a couple of kilobytes a screen, for a link too slow for video.</td></tr>
+        <tr><td>Watch for words</td><td>Give it phrases; it alerts when one appears, with nobody looking. Off by default.</td></tr>
+        <tr><td>A screen of one colour</td><td>A stop screen or a blank output is noticed, and can raise an alert or save a clip.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="media">
+    <h2>Virtual media</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Boot from a disk image</td><td>An image handed to the target as a USB drive it can boot from, from a microSD card (FAT32 or exFAT, MBR or GPT).</td></tr>
+        <tr><td>An image with no card</td><td>A small rescue image kept in the device's own flash. netboot.xyz goes there in one click.</td></tr>
+        <tr><td>Download onto the card</td><td>Paste a link and the device downloads the image itself.</td></tr>
+        <tr><td>The whole card as a disk</td><td>The target sees the card itself, read-write.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="recording">
+    <h2>Recording</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Record the screen and take screenshots</td><td>To the microSD card. The stream the viewers already get is saved, so nothing is encoded twice. A panel lists, plays and downloads them.</td></tr>
+        <tr><td>Dashcam</td><td>The last minutes kept, in memory or on the card. Saved as an MP4 with chapters on a stop screen, a watched phrase, the power going off or a button - and sent to Telegram.</td></tr>
+        <tr><td>Timelapse</td><td>A frame every few seconds, played back at 25 fps.</td></tr>
+        <tr><td>Search a recording</td><td>The screen's text is saved beside the video; search it and play from that moment. Character screens only.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="automation">
+    <h2>Automation</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Runbooks</td><td>A macro that waits for words on the screen: <code>wait Press F2</code>, then <code>key f2</code>. Runs on the device, with the browser closed. Character screens only.</td></tr>
+        <tr><td>Scheduler</td><td>Actions on a cron timetable: Wake-on-LAN in the morning, a runbook overnight, a reset every Sunday.</td></tr>
+        <tr><td>Notifications</td><td>To Telegram, with a screenshot or a clip, or to a webhook: a watched phrase, a blank screen, a panic in the target's log.</td></tr>
+        <tr><td>Home Assistant</td><td>Over MQTT, found by itself: sensors, buttons for each runbook, an update entity, and a camera with a still of the screen. Off by default.</td></tr>
+        <tr><td>REST API</td><td>Everything the console does, for scripts. An AI agent can use it too, behind a switch that is off by default.</td></tr>
+        <tr><td>Guess the target's OS</td><td>From the way it talks to the USB keyboard.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="target">
+    <h2>Power and the target</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>ATX power control</td><td>Power, reset and the power LED, wired to the motherboard's front-panel header. <a href="https://github.com/espkvm/espkvm/blob/main/docs/wiring.md">Wiring</a>.</td></tr>
+        <tr><td>Wake-on-LAN</td><td>From the console, a schedule, a button or Home Assistant.</td></tr>
+        <tr><td>A button on the box</td><td>A push button on a free pin, with one action for a short press and one for a hold.</td></tr>
+        <tr><td>Serial console <span class="tag tag-new">new</span></td><td>Two pins to the target's UART give a terminal in the browser that keeps the boot messages. For a NAS, a router or a server with no screen. Not tried on hardware yet.</td></tr>
+        <tr><td>The target's log over the network <span class="tag tag-new">new</span></td><td>netconsole or syslog over UDP, kept and shown live, with an alert on "Kernel panic". No wiring. Not tried on hardware yet.</td></tr>
+        <tr><td>HDMI-CEC</td><td>The device acts as a TV: see the source's name, send it remote keys, standby and wake. Media boxes, consoles and a Raspberry Pi speak CEC; an ordinary PC does not. Boards with a TC358743 chip.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="network">
+    <h2>Network and VPN</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Ethernet, PoE on some boards</td><td>With IPv6 and a local name, <code>espkvm.local</code>.</td></tr>
+        <tr><td>WiFi</td><td>On boards with an ESP32-C6, or an ESP32-C5 for 5&nbsp;GHz. Joins a network or makes its own, with a rescue hotspot and a captive portal.</td></tr>
+        <tr><td>Ethernet with WiFi as the backup</td><td>Pull the cable and the device moves to WiFi, then back, with no restart.</td></tr>
+        <tr><td>Tailscale, built in</td><td>The device joins your tailnet itself: no port forward, no gateway, no cloud of mine.</td></tr>
+        <tr><td>WireGuard</td><td>A split tunnel to your own hub. The key is made on the device.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="security">
+    <h2>Security</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>HTTPS from the first boot</td><td>The device is its own certificate authority. Import its CA once and the browser trusts it, which also opens H.264.</td></tr>
+        <tr><td>Let's Encrypt over Tailscale <span class="tag tag-new">new</span></td><td>A real certificate for the device's tailnet name, got and renewed on the device. No warning, nothing to import. <a href="/blog/0-63-0-lets-encrypt-over-tailscale/">How it works</a>.</td></tr>
+        <tr><td>Your own certificate</td><td>From an internal CA or any other, in Settings or with <code>PUT /api/v1/tls/cert</code> from a renewal hook.</td></tr>
+        <tr><td>Login and two-factor sign-in</td><td>A password, and optionally a TOTP app with eight recovery codes.</td></tr>
+        <tr><td>Password reset by hand</td><td>The board button, held after a reset, clears a lost password and the second factor. No reflash.</td></tr>
+      </table>
+    </div>
+    <p>
+      It is still not meant for the public internet: secure boot and signed
+      updates are not on. Reach it over a VPN.
+    </p>
+  </section>
+
+  <section class="feat" id="device">
+    <h2>The device</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>Updates from the browser</td><td>One click, two firmware slots, and a bad update goes back to the one that worked by itself. Any older release can be installed too.</td></tr>
+        <tr><td>Flash from the browser</td><td>The first install needs only a USB cable and Chrome or Edge: <a href="/flash/">the flasher</a>.</td></tr>
+        <tr><td>Settings to a file, and back</td><td>No secrets in the file, and a device's own identity is left alone.</td></tr>
+        <tr><td>Thermal protection</td><td>Halves the frame rate when the chip is warm, and stops encoding when it is hot until it cools.</td></tr>
+        <tr><td>A clock that survives a restart</td><td>Optional: a DS3231 or a similar chip on the capture board's I2C bus, found by itself.</td></tr>
+        <tr><td>A small status display</td><td>Optional: an I2C OLED or a round GC9A01 with the address, the link and the capture.</td></tr>
+        <tr><td>Diagnostics and a live log</td><td>Memory, temperatures, the network and the capture, and the device's own log as it happens.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="feat" id="not-yet">
+    <h2>Not yet</h2>
+    <div class="table-scroll">
+      <table class="feat-table">
+        <tr><td>HDMI audio <span class="tag tag-no">missing</span></td><td>The capture chip offers it, but the wires and the code are missing.</td></tr>
+        <tr><td>Frame rate</td><td>Not 60 fps at 1080p: 20-30 fps is what a microcontroller does. Fine for a BIOS and a desktop, not for a game.</td></tr>
+      </table>
+    </div>
+    <p>
+      What comes next is in the
+      <a href="https://github.com/espkvm/espkvm/blob/main/ROADMAP.md">roadmap</a>,
+      and how it stands next to PiKVM, JetKVM and the others is on the
+      <a href="/compare/">comparison page</a>. Or
+      <a href="https://demo.espkvm.io/" rel="noopener">try the live demo</a>.
+    </p>
+  </section>
+</div>

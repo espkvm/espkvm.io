@@ -10,9 +10,10 @@ flasher: p4-poe
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
+spec.Size: 68 x 55 mm
 spec.Network: 100M Ethernet with PoE, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-A
-spec.Capture: 15-pin Raspberry Pi camera connector
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
 spec.Measured: 1080p H.264 at 23 fps (rev 3.x)
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-wifi6-poe-eth.htm

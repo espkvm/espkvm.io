@@ -10,8 +10,9 @@ flasher: p4-wifi6
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
+spec.Size: 71 x 21 mm
 spec.Network: Wi-Fi 6 (ESP32-C6) only
-spec.Capture: 15-pin Raspberry Pi camera connector
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-wifi6.htm
 spec.To the target: USB OTG on an MX1.25 4-pin header

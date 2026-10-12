@@ -9,9 +9,10 @@ flasher: viewe-p4-pi
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 85 x 56 mm
 spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-C, the OTG-HS one
-spec.Capture: 15-pin Raspberry Pi camera connector
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
 link.VIEWE documentation: https://github.com/VIEWESMART/ESP32-P4-Pi
 photo: board.webp

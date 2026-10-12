@@ -2,17 +2,18 @@
 title: Waveshare ESP32-P4-NANO-WIFI6-DB
 family: Waveshare
 kind: device
-status: untested
+status: tested
 order: 130
-role: Not tested on hardware
+role: The device - community-tested
 summary: The NANO with a dual-band ESP32-C5, so it can join a 5 GHz network.
 flasher: p4-nano-wifi6-db
 capture: c790, waveshare-19137
 spec.Chip: ESP32-P4, rev 3.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
+spec.Size: 52 x 50 mm
 spec.Network: 100M Ethernet (PoE header), dual-band Wi-Fi 6 (ESP32-C5)
 spec.To the target: USB-A (A-to-A cable, 5 V wire cut)
-spec.Capture: 15-pin Raspberry Pi camera connector
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-nano-wifi6-db.htm
 photo: board.webp
 photo_style: product
@@ -30,4 +31,4 @@ can be wired there instead of the Type-A socket.
 - The Type-A socket for the target always carries 5 V, as on the NANO.
 - So the lead to the target is an **A-to-A cable with the 5 V wire cut**. A plain A-to-A cable joins two 5 V supplies.
 
-Built from the schematic, not yet run on one.
+Run by a user with a C790 from AliExpress, with no problems. Wi-Fi has not been tried on it yet.

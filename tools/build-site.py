@@ -332,6 +332,12 @@ def family_page(shell, slug, name, items):
         '\n      <div class="cat-grid">\n%s\n      </div>'
         % (html.escape(title), len(group), tiles(sorted(group, key=key)))
         for title, group in groups if group)
+    # Optional text for a family's page: _families/<slug>.md
+    extra = ""
+    intro = os.path.join(ROOT, "_families", slug + ".md")
+    if os.path.exists(intro):
+        with open(intro, encoding="utf-8") as f:
+            extra = "\n" + render_markdown(f.read(), intro)
     content = """
     <article class="board-page">
       <p class="post-back"><a href="/boards/">&larr; All boards</a></p>
@@ -340,9 +346,9 @@ def family_page(shell, slug, name, items):
         Every {name} part on this site: the boards ESP-KVM runs on, the capture
         that feeds them and the modules that plug in. "Untested" means built from
         the maker's documentation and not yet run by anyone.
-      </p>{sections}
+      </p>{extra}{sections}
     </article>
-""".format(name=html.escape(name), sections=sections)
+""".format(name=html.escape(name), extra=extra, sections=sections)
     url = SITE + "/boards/family/%s/" % slug
     return render_page(shell, {
         "title": "%s parts for ESP-KVM, an open-source ESP32-P4 IP-KVM" % name,
@@ -353,6 +359,220 @@ def family_page(shell, slug, name, items):
         "og_type": "website",
     }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
                                     (name, url))))
+
+
+# The rows of the comparison, in this order; a spec not listed here comes after.
+# Memory and Network are split into one row per part.
+COMPARE_ROWS = ["Status", "Chip", "PSRAM", "Flash", "Ethernet", "PoE", "Wi-Fi", "HDMI capture",
+                "Capture connector",
+                "To the target", "microSD", "HDMI-CEC", "HDMI audio", "Measured"]
+
+
+SIZE_PX_PER_MM = 1.2  # one scale for every board, so the drawings compare
+
+
+def size_px(text):
+    """"78 x 21 mm" -> the outline in pixels, long side across. Only the first
+    two numbers count (a case's depth, an antenna are in the text)."""
+    nums = [float(n) for n in re.findall(r"\d+(?:\.\d+)?", text)[:2]]
+    if len(nums) < 2:
+        return (0, 0)
+    return (round(max(nums) * SIZE_PX_PER_MM), round(min(nums) * SIZE_PX_PER_MM))
+
+
+def size_drawing(text):
+    """The board's outline to scale, as a rectangle."""
+    w, h = size_px(text)
+    if not w:
+        return ""
+    return ('<svg class="cmp-size" width="%d" height="%d" viewBox="0 0 %d %d" aria-hidden="true">'
+            '<rect x="1" y="1" width="%d" height="%d" rx="3"/></svg>') % (
+        w + 2, h + 2, w + 2, h + 2, w, h)
+
+
+def compare_cells(d, catalog):
+    """A board's cells for the comparison: row -> (text, score). The score
+    marks the best of the boards shown; None where a row has no better."""
+    specs = dict(d["specs"])
+    cells = {}
+    for k, v in specs.items():
+        if k not in ("Memory", "Network"):
+            cells[k] = (v, None)
+    tested = d["meta"]["status"] == "tested"
+    cells["Status"] = ('<span class="cat-status">Tested</span>' if tested
+                       else '<span class="cat-status untested">Untested</span>', int(tested))
+    chip = specs.get("Chip", "")
+    cells["Chip"] = (chip, int("rev 3" in chip))
+
+    mem = specs.get("Memory", "")
+    m = re.search(r"(\d+) MB PSRAM", mem)
+    cells["PSRAM"] = (m.group(1) + " MB" if m else "", int(m.group(1)) if m else 0)
+    m = re.search(r"(\d+) MB flash", mem)
+    cells["Flash"] = (m.group(1) + " MB" if m else "", int(m.group(1)) if m else 0)
+
+    net = specs.get("Network", "")
+    m = re.search(r"(\d+M) Ethernet", net)
+    cells["Ethernet"] = (m.group(1) if m else "", int(bool(m)))
+    if "802.3at" in net:
+        poe = ("802.3at", 2)
+    elif "PoE header" in net:
+        poe = ("header only", 1)
+    elif "PoE" in net:
+        poe = ("yes", 2)
+    else:
+        poe = ("", 0)
+    cells["PoE"] = poe
+    m = re.search(r"((?:dual-band )?Wi-Fi \d+) \((ESP32-\w+)\)", net)
+    cells["Wi-Fi"] = (("%s, %s" % (m.group(1), m.group(2))) if m else "",
+                      (2 if "dual-band" in m.group(1) else 1) if m else 0)
+
+    caps = [catalog["by_id"][c] for c in id_list(d["meta"].get("capture"))
+            if c in catalog["by_id"]]
+    cells["HDMI capture"] = (" or ".join(
+        "[%s](%s)" % (c["meta"]["title"], c["url"]) for c in caps), None)
+
+    sd = specs.get("microSD", "")
+    cells["microSD"] = (sd, int(bool(sd)))
+    # fps at 1080p; a figure with no resolution next to it is 1080p too
+    meas = specs.get("Measured", "")
+    best = 0
+    for part in meas.split(";"):
+        if "fps" in part and ("1080p" in part or "720p" not in part):
+            best = max([best] + [int(n) for n in re.findall(r"(\d+) fps", part)])
+    cells["Measured"] = (meas, best)
+    return cells
+
+
+def compare_page(shell, catalog):
+    """Every ESP32-P4 board side by side. The table holds all of them, so it
+    reads without JavaScript; the script shows only the ones picked."""
+    devices = catalog["tested"] + catalog["untested"]
+    cells = {d["id"]: compare_cells(d, catalog) for d in devices}
+    keys = list(COMPARE_ROWS)
+    for d in devices:
+        for k in cells[d["id"]]:
+            if k not in keys and k != "Size":  # drawn under the photo instead
+                keys.append(k)
+
+    def cell(d, key):
+        text, score = cells[d["id"]].get(key, ("", None))
+        if key == "Status":
+            body = text
+        else:
+            body = inline(text, d["path"]) if text else '<span class="cmp-none">-</span>'
+        return '<td class="cmp-col" data-id="%s"%s>%s</td>' % (
+            html.escape(d["id"]), "" if score is None else ' data-score="%d"' % score, body)
+
+    used = [k for k in keys if any(cells[d["id"]].get(k, ("",))[0] for d in devices)]
+    def head_size(d):
+        """The board's outline to scale and its size, under the photo. The
+        box is as tall as the tallest outline, so the names stay level."""
+        text = cells[d["id"]].get("Size", ("", None))[0]
+        return '<span class="cmp-head-size" style="height:%dpx">%s<small>%s</small></span>' % (
+            size_box_h, size_drawing(text) if text else "",
+            html.escape(text.split(",")[0]) if text else "&nbsp;")  # the notes stay on the board's page
+
+    size_box_h = max([size_px(cells[d["id"]].get("Size", ("",))[0])[1] for d in devices] + [0]) + 22
+    head = "".join(
+        '<th class="cmp-col" data-id="{id}" scope="col"><div class="cmp-head">'
+        '<a href="{url}" tabindex="-1" aria-hidden="true">'
+        '<img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></a>'
+        '{size}<a href="{url}"><span>{title}</span></a></div></th>'.format(
+            id=html.escape(d["id"]), url=d["url"], photo=d["photo"], w=d["photo_w"],
+            h=d["photo_h"], size=head_size(d), title=html.escape(d["meta"]["title"]))
+        for d in devices)
+    rows = "\n".join(
+        '<tr><th scope="row">%s</th>%s</tr>' % (html.escape(k), "".join(cell(d, k) for d in devices))
+        for k in used)
+    picks = "".join(
+        '<button type="button" class="cat-filter" data-id="%s" aria-pressed="false">%s</button>'
+        % (html.escape(d["id"]), html.escape(d["meta"]["title"])) for d in devices)
+    tested = ",".join(d["id"] for d in catalog["tested"][:3])  # a first view that fits
+
+    content = """
+    <article class="board-page">
+      <p class="post-back"><a href="/boards/">&larr; All boards</a></p>
+      <h1>Compare boards</h1>
+      <p class="lead">
+        The ESP32-P4 boards ESP-KVM runs on, side by side. Pick the ones you are
+        choosing between; the address of this page keeps the choice, so it can
+        be sent to someone. "Untested" means built from the vendor's schematic
+        and not yet run by anyone. Green marks the best of the boards shown.
+      </p>
+      <div class="cat-filters" id="cmp-picks" hidden>{picks}</div>
+      <label class="cmp-diff" id="cmp-diff-wrap" hidden><input type="checkbox" id="cmp-diff" /> Only the rows that differ</label>
+      <div class="table-scroll">
+        <table class="cmp-table" id="cmp-table">
+          <thead><tr><th scope="col"></th>{head}</tr></thead>
+          <tbody>
+{rows}
+          </tbody>
+        </table>
+      </div>
+    </article>
+    <script>
+      (function () {{
+        var picks = document.getElementById("cmp-picks"),
+          table = document.getElementById("cmp-table");
+        if (!picks || !table) return;
+        var q = new URLSearchParams(location.search).get("b"),
+          kept = null;
+        try {{ kept = (JSON.parse(localStorage.getItem("espkvm-compare")) || []).join(","); }} catch (e) {{}}
+        var chosen = (q || kept || "{tested}").split(",").filter(Boolean);
+        var diff = document.getElementById("cmp-diff");
+        function show() {{
+          picks.querySelectorAll("button").forEach(function (b) {{
+            b.setAttribute("aria-pressed", String(chosen.indexOf(b.dataset.id) >= 0));
+          }});
+          table.querySelectorAll(".cmp-col").forEach(function (c) {{
+            c.hidden = chosen.indexOf(c.dataset.id) < 0;
+          }});
+          table.querySelectorAll("tbody tr").forEach(function (r) {{
+            var seen = {{}}, n = 0;
+            r.querySelectorAll("td:not([hidden])").forEach(function (c) {{
+              var t = c.textContent.trim();
+              if (!seen[t]) {{ seen[t] = 1; n++; }}
+            }});
+            r.hidden = diff.checked && n < 2;
+            var cells = r.querySelectorAll("td[data-score]:not([hidden])"),
+              hi = -1, lo = Infinity;
+            cells.forEach(function (c) {{
+              var v = +c.dataset.score;
+              hi = Math.max(hi, v); lo = Math.min(lo, v);
+            }});
+            r.querySelectorAll("td[data-score]").forEach(function (c) {{
+              c.classList.toggle("cmp-best", !c.hidden && hi > lo && +c.dataset.score === hi);
+            }});
+          }});
+        }}
+        picks.hidden = false;
+        document.getElementById("cmp-diff-wrap").hidden = false;
+        diff.addEventListener("change", show);
+        picks.addEventListener("click", function (e) {{
+          var b = e.target.closest("button");
+          if (!b) return;
+          var i = chosen.indexOf(b.dataset.id);
+          if (i >= 0) chosen.splice(i, 1);
+          else chosen.push(b.dataset.id);
+          history.replaceState(null, "", chosen.length ? "?b=" + chosen.join(",") : location.pathname);
+          try {{ localStorage.setItem("espkvm-compare", JSON.stringify(chosen)); }} catch (e) {{}}
+          show();
+        }});
+        show();
+      }})();
+    </script>
+""".format(picks=picks, head=head, rows=rows, tested=tested)
+
+    return render_page(shell, {
+        "title": "Compare ESP32-P4 boards for ESP-KVM, an open-source IP-KVM",
+        "og_title": "Compare ESP-KVM boards",
+        "description": "The ESP32-P4 boards ESP-KVM runs on side by side: chip revision, "
+                       "memory, network, HDMI capture, USB to the target, microSD and "
+                       "measured frame rates.",
+        "canonical": SITE + "/boards/compare/",
+        "og_type": "website",
+    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
+                                    ("Compare", SITE + "/boards/compare/"))))
 
 
 def features(item):
@@ -441,6 +661,11 @@ def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
         group = match.group(1)
+        devices = catalog["tested"] + catalog["untested"]
+        if group == "teaser":  # the start of the catalog, fading out on the home page
+            return tiles(devices[:8])
+        if group == "count":
+            return str(len(devices))
         if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial", "control"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
@@ -511,6 +736,24 @@ def rev_note(item):
             "revision, the flash and the PSRAM.</p>")
 
 
+def try_note(item):
+    """For an untested board or module: ask whoever has one to say how it went,
+    with a post in Discussions already started."""
+    m = item["meta"]
+    if m.get("status") != "untested" or item["section"] == "cases":
+        return ""
+    name = html.unescape(m["title"])
+    body = "Part: %s\nFirmware version: \n%s\nWhat works:\n\nWhat does not:\n" % (
+        name, "Capture board: \n" if m.get("kind") == "device" else "")
+    url = ("https://github.com/espkvm/espkvm/discussions/new?category=general&title=%s&body=%s"
+           % (quote("Tried it: " + name), quote(body)))
+    return ('<div class="board-try"><strong>Have one?</strong> Nobody has run ESP-KVM on this '
+            "yet. If you try it, tell me how it went, whether it worked or not: "
+            "one report moves it to tested or gets the bug fixed. "
+            '<a href="%s" rel="noopener" target="_blank" data-try>Post your result &rarr;</a></div>'
+            % html.escape(url))
+
+
 def item_page(shell, item, catalog):
     m = item["meta"]
     kind = m.get("kind")
@@ -521,6 +764,11 @@ def item_page(shell, item, catalog):
     for label, url in item["links"]:
         actions.append('<a class="btn" href="%s" rel="noopener">%s</a>'
                        % (html.escape(url), html.escape(label)))
+    if kind == "device":
+        # This board next to the first two tested others.
+        others = [b["id"] for b in catalog["tested"] if b["id"] != item["id"]][:2]
+        actions.append('<a class="btn" href="/boards/compare/?b=%s">Compare</a>'
+                       % ",".join([item["id"]] + others))
 
     related = []
     if kind == "device":
@@ -612,6 +860,7 @@ def item_page(shell, item, catalog):
           {specs}
           {revnote}
           <p class="board-actions">{actions}</p>
+          {trynote}
           {credit}
         </div>
       </div>
@@ -625,7 +874,7 @@ def item_page(shell, item, catalog):
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
            role=html.escape(role), title=html.escape(m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),
-           revnote=rev_note(item),
+           revnote=rev_note(item), trynote=try_note(item),
            actions=" ".join(actions), credit=credit,
            body=link_boards(render_markdown(item["body"], item["path"]),
                             set(catalog["by_id"]), skip={item["id"]}),
@@ -674,8 +923,20 @@ def catalog_page(shell, catalog):
 
       <h2 class="cat-head" id="devices">ESP32-P4 boards <span class="cat-count" id="cat-count">{n}</span></h2>
       <div class="cat-filters" id="cat-filters" hidden>{buttons}</div>
+      <div class="cmp-cta">
+        <p><strong>Choosing between a few?</strong> Put them side by side: chip, memory, Ethernet, PoE, Wi-Fi, microSD and the measured frame rate, with the best marked.</p>
+        <div class="cmp-cta-btns"><a class="btn btn-primary" href="/boards/compare/">Compare boards</a></div>
+      </div>
       <div class="cat-grid" id="cat-devices">
 {devices}
+          <a class="cat-card cat-card-add" href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">
+            <span class="cat-photo"><img src="/assets/board-add.svg" width="680" height="340" loading="lazy" alt="" /></span>
+            <span class="cat-body">
+              <span class="cat-maker">Yours, maybe</span>
+              <span class="cat-model">Not on the list?</span>
+              <span class="cat-chips"><span class="cat-chip">open an issue with its schematic</span></span>
+            </span>
+          </a>
       </div>
 
       <h2 class="cat-head" id="capture">HDMI capture <span class="cat-count">{n_capture}</span></h2>
@@ -728,13 +989,67 @@ def catalog_page(shell, catalog):
           bar.querySelectorAll("button").forEach(function (x) {{
             x.setAttribute("aria-pressed", String(x === b));
           }});
-          grid.querySelectorAll(".cat-card").forEach(function (c) {{
+          grid.querySelectorAll(".cat-card:not(.cat-card-add)").forEach(function (c) {{
             var on = f === "all" || (" " + c.dataset.f + " ").indexOf(" " + f + " ") >= 0;
-            c.hidden = !on;
+            (c.parentNode.classList.contains("cat-item") ? c.parentNode : c).hidden = !on;
             if (on) shown++;
           }});
           count.textContent = shown;
         }});
+      }})();
+      // A scales button on each board adds it to the comparison; the choice
+      // is kept in this browser and the compare page starts from it.
+      (function () {{
+        var grid = document.getElementById("cat-devices");
+        if (!grid) return;
+        var KEY = "espkvm-compare", chosen = [];
+        try {{ chosen = JSON.parse(localStorage.getItem(KEY)) || []; }} catch (e) {{}}
+        var icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M12 5l-7 2M12 5l7 2M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg>';
+        var bar = document.createElement("div");
+        bar.className = "cmp-float";
+        bar.hidden = true;
+        bar.innerHTML = '<a class="btn btn-primary" id="cmp-go">' + icon + '<span></span></a>' +
+          '<button type="button" class="cmp-clear" aria-label="Clear the comparison">&times;</button>';
+        document.body.appendChild(bar);
+        function save() {{
+          try {{ localStorage.setItem(KEY, JSON.stringify(chosen)); }} catch (e) {{}}
+          grid.querySelectorAll(".cmp-add").forEach(function (b) {{
+            var on = chosen.indexOf(b.dataset.id) >= 0;
+            b.setAttribute("aria-pressed", String(on));
+            b.title = on ? "Remove from the comparison" : "Add to the comparison";
+          }});
+          bar.hidden = !chosen.length;
+          var go = bar.querySelector("#cmp-go");
+          go.href = "/boards/compare/?b=" + chosen.join(",");
+          go.querySelector("span").textContent = "Compare " + chosen.length +
+            (chosen.length === 1 ? " board" : " boards");
+        }}
+        grid.querySelectorAll(".cat-card:not(.cat-card-add)").forEach(function (c) {{
+          var wrap = document.createElement("div");
+          wrap.className = "cat-item";
+          c.parentNode.insertBefore(wrap, c);
+          wrap.appendChild(c);
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "cmp-add";
+          b.dataset.id = c.dataset.itemId;
+          b.setAttribute("aria-label", "Compare " + c.dataset.itemName);
+          b.innerHTML = icon;
+          wrap.appendChild(b);
+        }});
+        grid.addEventListener("click", function (e) {{
+          var b = e.target.closest(".cmp-add");
+          if (!b) return;
+          var i = chosen.indexOf(b.dataset.id);
+          if (i >= 0) chosen.splice(i, 1);
+          else chosen.push(b.dataset.id);
+          save();
+        }});
+        bar.querySelector(".cmp-clear").addEventListener("click", function () {{
+          chosen = [];
+          save();
+        }});
+        save();
       }})();
     </script>
 """.format(by_maker=(
@@ -841,6 +1156,7 @@ def write_catalog(shell, catalog):
                 shutil.copy2(os.path.join(item["folder"], name), os.path.join(out, name))
         write(os.path.join(out, "index.html"), item_page(shell, item, catalog))
     write(os.path.join(ROOT, "boards", "index.html"), catalog_page(shell, catalog))
+    write(os.path.join(ROOT, "boards", "compare", "index.html"), compare_page(shell, catalog))
     for slug, (name, items) in families(catalog).items():
         write(os.path.join(ROOT, "boards", "family", slug, "index.html"),
               family_page(shell, slug, name, items))
@@ -1482,6 +1798,7 @@ def sitemap(posts, tags=None, pages=None, catalog=None):
     )
     if catalog:
         entries += "  <url>\n    <loc>%s/boards/</loc>\n    <priority>0.8</priority>\n  </url>\n" % SITE
+        entries += "  <url>\n    <loc>%s/boards/compare/</loc>\n    <priority>0.7</priority>\n  </url>\n" % SITE
         entries += "".join(
             "  <url>\n    <loc>%s%s</loc>\n    <priority>0.7</priority>\n  </url>\n"
             % (SITE, item["url"]) for item in catalog["all"])

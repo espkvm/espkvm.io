@@ -9,8 +9,10 @@ summary: An image for a Unit PoE-P4 with a rev 3.x chip. M5Stack does not list o
 flasher: m5-poe-p4x
 capture: m5-addon-display-in
 spec.Chip: ESP32-P4, rev 3.x
+spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Network: 100M Ethernet, 802.3at PoE
-spec.Capture: M5Stack Add-on Display In (LT6911D), 24-pin flat cable
+spec.Capture connector: 24-pin flat cable to the Add-on Display In
+spec.microSD: yes, on the capture module the board needs anyway
 link.M5Stack documentation: https://docs.m5stack.com/en/unit/Unit_PoE-P4
 photo: board.webp
 photo_style: product
