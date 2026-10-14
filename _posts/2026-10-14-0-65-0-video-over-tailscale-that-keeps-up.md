@@ -5,7 +5,7 @@ tags: video, network, tailscale
 date: 2026-10-14 21:00
 ---
 
-Over a slow link the device used to send frames faster than they could arrive. They queued up, and what you saw was seconds old. Now a viewer can ack each frame, and the device keeps at most two on the way to it. A slow link shows fewer frames, but always the newest one. The console acks from this release on.
+Over a slow link the device sent frames faster than they could arrive, they queued up, and what you saw was a few seconds old. In 0.65.0 a viewer acks each frame and the device keeps at most two on the way to it. On my Wi-Fi a client that showed about 3 fps went to 8-9. The console acks from this release on.
 
 The device says on the video socket that it takes acks, and a viewer only acks after that. Older firmware would read the ack as a request for a keyframe, so an old device and a new console still work together.
 
@@ -13,11 +13,11 @@ The device says on the video socket that it takes acks, and a viewer only acks a
 
 Most of this release is the Tailscale client. Video between two ESP32-P4 devices on my Wi-Fi went from 1-3 fps to 11-14 fps at 720p. What was wrong:
 
-- The tunnel delivers everything to one UDP socket, and it held only 6 packets. A burst of video is about 45. It holds 64 now.
-- A send that timed out wrote half a WebSocket frame, and the viewer lost track of the frames. A frame now goes whole, or the socket closes.
-- Every small message, a pong or an input echo, waited 200-450 ms for the ACK of the one before it. Nagle is off now.
-- After one side restarted, the two could not meet again: a second handshake replaced the first before its reply came back. Now the first one is left to finish.
-- The tunnel started a new handshake every 15-40 s for nothing: when it moved between the direct path and the relay, and when an idle peer did not answer its keepalives. Now a session just moves to the other path.
+- The tunnel delivers everything to one UDP socket, and that socket held 6 packets. A burst of video is about 45, so most of it was dropped. The queue is 64 long.
+- A send that hit its timeout wrote half a WebSocket frame and gave up, and the viewer lost track of where frames start. Each frame goes out whole, or the socket closes.
+- Nagle's algorithm held every small message, a pong or an input echo, until the one before it was acked: 200-450 ms each. Turning it off was the biggest single win. The ping went from 440 ms to 15.
+- After one side restarted, the two could not meet again. A second handshake replaced the first before its reply came back, so every reply was for a handshake that no longer existed.
+- And the tunnel started a fresh handshake every 15-40 s for no reason, each time it moved between the direct path and the relay, or when an idle peer did not answer a keepalive. Session keys do not depend on the path, so it just moves the session.
 
 ## Also in 0.65.0
 

@@ -28,6 +28,25 @@ output: terminal/index.html
     border-radius: 12px;
     border: 1px solid var(--border-soft);
   }
+  .term-video {
+    position: relative;
+    display: block;
+  }
+  .term-video img {
+    display: block;
+  }
+  .term-video:hover .shot-demo-badge,
+  .term-video:focus-visible .shot-demo-badge {
+    background: var(--accent-hover);
+    transform: translateX(-50%) scale(1.04);
+  }
+  .term-iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 12px;
+  }
   .term-actions {
     display: flex;
     flex-wrap: wrap;
@@ -66,18 +85,40 @@ output: terminal/index.html
 </header>
 
 <figure class="term-photo">
-  <img
-    src="/assets/terminal.webp"
-    srcset="/assets/terminal-800.webp 800w, /assets/terminal.webp 1280w"
-    sizes="(max-width: 852px) calc(100vw - 32px), 820px"
-    width="1280"
-    height="964"
-    alt="An M5Stack Tab5 with its keyboard, showing the same desktop as the laptop screen behind it, mouse pointer included."
-  />
+  <!-- The video loads only when clicked: until then the page fetches nothing
+       from YouTube. Without JavaScript the link opens it on YouTube. -->
+  <a class="term-video" href="https://youtu.be/fkVMvvYvx0U" rel="noopener" data-yt="fkVMvvYvx0U">
+    <img
+      src="/assets/terminal.webp"
+      srcset="/assets/terminal-800.webp 800w, /assets/terminal.webp 1280w"
+      sizes="(max-width: 852px) calc(100vw - 32px), 820px"
+      width="1280"
+      height="964"
+      alt="An M5Stack Tab5 with its keyboard, showing the same desktop as the laptop screen behind it, mouse pointer included."
+    />
+    <span class="shot-demo-badge">&#9654; Watch it run &mdash; 26 seconds</span>
+  </a>
   <figcaption>
-    The Tab5 in front, the target's own screen behind it.
+    The Tab5 in front, the target's own screen behind it. In the video a
+    clip plays on the laptop, to show how the picture keeps up over Wi-Fi.
   </figcaption>
 </figure>
+<script>
+  (function () {
+    var a = document.querySelector(".term-video");
+    if (!a) return;
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      var f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + a.dataset.yt + "?autoplay=1&rel=0";
+      f.title = "ESP-KVM terminal on an M5Stack Tab5";
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.allowFullscreen = true;
+      f.className = "term-iframe";
+      a.replaceWith(f);
+    });
+  })();
+</script>
 
 <p class="note">
   <strong>An experiment.</strong> The Tab5 has the same ESP32-P4 as the KVM,
