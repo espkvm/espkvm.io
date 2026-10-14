@@ -60,11 +60,57 @@ output: index.html
           TC358743 HDMI bridge &mdash; firmware, with <a href="#no-linux">no Linux inside</a>.
         </p>
 
-        <div class="actions">
-          <a class="btn btn-primary" href="flash/">Flash from the browser</a>
-          <a class="btn" href="https://demo.espkvm.io/" rel="noopener" data-demo="hero">Try the live demo</a>
-          <a class="btn" href="https://github.com/espkvm/espkvm">Source on GitHub</a>
-        </div>
+        <ul class="hero-facts">
+          <li><a class="fact-oss" href="https://github.com/espkvm/espkvm" rel="noopener">
+            <svg class="fact-art" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.22-3.37-1.22-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.34c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.79-4.58 5.05.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+            <strong>Open source.</strong> Free, Apache&nbsp;2.0.
+          </a></li>
+          <li><a class="fact-boards" href="boards/">
+            <svg class="fact-art" viewBox="0 0 160 110" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="152" height="102" rx="6"/>
+              <circle cx="13" cy="13" r="3.5"/><circle cx="147" cy="13" r="3.5"/><circle cx="13" cy="97" r="3.5"/><circle cx="147" cy="97" r="3.5"/>
+              <g fill="currentColor" stroke="none"><rect x="30" y="10" width="5" height="5"/><rect x="30" y="19" width="5" height="5"/><rect x="39" y="10" width="5" height="5"/><rect x="39" y="19" width="5" height="5"/><rect x="48" y="10" width="5" height="5"/><rect x="48" y="19" width="5" height="5"/><rect x="57" y="10" width="5" height="5"/><rect x="57" y="19" width="5" height="5"/><rect x="66" y="10" width="5" height="5"/><rect x="66" y="19" width="5" height="5"/><rect x="75" y="10" width="5" height="5"/><rect x="75" y="19" width="5" height="5"/><rect x="84" y="10" width="5" height="5"/><rect x="84" y="19" width="5" height="5"/><rect x="93" y="10" width="5" height="5"/><rect x="93" y="19" width="5" height="5"/><rect x="102" y="10" width="5" height="5"/><rect x="102" y="19" width="5" height="5"/><rect x="111" y="10" width="5" height="5"/><rect x="111" y="19" width="5" height="5"/><rect x="120" y="10" width="5" height="5"/><rect x="120" y="19" width="5" height="5"/><rect x="129" y="10" width="5" height="5"/><rect x="129" y="19" width="5" height="5"/><rect x="138" y="10" width="5" height="5"/><rect x="138" y="19" width="5" height="5"/></g>
+              <rect x="58" y="40" width="34" height="34" rx="2"/>
+              <rect x="64" y="46" width="22" height="22" rx="1" fill="currentColor" fill-opacity=".35"/>
+              <path d="M58 46h-5M58 52h-5M58 58h-5M58 64h-5M58 70h-5M92 46h5M92 52h5M92 58h5M92 64h5M92 70h5M64 40v-5M70 40v-5M76 40v-5M82 40v-5M88 40v-5M64 74v5M70 74v5M76 74v5M82 74v5M88 74v5"/>
+              <rect x="112" y="42" width="44" height="34" rx="2"/>
+              <path d="M120 50h28M120 56h28M120 62h28"/>
+              <rect x="20" y="86" width="22" height="20" rx="2"/>
+              <rect x="50" y="90" width="14" height="16" rx="2"/>
+              <rect x="18" y="40" width="26" height="30" rx="1"/>
+              <path d="M22 46h18M22 52h18M22 58h18M22 64h18"/>
+              <rect x="104" y="88" width="30" height="14" rx="1"/>
+            </svg>
+            <strong>Hardware.</strong> No soldering.
+          </a></li>
+          <li><a class="fact-flash" href="flash/">
+            <svg class="fact-art" viewBox="0 0 160 110" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="152" height="102" rx="7"/>
+              <path d="M4 30h152"/>
+              <g fill="currentColor" stroke="none"><circle cx="15" cy="17" r="3"/><circle cx="25" cy="17" r="3"/><circle cx="35" cy="17" r="3"/></g>
+              <rect x="46" y="10" width="102" height="14" rx="7"/>
+              <rect x="53" y="15" width="5" height="5" rx="1" fill="currentColor" stroke="none"/>
+              <path d="M54 15v-2a1.5 1.5 0 0 1 3 0v2"/>
+              <path d="M64 17h52" stroke-width="2.5" stroke-linecap="round"/>
+              <rect x="44" y="52" width="72" height="18" rx="4"/>
+              <path d="M58 61h44" stroke-width="2.5" stroke-linecap="round"/>
+              <rect x="30" y="84" width="100" height="6" rx="3"/>
+              <rect x="30" y="84" width="62" height="6" rx="3" fill="currentColor" stroke="none"/>
+            </svg>
+            <strong>Install.</strong> From the browser, over USB.
+          </a></li>
+          <li><a class="fact-demo" href="https://demo.espkvm.io/" rel="noopener" data-demo="hero">
+            <svg class="fact-art" viewBox="0 0 160 110" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="10" y="6" width="140" height="80" rx="5"/>
+              <rect x="18" y="14" width="124" height="64" rx="2"/>
+              <path d="M66 86l-6 16h40l-6-16M50 102h60"/>
+              <path d="M30 26h40M30 34h56M30 42h30" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M92 40l0 30 8-8 6 13 5-2-6-13 11 0z" fill="currentColor" stroke-linejoin="round"/>
+            </svg>
+            <strong>Try the demo.</strong> The real console, no board.
+          </a></li>
+        </ul>
+
         <!-- The plain-words explainer, for a reader who has not met the term.
              Quiet and under the buttons: someone who knows what this is should
              not have to step over it. -->
@@ -104,6 +150,30 @@ output: index.html
           thing over HTTPS from a megabyte of firmware &mdash; the console inside
           it is 44&nbsp;KB.
         </p>
+      </section>
+
+
+      <!-- The Tab5 terminal: new and experimental, and placed high so people
+           see it. Its page says what was tried and what was only built. -->
+      <section class="term-promo">
+        <a class="term-promo-photo" href="/terminal/">
+          <img src="assets/terminal-800.webp" width="800" height="603" loading="lazy"
+            alt="An M5Stack Tab5 with its keyboard showing the target's desktop, the same desktop on the laptop screen behind it." />
+        </a>
+        <div>
+          <span class="term-promo-flag">New &middot; experimental</span>
+          <h2>The screen in your hand</h2>
+          <p>
+            ESP-KVM terminal is firmware for the M5Stack Tab5: the target's
+            screen on the Tab5, with touch, a keyboard and the power buttons.
+            The same ESP32-P4 as the KVM, on the other end of the link.
+          </p>
+          <p>
+            It is an experiment: I do not know yet how useful it is outside my
+            desk. Try it and tell me.
+          </p>
+          <a class="btn btn-primary" href="/terminal/">See the terminal &rarr;</a>
+        </div>
       </section>
 
 
@@ -253,10 +323,9 @@ output: index.html
             </span>
             <h3>Copy text off a BIOS screen</h3>
             <p>
-              A BIOS, a boot loader, a console: select it with the mouse like a
-              page, or copy the whole screen. Not OCR &mdash; the characters are
-              read from the grid the firmware drew them on, so a serial number
-              comes back exactly or not at all.
+              Select text on a BIOS, boot loader or console screen, or copy it
+              all. Not OCR: characters are read from the text grid, so a serial
+              number comes back exact or not at all.
             </p>
           </div>
 
@@ -277,11 +346,10 @@ output: index.html
             </span>
             <h3>Boot from a disk image</h3>
             <p>
-              A rescue or live image, handed to the target as a USB drive it can
-              boot from &mdash; from a microSD card, or a small one kept in the
-              device&rsquo;s own flash with no card at all.
-              <a href="#faq-netboot">netboot.xyz</a> goes into that flash slot in
-              one click, and any link downloads onto the card by the device itself.
+              A rescue or live image becomes a bootable USB drive for the
+              target, from a microSD card or the device&rsquo;s own flash.
+              <a href="#faq-netboot">netboot.xyz</a> in one click; any link
+              downloads straight to the card.
             </p>
           </div>
 
@@ -291,9 +359,8 @@ output: index.html
             </span>
             <h3>A serial console</h3>
             <p>
-              For a NAS, a router or a server with no screen: two pins wired to the
-              target&rsquo;s console give a terminal in the browser, with the last
-              64&nbsp;KB kept. The target&rsquo;s kernel log can come over the
+              For a NAS, a router or a headless server: two wires to its serial
+              port give a terminal in the browser. Kernel logs can come over the
               network too, with an alert on a panic. <a href="#faq-serial">How to wire it</a>.
             </p>
           </div>
@@ -304,9 +371,8 @@ output: index.html
             </span>
             <h3>Updates itself</h3>
             <p>
-              Two app slots and automatic rollback: an image that fails to start
-              returns the device to the one that worked. The console shows the
-              version on each slot, and can boot the other one on demand.
+              Over-the-air updates with two slots and automatic rollback: an
+              image that fails to start goes back to the one that worked.
             </p>
           </div>
 
@@ -316,9 +382,8 @@ output: index.html
             </span>
             <h3>HTTPS and a login</h3>
             <p>
-              A certificate the device issues itself on first boot, a
-              password you can clear with the board button if you forget it,
-              and an optional code from an authenticator app.
+              A certificate made on the device at first boot, a password the
+              board button can reset, and optional codes from an authenticator app.
             </p>
           </div>
 
@@ -339,9 +404,8 @@ output: index.html
             </span>
             <h3>Reach it over WireGuard or Tailscale</h3>
             <p>
-              Reach it across the internet without exposing it. WireGuard for a
-              classic hub, or Tailscale to join a tailnet with no gateway, VPS or
-              port-forward. Off by default.
+              Remote access without opening a port: WireGuard to your own
+              server, or Tailscale with no VPS or port forwarding. Off by default.
             </p>
           </div>
 
@@ -352,9 +416,9 @@ output: index.html
             <h3>WiFi, with a rescue hotspot</h3>
             <p>
               Join a network or be the access point, on boards with an ESP32-C6.
-              Or keep WiFi as the backup for the cable: pull it, and the device
-              moves to WiFi and back on its own. Out of range, a rescue hotspot
-              and a captive portal put the console on your phone.
+              WiFi can back up the cable, switching over and back by itself. Out
+              of range, a rescue hotspot with a captive portal opens the console
+              on your phone.
             </p>
           </div>
 
@@ -365,11 +429,8 @@ output: index.html
             <h3>A little status screen</h3>
             <p>
               A cheap OLED or a round colour LCD shows the IP, link, capture and
-              health with no browser open. Pins are picked in the console.
-            </p>
-            <p>
-              The round one also fills with a code your phone scans to join the
-              rescue hotspot, and draws the recovery button press as a ring.
+              health with no browser open. The round one also shows a QR code
+              for the rescue hotspot.
             </p>
           </div>
 
@@ -390,9 +451,8 @@ output: index.html
             </span>
             <h3>Power and reset, held down for you</h3>
             <p>
-              Two optocouplers on the front-panel header put the machine&rsquo;s own
-              buttons in the browser. It reads the power LED back, so the state
-              shown is the machine&rsquo;s.
+              Two optocouplers on the front-panel (ATX) header put the power and
+              reset buttons in the browser. The power LED is read back.
             </p>
           </div>
 
@@ -402,10 +462,9 @@ output: index.html
             </span>
             <h3>Watches the screen while you do not</h3>
             <p>
-              Give it phrases &mdash; <code>no boot device</code>, <code>kernel
-              panic</code> &mdash; and it alerts with a still attached. A screen
-              gone one flat colour counts too. It can push the alert, with a
-              screenshot, to Telegram or a webhook.
+              Give it phrases like <code>no boot device</code> or <code>kernel
+              panic</code>, or watch for a screen gone one flat colour. The alert
+              comes with a screenshot, to Telegram or a webhook.
             </p>
           </div>
 
@@ -415,11 +474,9 @@ output: index.html
             </span>
             <h3>Records to its own card</h3>
             <p>
-              A button writes the screen to the microSD card as H.264, and a
-              dashcam keeps the last minutes and saves them when a stop screen
-              shows or the power drops &mdash; as an MP4 with chapters, and to
-              Telegram if you want. Keystrokes go in as subtitles, and it all
-              plays back in the console.
+              Record the screen to the microSD card as H.264. A dashcam keeps
+              the last minutes and saves an MP4 when a crash screen shows or the
+              power drops, keystrokes as subtitles. Plays back in the console.
             </p>
           </div>
 
@@ -1001,127 +1058,127 @@ output: index.html
             <tbody>
               <tr>
                 <td>Video capture, resolution changes, MJPEG, H.264</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Keyboard, absolute and relative pointer, media keys, paste</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Touch mode for phones and tablets (trackpad, on-screen keyboard)</td>
-                <td class="yes">works</td>
+                <td>Touch mode for phones and tablets <span class="tnote">(trackpad, on-screen keyboard)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Multiple viewers, one in control at a time with takeover</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>HTTPS, login, two-factor sign-in, physical password reset</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Battery-backed clock (an optional DS3231 module)</td>
-                <td class="yes">works</td>
+                <td>Battery-backed clock <span class="tnote">(an optional DS3231 module)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Bring your own TLS certificate (or the self-signed default)</td>
-                <td class="yes">works</td>
+                <td>Bring your own TLS certificate <span class="tnote">(or the self-signed default)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Firmware updates over the network, with rollback</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Thermal protection</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Recording the screen and screenshots to the device&rsquo;s microSD card</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>A dashcam &mdash; the last minutes saved when a stop screen shows, a phrase appears or the power drops</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Timelapse, keystroke subtitles, playback and text search in the console</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Virtual media &mdash; boot the target from a disk image</td>
-                <td class="yes">works (card or on-flash)</td>
+                <td>Virtual media &mdash; boot the target from a disk image <span class="tnote">(on a card or in flash)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Download an image from a link onto the device &mdash; netboot.xyz in one click</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>The target&rsquo;s serial console in the browser</td>
-                <td class="yes">works &mdash; <a href="#faq-serial">wiring</a></td>
+                <td>The target&rsquo;s serial console in the browser <span class="tnote"><a href="#faq-serial">wiring</a></span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>The target&rsquo;s kernel log over the network (netconsole, syslog), with alerts</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Guessing the target&rsquo;s OS from how it enumerates USB</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>User macros &mdash; replayable key sequences</td>
-                <td class="yes">works &mdash; <a href="/scripts/">the language</a></td>
+                <td>User macros &mdash; replayable key sequences <span class="tnote"><a href="/scripts/">the language</a></span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Runbooks &mdash; a macro that waits for words on the screen, run on the device</td>
-                <td class="yes">works; text screens only</td>
+                <td>Runbooks &mdash; a macro that waits for words on the screen, run on the device <span class="tnote">(text screens only)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Wake-on-LAN (no ATX wiring)</td>
-                <td class="yes">works</td>
+                <td>Wake-on-LAN <span class="tnote">(no ATX wiring)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>A gamepad for a console &mdash; a HORI pad for a Switch, an original Xbox pad, an Xbox 360 pad for Windows and a Steam Deck; buttons in a window or over the picture</td>
-                <td class="yes">works on a Switch; the Xbox pads not tried here yet</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>HDMI-CEC &mdash; see the source, send it remote keys, standby and wake</td>
-                <td class="yes">works with a TC358743 capture chip; media boxes and consoles, not PCs</td>
+                <td>HDMI-CEC &mdash; see the source, send it remote keys, standby and wake <span class="tnote">(with a TC358743 capture chip; media boxes and consoles, not PCs)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Static IP addressing, or DHCP</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>Status screen on the device (OLED or round LCD), either way up, with a scannable hotspot code</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>IPv6 alongside IPv4, autoconfigured</td>
-                <td class="yes">works</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>WiFi &mdash; station or access point, with a rescue hotspot and captive portal (boards with an ESP32-C6)</td>
-                <td class="yes">works</td>
+                <td>WiFi &mdash; station or access point, with a rescue hotspot and captive portal <span class="tnote">(boards with an ESP32-C6)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Ethernet with WiFi as the backup, switching both ways on its own (boards with both)</td>
-                <td class="yes">works</td>
+                <td>Ethernet with WiFi as the backup, switching both ways on its own <span class="tnote">(boards with both)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>ATX power control (power/reset buttons, power-LED sensing)</td>
-                <td class="yes">works</td>
+                <td>ATX power control <span class="tnote">(power/reset buttons, power-LED sensing)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Home Assistant over MQTT (auto-discovered sensors and buttons)</td>
-                <td class="yes">works</td>
+                <td>Home Assistant over MQTT <span class="tnote">(auto-discovered sensors and buttons)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>VPN &mdash; WireGuard or native Tailscale (pick one; Tailscale needs no gateway or port-forward)</td>
-                <td class="yes">works</td>
+                <td>VPN &mdash; WireGuard or native Tailscale <span class="tnote">(pick one; Tailscale needs no gateway or port-forward)</span></td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
                 <td>HDMI audio</td>
-                <td class="no">not yet</td>
+                <td class="no"><span class="st st-no">Not yet</span></td>
               </tr>
             </tbody>
           </table>
@@ -1189,6 +1246,12 @@ output: index.html
         <p class="hw-lead">For the serial console. A 3.3&nbsp;V console, like a Raspberry Pi's or a router's header, wires straight to two free pins. A PC's 9-pin COM port is RS-232 at &plusmn;12&nbsp;V and needs a MAX3232 module in between. No supported board has RS-232 on it.</p>
         <div class="cat-grid">
 <!-- catalog:serial -->
+        </div>
+
+        <h3 class="hw-head" id="terminal">Terminal (optional, experimental)</h3>
+        <p class="hw-lead">A second screen you hold: an M5Stack Tab5 running the <a href="/terminal/">ESP-KVM terminal</a> shows the target's screen and controls it over the network, with no browser. The keyboard is optional.</p>
+        <div class="cat-grid">
+<!-- catalog:terminal -->
         </div>
 
         <h3 class="hw-head" id="cases">A case (optional)</h3>

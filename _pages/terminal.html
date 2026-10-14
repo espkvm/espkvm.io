@@ -1,0 +1,140 @@
+---
+title: ESP-KVM terminal - the target's screen on an M5Stack Tab5
+description: Experimental firmware for the M5Stack Tab5 that turns it into a handheld console for an ESP-KVM device - the target's screen on the Tab5, touch, a keyboard and the power buttons, with no browser and no computer.
+canonical: https://espkvm.io/terminal/
+og_type: article
+output: terminal/index.html
+---
+<!--
+  Experimental, and the page says so first. It is also the one place on the
+  site that sends people to the espkvm-term repo, so it has to stay honest
+  about what was tried on hardware and what was only built.
+-->
+<style>
+  .term-flag {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--warn);
+    border-radius: 999px;
+    color: var(--warn);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .term-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+  }
+  .term-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0 8px;
+  }
+  .term-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 8px 28px;
+  }
+  .term-table td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .term-table td {
+    color: var(--muted);
+  }
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <span class="term-flag">Experimental</span>
+  <h1>ESP-KVM terminal</h1>
+  <p class="tagline">
+    Firmware for the M5Stack Tab5 that shows an ESP-KVM device's screen on
+    the Tab5. Touch, the Tab5 keyboard or a USB keyboard and mouse control the
+    target. No browser, no computer: a KVM console you hold in one hand.
+  </p>
+  <div class="term-actions">
+    <a class="btn btn-primary" href="https://github.com/espkvm/espkvm-term" rel="noopener">The code and the releases</a>
+    <a class="btn" href="https://github.com/orgs/espkvm/discussions/75" rel="noopener">Vote: would you use it?</a>
+  </div>
+</header>
+
+<figure class="term-photo">
+  <img
+    src="/assets/terminal.webp"
+    srcset="/assets/terminal-800.webp 800w, /assets/terminal.webp 1280w"
+    sizes="(max-width: 852px) calc(100vw - 32px), 820px"
+    width="1280"
+    height="964"
+    alt="An M5Stack Tab5 with its keyboard, showing the same desktop as the laptop screen behind it, mouse pointer included."
+  />
+  <figcaption>
+    The Tab5 in front, the target's own screen behind it.
+  </figcaption>
+</figure>
+
+<p class="note">
+  <strong>An experiment.</strong> The Tab5 has the same ESP32-P4 as the KVM,
+  so I wanted to see what it could do with it. I do not know yet how many
+  people want one, or how well it works day to day outside my desk. It works
+  for me. If you try it, or decide you would never use it, I would like to
+  hear either.
+</p>
+
+<section>
+  <h2>What it does</h2>
+  <div class="table-scroll">
+    <table class="term-table">
+      <thead><tr><th>What</th><th>How</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Wi-Fi</td><td>Through the Tab5's ESP32-C6; remembers the network.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Finding devices</td><td>ESP-KVM devices on the network show up by themselves (mDNS).</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Sign-in</td><td>A device's certificate is trusted only after you check its fingerprint.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>The picture</td><td>MJPEG, up to about 20 fps at 1280&times;720.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Tailscale</td><td>About 11-14 fps on my network.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Reconnecting</td><td>When the device or the network drops.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Touch</td><td>Touch as the pointer or a trackpad, two-finger scroll, pinch to zoom up to 8&times;.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Keyboards</td><td>The M5Stack Keyboard for Tab5, or a USB keyboard and mouse.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Extra keys</td><td>Esc, F1-F12, the arrows; Ctrl, Alt, Win and Shift held for the next key.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Target power</td><td>Power, reset, Wake-on-LAN, Ctrl+Alt+Del.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>The Tab5 itself</td><td>Sleep, brightness, battery level; turns over when held upside down.</td><td><span class="st st-ok">Works</span></td></tr>
+        <tr><td>Several saved networks</td><td>Up to five; the strongest one in range is joined.</td><td><span class="st st-new st-icon" role="img" aria-label="Not tried yet"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></td></tr>
+        <tr><td>Updates</td><td>From GitHub releases, with a way back after a bad one.</td><td><span class="st st-new st-icon" role="img" aria-label="Not tried yet"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></td></tr>
+        <tr><td>2FA sign-in</td><td>A code from an authenticator app.</td><td><span class="st st-new st-icon" role="img" aria-label="Not tried yet"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></td></tr>
+        <tr><td>Several devices</td><td>Switching between them, forgetting one.</td><td><span class="st st-new st-icon" role="img" aria-label="Not tried yet"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></td></tr>
+        <tr><td>Text mode</td><td>The target's screen read as characters.</td><td><span class="st st-new st-icon" role="img" aria-label="Not tried yet"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>What it needs</h2>
+  <div class="cat-grid">
+<!-- catalog:terminal -->
+  </div>
+  <ul>
+    <li>An M5Stack Tab5. The Keyboard for Tab5 is optional: without it an on-screen keyboard appears.</li>
+    <li>An ESP-KVM device on the same network, or on the same tailnet.</li>
+    <li>The device's video codec set to MJPEG. The Tab5's chip has no H.264 decoder, and decoding it in software gives about 4 fps.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Installing it</h2>
+  <p>
+    Each release on GitHub has two files. <code>espkvm-term-merged.bin</code>
+    goes onto a Tab5 at address 0x0 and replaces what is there, M5 Launcher
+    included. <code>espkvm-term.bin</code> is for M5 Launcher: copy it to the
+    SD card and install it from there. After that the Tab5 updates itself
+    from its TERMINAL screen. Building from source needs ESP-IDF 6.1 and the
+    espkvm repository next to it; the README has the steps.
+  </p>
+</section>
+</div>

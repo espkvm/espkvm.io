@@ -83,6 +83,9 @@ Key facts:
 - Updates install over the network into a spare slot, with rollback. The console
   shows the version and state of both slots and can boot the other one on demand.
   The device never reaches the internet on its own.
+- Experimental: ESP-KVM terminal, separate firmware for the M5Stack Tab5 that shows
+  an ESP-KVM device's screen on the Tab5 and controls the target by touch and
+  keyboard, with no browser. MJPEG only (the Tab5 chip has no H.264 decoder).
 - It builds on jrowny/p4kvm, which brought up the TC358743 on the ESP32-P4 first.
 
 ## Links
@@ -92,6 +95,7 @@ Key facts:
 - [Supported boards, capture boards and cases](https://espkvm.io/boards/)
 - [Serial monitor in the browser](https://espkvm.io/serial/)
 - [Tools: read a firmware image, decode a panic, inspect an EDID](https://espkvm.io/tools/)
+- [ESP-KVM terminal on an M5Stack Tab5 (experimental)](https://espkvm.io/terminal/)
 - [Comparison with PiKVM, JetKVM, JetKVM Mini, NanoKVM and GL.iNet Comet](https://espkvm.io/compare/)
 - [For writers: descriptions, facts, logo files, pictures](https://espkvm.io/press/)
 - [Interactive demo, no hardware needed](https://demo.espkvm.io/)

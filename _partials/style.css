@@ -17,6 +17,7 @@
         --accent-soft: rgba(76, 154, 255, 0.12);
         --ok: #46c17c;
         --warn: #e3a33c;
+        --violet: #a98bfa;
         --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
           Arial, "Noto Sans", sans-serif;
         --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
@@ -41,6 +42,7 @@
           --accent-soft: rgba(21, 96, 208, 0.1);
           --ok: #1a7f4b;
           --warn: #9a6700;
+          --violet: #6d4ad8;
         }
       }
 
@@ -284,6 +286,119 @@
         max-width: 36em;
         color: var(--muted);
         font-size: clamp(17px, 2.4vw, 20px);
+      }
+
+      /* The Tab5 terminal block on the front page: photo and words side by
+         side, one under the other on a phone. */
+      .term-promo {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 24px;
+        align-items: center;
+        margin: 40px 0;
+        padding: 20px;
+        border: 1px solid var(--warn);
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--warn) 6%, var(--bg-soft));
+      }
+      .term-promo h2 {
+        margin: 6px 0 10px;
+      }
+      .term-promo p {
+        color: var(--muted);
+      }
+      .term-promo-photo img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+      .term-promo-flag {
+        display: inline-block;
+        padding: 3px 10px;
+        border: 1px solid var(--warn);
+        border-radius: 999px;
+        color: var(--warn);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      @media (max-width: 640px) {
+        .term-promo {
+          grid-template-columns: 1fr;
+        }
+      }
+      .hero-facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+        margin: 24px auto 0;
+        padding: 0;
+        list-style: none;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .hero-facts li {
+        display: flex;
+      }
+      /* Each fact is a way in: the code, the boards, the flasher. The drawing
+         behind the words is in currentColor, so it follows the theme. */
+      .hero-facts a {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        flex: 1;
+        padding: 14px 16px 18px;
+        border: 1px solid var(--border-soft);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--fact) 7%, var(--bg-soft));
+        color: var(--muted);
+        text-align: left;
+        text-decoration: none;
+        text-wrap: balance;
+      }
+      .hero-facts a:hover {
+        border-color: var(--fact);
+        color: var(--muted);
+      }
+      /* One colour per card; the flasher, where most visitors are headed,
+         also keeps its border. */
+      .hero-facts .fact-oss { --fact: var(--ok); }
+      .hero-facts .fact-boards { --fact: var(--warn); }
+      .hero-facts .fact-flash {
+        --fact: var(--accent);
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+      .hero-facts .fact-demo { --fact: var(--violet); }
+      .hero-facts strong {
+        display: block;
+        color: var(--text);
+      }
+      .fact-art {
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+        color: var(--fact);
+        opacity: 0.32;
+        transform: rotate(-45deg);
+        transition: opacity 0.15s;
+      }
+      .hero-facts a:hover .fact-art {
+        opacity: 0.5;
+      }
+      .fact-oss .fact-art {
+        right: -6px;
+        bottom: -10px;
+        width: 84px;
+        height: 84px;
+      }
+      .fact-boards .fact-art,
+      .fact-flash .fact-art,
+      .fact-demo .fact-art {
+        right: -4px;
+        bottom: -6px;
+        width: 116px;
+        height: 80px;
       }
 
       .actions {
@@ -1325,12 +1440,36 @@
       }
       .status td:last-child {
         font-size: 14px;
+        color: var(--muted);
       }
       .yes {
         color: var(--ok);
       }
       .no {
         color: var(--faint);
+      }
+      /* A status chip: "Works", "Not tried yet", "Not yet". */
+      .st {
+        display: inline-block;
+        padding: 1px 8px;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .st-ok { color: var(--ok); }
+      .st-new { color: var(--warn); }
+      .st-no { color: var(--faint); }
+      /* A remark on a row of the status table, after the feature. */
+      .tnote {
+        color: var(--faint);
+      }
+      .tnote a {
+        color: inherit;
+      }
+      .st-icon {
+        padding: 2px 8px;
+        line-height: 0;
       }
 
       pre {

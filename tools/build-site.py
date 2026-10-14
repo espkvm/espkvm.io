@@ -156,7 +156,7 @@ def read_posts(include_drafts):
 # "link.<Label>: url" links, shown in the order written. A case takes title,
 # author, summary, boards (ids it fits), photo, photo_credit and links.
 # A module in _modules/ (a status display, a clock or a serial adapter) takes
-# title, kind (display, clock or serial), status, order, role, summary, photo, chip (the label on
+# title, kind (display, clock, serial, control or terminal), status, order, role, summary, photo, chip (the label on
 # its tile), boards (ids it plugs straight into), specs and links, and
 # tile_maker / tile_model when the title does not split at its first space.
 
@@ -166,7 +166,8 @@ MODULES_DIR = os.path.join(ROOT, "_modules")
 MODULE_KINDS = {"display": ("Status displays", "displays", "a status display for an IP-KVM"),
                 "clock": ("Clocks", "clocks", "a clock for an IP-KVM"),
                 "serial": ("Serial adapters", "serial", "a serial adapter for an IP-KVM"),
-                "control": ("Power control and buttons", "control", "power control for an IP-KVM")}
+                "control": ("Power control and buttons", "control", "power control for an IP-KVM"),
+                "terminal": ("Terminal parts", "terminal", "a handheld terminal for an IP-KVM")}
 # The firmware's own list of boards, when the two repos sit side by side. A
 # flasher id here that the firmware does not publish is a dead install button.
 FIRMWARE_BOARDS = os.path.join(os.path.dirname(ROOT), "espkvm", "boards", "boards.json")
@@ -296,6 +297,7 @@ def read_catalog():
         "clocks": sorted([m for m in modules if m["meta"]["kind"] == "clock"], key=key),
         "serial": sorted([m for m in modules if m["meta"]["kind"] == "serial"], key=key),
         "control": sorted([m for m in modules if m["meta"]["kind"] == "control"], key=key),
+        "terminal": sorted([m for m in modules if m["meta"]["kind"] == "terminal"], key=key),
         "all": boards + cases + modules,
         "by_id": {b["id"]: b for b in boards},
     }
@@ -666,7 +668,7 @@ def fill_catalog(body, catalog):
             return tiles(devices[:8])
         if group == "count":
             return str(len(devices))
-        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial", "control"):
+        if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial", "control", "terminal"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
     body = re.sub(r"<!-- catalog:(\w+) -->", swap, body)
@@ -790,6 +792,10 @@ def item_page(shell, item, catalog):
         fits = [catalog["by_id"][b] for b in id_list(m.get("boards"))]
         if fits:
             related.append(("Fits these boards", fits))
+        if kind == "terminal":
+            pair = [x for x in catalog["terminal"] if x is not item]
+            if pair:
+                related.append(("Goes with it", pair))
     else:
         fits = [catalog["by_id"][b] for b in id_list(m.get("boards"))]
         related.append(("Fits", fits))
@@ -831,7 +837,9 @@ def item_page(shell, item, catalog):
                 "serial": "it puts a computer's RS-232 serial port on the device's pins, "
                           "for the serial console in the browser",
                 "control": "it presses the target's buttons, or gives the box a button "
-                           "of its own"}[kind]
+                           "of its own",
+                "terminal": "with the experimental ESP-KVM terminal firmware it shows "
+                            "the target's screen in your hand, with no browser"}[kind]
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
                  "mouse in your browser, from the BIOS up. The %s is an optional extra: "
@@ -964,6 +972,12 @@ def catalog_page(shell, catalog):
 {control}
       </div>
 
+      <h2 class="cat-head" id="terminal">Terminal (optional, experimental) <span class="cat-count">{n_terminal}</span></h2>
+      <p class="cat-note">For the <a href="/terminal/">ESP-KVM terminal</a>: the target's screen on an M5Stack Tab5, no browser.</p>
+      <div class="cat-grid">
+{terminal}
+      </div>
+
       <h2 class="cat-head" id="cases">Cases <span class="cat-count">{n_cases}</span></h2>
       <div class="cat-grid">
 {cases}
@@ -1063,6 +1077,7 @@ def catalog_page(shell, catalog):
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
            n_serial=len(catalog["serial"]), serial=tiles(catalog["serial"]),
            n_control=len(catalog["control"]), control=tiles(catalog["control"]),
+           n_terminal=len(catalog["terminal"]), terminal=tiles(catalog["terminal"]),
            n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
 
     return render_page(shell, {
