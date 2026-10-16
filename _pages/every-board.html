@@ -1,0 +1,123 @@
+---
+title: Every ESP32-P4 board, and whether ESP-KVM runs on it
+description: Every ESP32-P4 board I have looked at for ESP-KVM, the open-source IP-KVM - which are supported, which might work, and which cannot work and why (PSRAM, camera connector, USB, network).
+canonical: https://espkvm.io/boards/all/
+og_type: article
+output: boards/all/index.html
+---
+<!--
+  The supported rows come from _boards/ (catalog:support), so they never fall
+  behind the catalog. The rest is read from schematics and vendor pages, not
+  from hardware; docs/PORTING.md in the firmware repo has the same verdicts.
+-->
+<style>
+  .every-table td:first-child { color: var(--text); font-weight: 600; }
+  .every-table td { color: var(--muted); vertical-align: top; }
+  .every-table td:nth-child(2) { white-space: nowrap; }
+  .every-need li { margin-bottom: 4px; }
+  .every-table th, .every-table td:nth-child(n+3):nth-child(-n+7) { text-align: center; }
+  .every-table th:first-child, .every-table th:last-child { text-align: left; }
+  .every-table tr:target td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .mk { font-weight: 700; font-size: 16px; }
+  .every-table td.c-y { background: color-mix(in srgb, var(--ok) 16%, transparent); }
+  .every-table td.c-n { background: color-mix(in srgb, var(--warn) 18%, transparent); }
+  .mk-y { color: var(--ok); }
+  .mk-n { color: var(--warn); }
+  .mk-q { color: var(--faint); }
+  .every-try { display: block; margin-top: 4px; font-size: 13px; }
+  /* Eight columns do not fit the 820 px text column: the tables break out of it. */
+  .every-wide { width: min(1200px, calc(100vw - 32px)); margin-left: 50%; transform: translateX(-50%); }
+  .every-table { font-size: 14px; }
+  .every-table td:first-child { min-width: 190px; }
+  .every-table td:last-child { min-width: 320px; }
+  .every-table td:nth-child(n+3):nth-child(-n+7) { white-space: nowrap; }
+  .every-table td:nth-child(4) { white-space: normal; min-width: 120px; }
+  .rib { font-size: 13px; }
+  .every-table td:nth-child(2) .tnote { display: block; font-size: 12px; margin-top: 2px; }
+  .every-table td:last-child { min-width: 280px; }
+  /* The header stays under the site's 57 px bar while the table scrolls by.
+     That needs the wrapper not to clip, so it only happens where the table fits. */
+  .every-table thead th { position: sticky; top: 57px; z-index: 2; background: var(--bg); box-shadow: inset 0 -1px 0 var(--border); }
+  @media (min-width: 1240px) { .every-wide { overflow: visible; } }
+</style>
+<div class="wrap">
+  <header class="hero">
+    <h1>Every ESP32-P4 board</h1>
+    <p class="tagline">
+      The ESP32-P4 boards I have looked at, and whether ESP-KVM runs on them.
+      Supported boards are in the <a href="/boards/">catalog</a>; the others
+      say what is missing.
+    </p>
+  </header>
+
+  <section>
+    <h2>What a board needs</h2>
+    <ul class="every-need">
+      <li><strong>32 MB of PSRAM.</strong> Capture, the encoder and TLS do not fit in 16 MB. On the chip it reads NRW32 (rev 1.x) or NRW32X (rev 3.x); NRW16 boards do not qualify.</li>
+      <li><strong>A free camera connector.</strong> The HDMI capture board plugs into the P4's MIPI-CSI: a Raspberry Pi style 15-pin or 22-pin ribbon. A camera soldered onto that connector, or a board-to-board plug, takes it away.</li>
+      <li><strong>The P4's high-speed USB on a connector it can drive as a device.</strong> That port is the keyboard and mouse the target sees. Behind a hub, or not brought out at all, it cannot be.</li>
+      <li><strong>A network.</strong> An Ethernet PHY on the board, or an ESP32-C6, C5 or C61 for Wi-Fi.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>ESP32-P4 boards for ESP-KVM</h2>
+    <p>
+      Green has it, orange does not, no colour is not known yet. The four
+      columns are the four needs above. For the camera, what counts is whether
+      the capture board's Raspberry Pi ribbon fits: a 15-pin or 22-pin
+      connector in Pi order. A connector of another kind, or with an
+      unpublished pinout, stays unknown.
+    </p>
+<!-- catalog:all_filters -->
+    <div class="table-scroll every-wide">
+      <table class="every-table" id="every-kvm">
+        <thead><tr><th>Board</th><th>ESP-KVM</th><th title="32 MB PSRAM">PSRAM</th><th title="Does the HDMI capture board's Raspberry Pi camera ribbon fit?">Camera ribbon</th><th title="High-speed USB the board can drive as a device">USB</th><th>Network</th><th>Chip rev</th><th>Notes</th></tr></thead>
+        <tbody>
+<!-- catalog:all_kvm -->
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="terminal">Boards for ESP-KVM terminal</h2>
+    <p>
+      <a href="/terminal/">ESP-KVM terminal</a> is the other end: a board with a
+      screen that shows a KVM's picture, with no browser. It needs a screen with
+      touch and a network, but no camera connector and no USB to a target. Today
+      it is written for the Tab5 only.
+    </p>
+    <div class="table-scroll every-wide">
+      <table class="every-table">
+        <thead><tr><th>Board</th><th>Terminal</th><th>Screen</th><th>Network</th><th>Battery</th><th>Notes</th></tr></thead>
+        <tbody>
+<!-- catalog:all_terminal -->
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      Everything but the supported boards is read from schematics and vendor
+      pages, not from hardware. Have one of the candidates, or a P4 board that
+      is not here? <a href="https://github.com/espkvm/espkvm/issues/new">Open an issue</a>
+      with a link to its schematic.
+    </p>
+  </section>
+</div>
+<script>
+  (function () {
+    var bar = document.getElementById("every-filters"),
+      table = document.getElementById("every-kvm");
+    if (!bar || !table) return;
+    bar.hidden = false;
+    bar.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      bar.querySelectorAll("button").forEach(function (x) {
+        x.setAttribute("aria-pressed", String(x === b));
+      });
+      table.querySelectorAll("tbody tr").forEach(function (r) {
+        r.hidden = !!b.dataset.f && r.dataset.v !== b.dataset.f;
+      });
+    });
+  })();
+</script>

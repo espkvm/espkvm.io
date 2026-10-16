@@ -126,6 +126,7 @@ def read_posts(include_drafts):
             "description": meta["description"],
             "date": date,
             "image": meta.get("image", ""),
+            "image_link": meta.get("image_link", ""),
             "thumb": thumb,
             "tags": tags,
             "body": body,
@@ -553,14 +554,14 @@ def compare_page(shell, catalog, capture=False):
                 "the connector, whether a monitor can stay on the target, and which "
                 "ESP32-P4 boards each one fits. Pick the ones you are choosing between. "
                 "\"Untested\" means nobody has run ESP-KVM with it yet.")
-        other = '<a href="/boards/compare/">Compare the ESP32-P4 boards &rarr;</a>'
+        other = '<a href="/boards/compare/">Compare the ESP32-P4 boards &rarr;</a> &middot; <a href="/boards/all/">Every ESP32-P4 board, supported or not &rarr;</a>'
     else:
         h1, url = "Compare boards", SITE + "/boards/compare/"
         lead = ("The ESP32-P4 boards ESP-KVM runs on, side by side. Pick the ones you are "
                 "choosing between; the address of this page keeps the choice, so it can "
                 "be sent to someone. \"Untested\" means built from the vendor's schematic "
                 "and not yet run by anyone. Green marks the best of the boards shown.")
-        other = '<a href="/boards/compare/capture/">Compare the capture boards &rarr;</a>'
+        other = '<a href="/boards/compare/capture/">Compare the capture boards &rarr;</a> &middot; <a href="/boards/all/">Every ESP32-P4 board, supported or not &rarr;</a>'
 
     content = """
     <article class="board-page">
@@ -732,6 +733,112 @@ def tiles(items):
     return "\n".join(tile(i) for i in items)
 
 
+EVERY_DATA = os.path.join(ROOT, "_data", "p4-boards.json")
+MARKS = {"y": ('<span class="mk mk-y" title="yes">&#10003;</span>'),
+         "n": ('<span class="mk mk-n" title="no">&#10007;</span>'),
+         "?": ('<span class="mk mk-q" title="not known">?</span>')}
+VERDICTS = [("supported", "Supported"), ("candidate", "Candidate"), ("maybe", "Maybe"),
+            ("no", "No"), ("terminal", "As a terminal")]
+
+
+def every_data():
+    import json
+    with open(EVERY_DATA, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def try_url(name):
+    body = "Board: %s\nFirmware version: \nCapture board: \nWhat works:\n\nWhat does not:\n" % name
+    return ("https://github.com/espkvm/espkvm/discussions/new?category=general&title=%s&body=%s"
+            % (quote("Tried it: " + name), quote(body)))
+
+
+def source_note(e):
+    bits = []
+    if e.get("src"):
+        bits.append('<a href="%s" rel="noopener">source</a>' % html.escape(e["src"]))
+    if e.get("checked"):
+        bits.append("checked " + html.escape(e["checked"]))
+    return (' <span class="tnote">(%s)</span>' % ", ".join(bits)) if bits else ""
+
+
+def every_rows(catalog):
+    """The KVM table: catalog boards first (all four marks by definition),
+    then the hand-checked ones from _data/p4-boards.json."""
+    rows = []
+    for d in catalog["tested"] + catalog["untested"]:
+        specs = dict(d["specs"])
+        chip = specs.get("Chip", "")
+        revs = ", ".join(x for x, k in (("1.x", "rev 1"), ("3.x", "rev 3")) if k in chip) or "?"
+        tested = d["meta"]["status"] == "tested"
+        status = '<span class="st st-ok">Supported</span>' + (
+            "" if tested else ' <span class="tnote">not run on one yet</span>')
+        conn = specs.get("Capture connector", "")
+        ribbon = ("15-pin, Pi order" if "15-pin" in conn else "22-pin, Pi 5 kind" if "22-pin" in conn
+                  else "24-pin, M5Stack add-on only" if "24-pin" in conn
+                  else "works with the C790" if "c790" in id_list(d["meta"].get("capture")) else conn or "?")
+        rows.append(("supported", d["id"], '<a href="%s">%s</a>' % (d["url"], html.escape(d["meta"]["title"])),
+                     status, ["y"] * 4, revs, html.escape(specs.get("Network", "")), ribbon))
+    for e in every_data()["kvm"]:
+        name = html.escape(e["name"])
+        name = '<a href="%s">%s</a>' % (e["url"], name) if e.get("url") else name
+        v = e["verdict"]
+        if v == "terminal":
+            status = '<a class="st st-alt" href="#terminal">As a terminal</a>'
+        else:
+            status = '<span class="st %s">%s</span>' % (
+                {"candidate": "st-new", "maybe": "st-new", "no": "st-no"}[v], dict(VERDICTS)[v])
+        note = html.escape(e["note"]) + source_note(e)
+        if v == "candidate":
+            note += (' <a class="every-try" href="%s" rel="noopener" target="_blank" data-try>'
+                     'Have one? Post your result &rarr;</a>' % html.escape(try_url(e["name"])))
+        rows.append((v, e["id"], name, status, [e["psram"], e["camera"], e["usb"], e["network"]],
+                     html.escape(e.get("chip", "?")), note, e.get("ribbon", "")))
+    return rows
+
+
+def every_kvm_table(catalog):
+    rows = every_rows(catalog)
+    def cells(marks, ribbon):
+        out = []
+        for i, m in enumerate(marks):
+            cls = {"?": "q"}.get(m, m)
+            # the camera column says what the connector is, not just yes or no
+            body = ('<span class="rib">%s</span>' % html.escape(ribbon)) if i == 1 and ribbon else MARKS[m]
+            out.append('<td class="c-%s">%s</td>' % (cls, body))
+        return "".join(out)
+    body = "\n".join(
+        '        <tr id="b-%s" data-v="%s"><td>%s</td><td>%s</td>%s<td>%s</td><td>%s</td></tr>'
+        % (rid, v, name, status, cells(marks, ribbon), chip, note)
+        for v, rid, name, status, marks, chip, note, ribbon in rows)
+    return body
+
+
+def every_filters(catalog):
+    rows = every_rows(catalog)
+    counts = {k: sum(1 for r in rows if r[0] == k) for k, _ in VERDICTS}
+    btns = ['<button type="button" class="cat-filter" data-f="" aria-pressed="true">All <span>%d</span></button>' % len(rows)]
+    btns += ['<button type="button" class="cat-filter" data-f="%s" aria-pressed="false">%s <span>%d</span></button>'
+             % (k, label, counts[k]) for k, label in VERDICTS if counts[k]]
+    return '<div class="cat-filters" id="every-filters" hidden>%s</div>' % "".join(btns)
+
+
+def every_terminal_table():
+    out = []
+    for e in every_data()["terminal"]:
+        name = html.escape(e["name"])
+        name = '<a href="%s">%s</a>' % (e["url"], name) if e.get("url") else name
+        status = {"supported": '<span class="st st-ok">Supported</span>',
+                  "candidate": '<span class="st st-new">Candidate</span>',
+                  "not-ported": '<span class="st st-no">Not ported</span>'}[e["status"]]
+        note = html.escape(e.get("note", "")) + source_note(e)
+        bat = e["battery"]
+        out.append('        <tr id="%s"><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td class="c-%s">%s</td><td>%s</td></tr>'
+                   % (e["id"], name, status, html.escape(e["screen"]), html.escape(e["network"]),
+                      {"?": "q"}.get(bat, bat), MARKS[bat], note))
+    return "\n".join(out)
+
+
 def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
@@ -741,6 +848,12 @@ def fill_catalog(body, catalog):
             return tiles(devices[:8])
         if group == "count":
             return str(len(devices))
+        if group == "all_kvm":  # /boards/all/: every P4 board, catalog + _data
+            return every_kvm_table(catalog)
+        if group == "all_filters":
+            return every_filters(catalog)
+        if group == "all_terminal":
+            return every_terminal_table()
         if group not in ("tested", "untested", "capture", "cases", "displays", "clocks", "serial", "control", "terminal"):
             sys.exit("unknown catalog group: %s" % group)
         return tiles(catalog[group])
@@ -1008,7 +1121,7 @@ def catalog_page(shell, catalog):
       <div class="cat-filters" id="cat-filters" hidden>{buttons}</div>
       <div class="cmp-cta">
         <p><strong>Choosing between a few?</strong> Put them side by side: chip, memory, Ethernet, PoE, Wi-Fi, microSD and the measured frame rate, with the best marked.</p>
-        <div class="cmp-cta-btns"><a class="btn btn-primary" href="/boards/compare/">Compare boards</a></div>
+        <div class="cmp-cta-btns"><a class="btn btn-primary" href="/boards/compare/">Compare boards</a> <a class="btn" href="/boards/all/">Is my board supported?</a></div>
       </div>
       <div class="cat-grid" id="cat-devices">
 {devices}
@@ -1060,7 +1173,7 @@ def catalog_page(shell, catalog):
       </div>
 
       <p class="cat-note">
-        Not the board you have? <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">Open an issue</a>
+        Not the board you have? See <a href="/boards/all/">every ESP32-P4 board I have looked at</a>, and why some cannot work, or <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">open an issue</a>
         with a link to its schematic. Printed a case? Post it in
         <a href="https://github.com/orgs/espkvm/discussions" rel="noopener">Discussions</a>.
       </p>
@@ -1637,6 +1750,10 @@ def post_page(shell, post, known=frozenset()):
     if post["image"]:
         hero = ('<figure class="post-hero"><img src="%s" alt="" loading="lazy" />'
                 "</figure>" % html.escape(post["image"]))
+        # image_link: the hero opens that page, e.g. the table it is a picture of.
+        if post["image_link"]:
+            hero = hero.replace("<img", '<a href="%s" aria-label="Open the page this picture is from"><img' % html.escape(post["image_link"]), 1)
+            hero = hero.replace("</figure>", "</a></figure>", 1)
 
     content = """
     <article class="post">

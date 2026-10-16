@@ -1464,6 +1464,7 @@
       .st-ok { color: var(--ok); }
       .st-new { color: var(--warn); }
       .st-no { color: var(--faint); }
+      .st-alt { color: var(--accent); text-decoration: none; }
       /* A remark on a row of the status table, after the feature. */
       .tnote {
         color: var(--faint);
