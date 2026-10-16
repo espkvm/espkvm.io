@@ -7,7 +7,7 @@ order: 50
 role: The device - community-tested, PoE
 summary: The first supported board that takes PoE: one cable to a KVM in a rack. 1080p H.264 at 23 fps.
 flasher: p4-poe
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 68 x 55 mm
@@ -28,6 +28,10 @@ for the target.
 Confirmed by [@deltorek112](https://github.com/deltorek112) on rev 3.x silicon
 with the `p4-poe-rev3` image, through Waveshare's HDMI to CSI adapter: 1080p over
 H.264 at 23 fps ([#51](https://github.com/espkvm/espkvm/issues/51)).
+
+[@dangamboa](https://github.com/dangamboa) runs one too, with the same image and adapter ([#54](https://github.com/orgs/espkvm/discussions/54)). The browser flasher could not connect to that board, and espconnect flashed it.
+
+**PoE and the USB-A port do not mix as they are.** On PoE, the USB cable to the target must have its 5 V wire cut, or the target's port and the board's PoE supply both drive the same 5 V line. Waveshare's support confirmed it (#54). Without PoE, a normal cable is fine.
 
 Waveshare said in August 2026 that these ship rev 1.3, but the one tested was
 rev 3.x. **Check the boot log before flashing**: it prints `chip revision:`. The

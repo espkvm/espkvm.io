@@ -7,7 +7,7 @@ order: 135
 role: Not tested on hardware
 summary: The ESP32-P4-WIFI6 with a dual-band ESP32-C5 and a rev 3.x chip. Wi-Fi only.
 flasher: p4-wifi6-db
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4NRW32X, rev 3.x
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 70 x 21 mm, 76 mm with the antenna

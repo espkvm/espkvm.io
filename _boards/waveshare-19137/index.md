@@ -9,7 +9,11 @@ summary: The same TC358743 bridge on Waveshare's board, with a full-size HDMI in
 bridge: TC358743
 spec.Bridge: Toshiba TC358743
 spec.Input: full-size HDMI
-spec.Connector: 15-pin Raspberry Pi camera ribbon only (also powers it)
+spec.15-pin ribbon: yes (1.0 mm, the Pi 4 kind); it also powers the board
+spec.22-pin ribbon: no; the P4-ETH needs a 15-to-22-pin ribbon
+spec.24-pin ribbon (M5Stack): no
+spec.HDMI out: no
+spec.Size: 45 x 30 mm
 spec.HDMI-CEC: same chip as the C790; not tried on this board
 spec.Measured: 1080p H.264 at 23 fps on the WIFI6-POE-ETH
 link.Waveshare wiki page: https://www.waveshare.com/wiki/HDMI_to_CSI_Adapter

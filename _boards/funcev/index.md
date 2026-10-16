@@ -7,7 +7,7 @@ order: 20
 role: The device - rev 3.2
 summary: Espressif's own ESP32-P4 board, with Ethernet and an ESP32-C6. On a rev 3.x chip, 1080p at a little over 20 fps.
 flasher: funcev
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); the unit here is rev 3.2
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 88 x 74 mm

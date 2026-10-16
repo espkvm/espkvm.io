@@ -370,6 +370,44 @@ COMPARE_ROWS = ["Status", "Chip", "PSRAM", "Flash", "Ethernet", "PoE", "Wi-Fi", 
                 "To the target", "microSD", "HDMI-CEC", "HDMI audio", "Measured"]
 
 
+# The capture boards' comparison: the same table, rows of their own.
+COMPARE_CAPTURE_ROWS = ["Status", "Bridge", "Input", "HDMI out", "15-pin ribbon", "22-pin ribbon",
+                        "24-pin ribbon (M5Stack)", "Works with",
+                        "HDMI-CEC", "HDMI audio", "Power", "Measured"]
+
+
+def capture_cells(d, catalog):
+    """A capture board's cells: row -> (text, score), as compare_cells."""
+    specs = dict(d["specs"])
+    cells = {k: (v, None) for k, v in specs.items()}
+    tested = d["meta"]["status"] == "tested"
+    cells["Status"] = ('<span class="cat-status">Tested</span>' if tested
+                       else '<span class="cat-status untested">Untested</span>', int(tested))
+    out = specs.get("HDMI out", "")
+    cells["HDMI out"] = (out, int(out.startswith("pass")))
+    for row in ("15-pin ribbon", "22-pin ribbon"):
+        v = specs.get(row, "")
+        cells[row] = (v, int(v.startswith("yes")))
+    # M5Stack's own cable fits only M5Stack's own boards: a warning, not a plus.
+    v = specs.get("24-pin ribbon (M5Stack)", "")
+    cells["24-pin ribbon (M5Stack)"] = (v, "warn" if v.startswith("yes") else None)
+    cec = specs.get("HDMI-CEC", "")
+    cells["HDMI-CEC"] = (cec, int(cec.startswith("yes")))
+    users = [b for b in catalog["tested"] + catalog["untested"]
+             if d["id"] in id_list(b["meta"].get("capture"))]
+    fams = {b["meta"].get("family") for b in users}
+    if users and len(fams) == 1 and None not in fams and len(users) <= 3:
+        # One maker's boards only: name them, and mark it as the limit it is.
+        fam = fams.pop()
+        cells["Works with"] = ("only %s: %s" % (fam, ", ".join(
+            "[%s](%s)" % (b["meta"]["title"].replace(fam + " ", "", 1), b["url"])
+            for b in users)), "warn")
+    else:
+        cells["Works with"] = ("%d ESP32-P4 board%s" % (len(users), "" if len(users) == 1 else "s")
+                               if users else "", len(users))
+    return cells
+
+
 SIZE_PX_PER_MM = 1.2  # one scale for every board, so the drawings compare
 
 
@@ -380,6 +418,15 @@ def size_px(text):
     if len(nums) < 2:
         return (0, 0)
     return (round(max(nums) * SIZE_PX_PER_MM), round(min(nums) * SIZE_PX_PER_MM))
+
+
+def size_label(text):
+    """"30 x 45 mm, 12 mm tall" -> "45 x 30 mm": long side first, as drawn."""
+    nums = re.findall(r"\d+(?:\.\d+)?", text)[:2]
+    if len(nums) < 2:
+        return text.split(",")[0]
+    a, b = sorted(nums, key=float, reverse=True)
+    return "%s x %s mm" % (a, b)
 
 
 def size_drawing(text):
@@ -445,12 +492,18 @@ def compare_cells(d, catalog):
     return cells
 
 
-def compare_page(shell, catalog):
-    """Every ESP32-P4 board side by side. The table holds all of them, so it
-    reads without JavaScript; the script shows only the ones picked."""
-    devices = catalog["tested"] + catalog["untested"]
-    cells = {d["id"]: compare_cells(d, catalog) for d in devices}
-    keys = list(COMPARE_ROWS)
+def compare_page(shell, catalog, capture=False):
+    """Every ESP32-P4 board, or every capture board, side by side. The table
+    holds all of them, so it reads without JavaScript; the script shows only
+    the ones picked."""
+    if capture:
+        devices = catalog["capture"]
+        cells = {d["id"]: capture_cells(d, catalog) for d in devices}
+        keys = list(COMPARE_CAPTURE_ROWS)
+    else:
+        devices = catalog["tested"] + catalog["untested"]
+        cells = {d["id"]: compare_cells(d, catalog) for d in devices}
+        keys = list(COMPARE_ROWS)
     for d in devices:
         for k in cells[d["id"]]:
             if k not in keys and k != "Size":  # drawn under the photo instead
@@ -462,6 +515,8 @@ def compare_page(shell, catalog):
             body = text
         else:
             body = inline(text, d["path"]) if text else '<span class="cmp-none">-</span>'
+        if score == "warn":  # a drawback, marked whatever else is shown
+            return '<td class="cmp-col cmp-warn" data-id="%s">%s</td>' % (html.escape(d["id"]), body)
         return '<td class="cmp-col" data-id="%s"%s>%s</td>' % (
             html.escape(d["id"]), "" if score is None else ' data-score="%d"' % score, body)
 
@@ -472,7 +527,7 @@ def compare_page(shell, catalog):
         text = cells[d["id"]].get("Size", ("", None))[0]
         return '<span class="cmp-head-size" style="height:%dpx">%s<small>%s</small></span>' % (
             size_box_h, size_drawing(text) if text else "",
-            html.escape(text.split(",")[0]) if text else "&nbsp;")  # the notes stay on the board's page
+            html.escape(size_label(text)) if text else "&nbsp;")  # the notes stay on the board's page
 
     size_box_h = max([size_px(cells[d["id"]].get("Size", ("",))[0])[1] for d in devices] + [0]) + 22
     head = "".join(
@@ -489,18 +544,30 @@ def compare_page(shell, catalog):
     picks = "".join(
         '<button type="button" class="cat-filter" data-id="%s" aria-pressed="false">%s</button>'
         % (html.escape(d["id"]), html.escape(d["meta"]["title"])) for d in devices)
-    tested = ",".join(d["id"] for d in catalog["tested"][:3])  # a first view that fits
+    # a first view that fits: three tested boards, or every capture board
+    tested = ",".join(d["id"] for d in (devices if capture else catalog["tested"][:3]))
+    store = "espkvm-compare-capture" if capture else "espkvm-compare"
+    if capture:
+        h1, url = "Compare capture boards", SITE + "/boards/compare/capture/"
+        lead = ("The HDMI capture boards ESP-KVM reads, side by side: the bridge chip, "
+                "the connector, whether a monitor can stay on the target, and which "
+                "ESP32-P4 boards each one fits. Pick the ones you are choosing between. "
+                "\"Untested\" means nobody has run ESP-KVM with it yet.")
+        other = '<a href="/boards/compare/">Compare the ESP32-P4 boards &rarr;</a>'
+    else:
+        h1, url = "Compare boards", SITE + "/boards/compare/"
+        lead = ("The ESP32-P4 boards ESP-KVM runs on, side by side. Pick the ones you are "
+                "choosing between; the address of this page keeps the choice, so it can "
+                "be sent to someone. \"Untested\" means built from the vendor's schematic "
+                "and not yet run by anyone. Green marks the best of the boards shown.")
+        other = '<a href="/boards/compare/capture/">Compare the capture boards &rarr;</a>'
 
     content = """
     <article class="board-page">
       <p class="post-back"><a href="/boards/">&larr; All boards</a></p>
-      <h1>Compare boards</h1>
-      <p class="lead">
-        The ESP32-P4 boards ESP-KVM runs on, side by side. Pick the ones you are
-        choosing between; the address of this page keeps the choice, so it can
-        be sent to someone. "Untested" means built from the vendor's schematic
-        and not yet run by anyone. Green marks the best of the boards shown.
-      </p>
+      <h1>{h1}</h1>
+      <p class="lead">{lead}</p>
+      <p class="cat-note">{other}</p>
       <div class="cat-filters" id="cmp-picks" hidden>{picks}</div>
       <label class="cmp-diff" id="cmp-diff-wrap" hidden><input type="checkbox" id="cmp-diff" /> Only the rows that differ</label>
       <div class="table-scroll">
@@ -519,7 +586,7 @@ def compare_page(shell, catalog):
         if (!picks || !table) return;
         var q = new URLSearchParams(location.search).get("b"),
           kept = null;
-        try {{ kept = (JSON.parse(localStorage.getItem("espkvm-compare")) || []).join(","); }} catch (e) {{}}
+        try {{ kept = (JSON.parse(localStorage.getItem("{store}")) || []).join(","); }} catch (e) {{}}
         var chosen = (q || kept || "{tested}").split(",").filter(Boolean);
         var diff = document.getElementById("cmp-diff");
         function show() {{
@@ -557,24 +624,30 @@ def compare_page(shell, catalog):
           if (i >= 0) chosen.splice(i, 1);
           else chosen.push(b.dataset.id);
           history.replaceState(null, "", chosen.length ? "?b=" + chosen.join(",") : location.pathname);
-          try {{ localStorage.setItem("espkvm-compare", JSON.stringify(chosen)); }} catch (e) {{}}
+          try {{ localStorage.setItem("{store}", JSON.stringify(chosen)); }} catch (e) {{}}
           show();
         }});
         show();
       }})();
     </script>
-""".format(picks=picks, head=head, rows=rows, tested=tested)
+""".format(picks=picks, head=head, rows=rows, tested=tested, store=store,
+           h1=h1, lead=html.escape(lead).replace("&amp;rarr;", "&rarr;"), other=other)
 
-    return render_page(shell, {
-        "title": "Compare ESP32-P4 boards for ESP-KVM, an open-source IP-KVM",
-        "og_title": "Compare ESP-KVM boards",
-        "description": "The ESP32-P4 boards ESP-KVM runs on side by side: chip revision, "
-                       "memory, network, HDMI capture, USB to the target, microSD and "
-                       "measured frame rates.",
-        "canonical": SITE + "/boards/compare/",
-        "og_type": "website",
-    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
-                                    ("Compare", SITE + "/boards/compare/"))))
+    if capture:
+        meta = {"title": "Compare HDMI capture boards for ESP-KVM, an open-source IP-KVM",
+                "og_title": "Compare ESP-KVM capture boards",
+                "description": "The HDMI to CSI capture boards ESP-KVM works with side by "
+                               "side: TC358743 or LT6911D, connector, HDMI pass-through, "
+                               "CEC, audio and the ESP32-P4 boards each one fits."}
+    else:
+        meta = {"title": "Compare ESP32-P4 boards for ESP-KVM, an open-source IP-KVM",
+                "og_title": "Compare ESP-KVM boards",
+                "description": "The ESP32-P4 boards ESP-KVM runs on side by side: chip revision, "
+                               "memory, network, HDMI capture, USB to the target, microSD and "
+                               "measured frame rates."}
+    meta.update({"canonical": url, "og_type": "website"})
+    return render_page(shell, meta, content, json_ld(breadcrumbs(
+        ("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"), ("Compare capture boards" if capture else "Compare", url))))
 
 
 def features(item):
@@ -771,6 +844,8 @@ def item_page(shell, item, catalog):
         others = [b["id"] for b in catalog["tested"] if b["id"] != item["id"]][:2]
         actions.append('<a class="btn" href="/boards/compare/?b=%s">Compare</a>'
                        % ",".join([item["id"]] + others))
+    elif kind == "capture":
+        actions.append('<a class="btn" href="/boards/compare/capture/">Compare</a>')
 
     related = []
     if kind == "device":
@@ -948,6 +1023,7 @@ def catalog_page(shell, catalog):
       </div>
 
       <h2 class="cat-head" id="capture">HDMI capture <span class="cat-count">{n_capture}</span></h2>
+      <p class="cat-note"><a href="/boards/compare/capture/">Compare the capture boards &rarr;</a></p>
       <div class="cat-grid">
 {capture}
       </div>
@@ -1172,6 +1248,8 @@ def write_catalog(shell, catalog):
         write(os.path.join(out, "index.html"), item_page(shell, item, catalog))
     write(os.path.join(ROOT, "boards", "index.html"), catalog_page(shell, catalog))
     write(os.path.join(ROOT, "boards", "compare", "index.html"), compare_page(shell, catalog))
+    write(os.path.join(ROOT, "boards", "compare", "capture", "index.html"),
+          compare_page(shell, catalog, capture=True))
     for slug, (name, items) in families(catalog).items():
         write(os.path.join(ROOT, "boards", "family", slug, "index.html"),
               family_page(shell, slug, name, items))
@@ -1814,6 +1892,7 @@ def sitemap(posts, tags=None, pages=None, catalog=None):
     if catalog:
         entries += "  <url>\n    <loc>%s/boards/</loc>\n    <priority>0.8</priority>\n  </url>\n" % SITE
         entries += "  <url>\n    <loc>%s/boards/compare/</loc>\n    <priority>0.7</priority>\n  </url>\n" % SITE
+        entries += "  <url>\n    <loc>%s/boards/compare/capture/</loc>\n    <priority>0.6</priority>\n  </url>\n" % SITE
         entries += "".join(
             "  <url>\n    <loc>%s%s</loc>\n    <priority>0.7</priority>\n  </url>\n"
             % (SITE, item["url"]) for item in catalog["all"])

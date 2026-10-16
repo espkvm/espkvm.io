@@ -7,7 +7,7 @@ order: 65
 role: The device - community-tested, PoE
 summary: Ethernet with PoE and Wi-Fi 6 on one board. H.264 at about 23 fps on the v1.2 board with a rev 3.1 chip.
 flasher: p4-wifi6-devkit
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); v1.2 boards carry rev 3.1
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 85 x 56.5 mm

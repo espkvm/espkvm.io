@@ -7,7 +7,7 @@ order: 130
 role: The device - community-tested
 summary: The NANO with a dual-band ESP32-C5, so it can join a 5 GHz network.
 flasher: p4-nano-wifi6-db
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 3.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 52 x 50 mm

@@ -8,8 +8,14 @@ summary: A TC358743 HDMI to camera bridge with both camera connectors, 15-pin an
 bridge: TC358743
 spec.Bridge: Toshiba TC358743
 spec.Input: HDMI
-spec.Connector: 15-pin 1.0 mm on the front, 22-pin 0.5 mm on the back; both ribbons in the box
-spec.HDMI-CEC: yes, tried with a Steam Deck
+spec.15-pin ribbon: yes, on the front (1.0 mm, the Pi 4 kind); cable in the box
+spec.22-pin ribbon: yes, on the back (0.5 mm, the Pi 5 kind); cable in the box
+spec.24-pin ribbon (M5Stack): no
+spec.HDMI-CEC: yes, tried with a Steam Deck, a Nintendo Switch and an Android TV box
+spec.HDMI out: no
+spec.HDMI audio: I2S on its own 5-pin connector; not captured yet
+spec.Size: 45 x 30 mm
+spec.Measured: 1080p H.264 at 22-24 fps on the Function EV, 1080p MJPEG at 20 fps on the P4-ETH; my own figures on this site are all with this board
 link.Geekworm wiki page: https://wiki.geekworm.com/C790
 photo: board.webp
 photo_style: product
@@ -24,6 +30,6 @@ chip, not to the board around it.
 - **Two connectors.** The wide 15-pin one on the front is the Raspberry Pi 4 kind; the narrow 22-pin one on the back is the Pi 5 / Zero kind. Use the one that matches the board: the P4-ETH takes the 22-pin ribbon, most other boards here the 15-pin one.
 
 - **No 1080p60.** Two CSI lanes carrying RGB cannot take more than about 81 megapixels a second, so the EDID offers 1080p at 30 Hz or lower, never a mode that would give a black screen.
-- **HDMI-CEC works.** The board wires the CEC line through to the TC358743, so the console's remote can drive a source that speaks CEC. Tried with a Steam Deck in its dock.
+- **HDMI-CEC works.** The board wires the CEC line through to the TC358743, so the console's remote can drive a source that speaks CEC. Tried with a Steam Deck in its dock, a Nintendo Switch and an Android TV box.
 - The HDMI audio comes out as I2S on a separate 5-pin connector by the HDMI socket, not on the ribbon. The firmware does not capture it yet.
-- The [C792](https://wiki.geekworm.com/C792) is the same bridge with a splitter in front and should work too, though nobody here has run one. Use its 15-pin connector.
+- The [C792](/boards/c792/) is the same bridge with a splitter in front, for a target that keeps its own monitor.

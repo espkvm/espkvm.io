@@ -7,7 +7,7 @@ order: 60
 role: The device - wireless only
 summary: The PoE board without the wired port. Capture and USB confirmed; Wi-Fi is the only way in.
 flasher: p4-wifi6
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 71 x 21 mm

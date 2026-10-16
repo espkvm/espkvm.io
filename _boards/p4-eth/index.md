@@ -7,7 +7,7 @@ order: 10
 role: The device - the one this project is built on
 summary: ESP32-P4 with 100M Ethernet, a 22-pin camera connector, USB OTG and a microSD slot.
 flasher: p4-eth
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 78 x 21 mm

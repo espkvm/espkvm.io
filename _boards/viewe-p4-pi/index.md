@@ -6,7 +6,7 @@ order: 150
 role: Not tested on hardware
 summary: A Raspberry-Pi-shaped carrier for VIEWE's P4 module, with Ethernet, an ESP32-C6 and microSD.
 flasher: viewe-p4-pi
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 85 x 56 mm

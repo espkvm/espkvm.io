@@ -1187,6 +1187,10 @@
         background: color-mix(in srgb, var(--ok) 14%, transparent);
         box-shadow: inset 3px 0 0 var(--ok);
       }
+      .cmp-table td.cmp-warn {
+        background: color-mix(in srgb, var(--warn) 14%, transparent);
+        box-shadow: inset 3px 0 0 var(--warn);
+      }
       .cat-teaser {
         position: relative;
         max-height: 460px;

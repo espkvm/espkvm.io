@@ -9,7 +9,11 @@ summary: A Lontium LT6911D and a microSD slot, on a 24-pin flat cable. Fits the 
 bridge: LT6911D
 spec.Bridge: Lontium LT6911D
 spec.Input: HDMI
-spec.Connector: 24-pin flat cable (M5Stack's own)
+spec.15-pin ribbon: no
+spec.22-pin ribbon: no
+spec.24-pin ribbon (M5Stack): yes, M5Stack's own flat cable to the Unit PoE-P4
+spec.HDMI out: no
+spec.Size: 63.1 x 20.3 mm, 15.5 mm tall
 spec.microSD: yes
 spec.HDMI-CEC: no; the line is wired to the chip, but its CEC is undocumented
 spec.HDMI audio: no; the chip's audio pins are not connected

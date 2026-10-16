@@ -6,7 +6,7 @@ order: 68
 role: The device - community-tested, the smallest
 summary: 60 x 25 mm with an ESP32-C6 and the camera connector. Wi-Fi only; about 9 fps of 1080p MJPEG over it.
 flasher: firebeetle2-p4
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 60 x 25.4 mm

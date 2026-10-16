@@ -7,7 +7,7 @@ order: 125
 role: Not tested on hardware
 summary: The Function EV with a dual-band ESP32-C5, so it can join a 5 GHz network. Ethernet, microSD, rev 3.x.
 flasher: funcev-c5
-capture: c790, waveshare-19137
+capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 3.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 88 x 74 mm
