@@ -1838,13 +1838,22 @@
 
       .post-foot {
         margin-top: 34px;
-        padding: 22px 0 48px;
+        padding: 22px 0 8px;
         border-top: 1px solid var(--border-soft);
         color: var(--muted);
         font-size: 15px;
       }
       .post-foot p {
         margin: 0 0 10px;
+      }
+
+      /* Comments: giscus, from GitHub Discussions. */
+      .post-comments {
+        padding-bottom: 48px;
+      }
+      .post-comments h2 {
+        margin: 0 0 16px;
+        font-size: 20px;
       }
 
       /* ---- share row --------------------------------------------------------- */

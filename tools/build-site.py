@@ -1781,6 +1781,16 @@ def post_page(shell, post, known=frozenset()):
         </p>
         {share}
       </footer>
+      <section class="post-comments" aria-label="Comments">
+        <h2>Comments</h2>
+        <script src="https://giscus.app/client.js"
+          data-repo="espkvm/espkvm" data-repo-id="R_kgDOTgkzaQ"
+          data-category="Blog comments" data-category-id="DIC_kwDOTgkzac4DI71t"
+          data-mapping="pathname" data-strict="0" data-reactions-enabled="1"
+          data-emit-metadata="0" data-input-position="bottom"
+          data-theme="preferred_color_scheme" data-lang="en" data-loading="lazy"
+          crossorigin="anonymous" async></script>
+      </section>
     </article>
 """.format(
         title=html.escape(post["title"]),
