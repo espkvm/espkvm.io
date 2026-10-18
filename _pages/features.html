@@ -121,6 +121,7 @@ output: features/index.html
         <tr><td>Follows the target's resolution</td><td>From an 800&times;600 firmware screen to a 1080p desktop, with nothing to set.</td></tr>
         <tr><td>MJPEG and H.264</td><td>Both encoded by the chip's hardware. H.264 uses far less bandwidth on a screen that barely changes, and needs HTTPS in the browser.</td></tr>
         <tr><td>Adapts to a slow link</td><td>Over WiFi or a VPN the stream lowers its quality instead of stuttering.</td></tr>
+        <tr><td>H.264 over WebRTC</td><td>The console takes H.264 over WebRTC (UDP) when it can, and over the WebSocket when it cannot. A lost packet then costs one frame instead of stalling the picture, which helps on Wi-Fi and mobile links. No STUN or TURN server; it works over Tailscale.</td></tr>
         <tr><td>Measured delay</td><td>"Measure the delay" times the whole round trip, mouse to picture: about 155&nbsp;ms at 1080p H.264.</td></tr>
         <tr><td>Several viewers</td><td>Anyone signed in can watch; one is in control at a time, and control can be taken over.</td></tr>
         <tr><td>A viewing token for dashboards</td><td>Opens the stream and the figures, and nothing that can touch the target. Off until you make one.</td></tr>
