@@ -1786,7 +1786,7 @@ def post_page(shell, post, known=frozenset()):
         <script src="https://giscus.app/client.js"
           data-repo="espkvm/espkvm" data-repo-id="R_kgDOTgkzaQ"
           data-category="Blog comments" data-category-id="DIC_kwDOTgkzac4DI71t"
-          data-mapping="pathname" data-strict="0" data-reactions-enabled="1"
+          data-mapping="specific" data-term="{term}" data-strict="1" data-reactions-enabled="1"
           data-emit-metadata="0" data-input-position="bottom"
           data-theme="preferred_color_scheme" data-lang="en" data-loading="lazy"
           crossorigin="anonymous" async></script>
@@ -1800,6 +1800,8 @@ def post_page(shell, post, known=frozenset()):
         tags=tag_links(post["tags"]),
         body=link_boards(render_markdown(post["body"], post["path"]), known),
         share=share_links("%s/blog/%s/" % (SITE, post["slug"]), post["title"] + " - ESP-KVM"),
+        # The discussion is titled after the post; renaming a post loses it.
+        term=html.escape(html.unescape(re.sub(r"<[^>]+>", "", post["title"]))),
     )
 
     url = "%s/blog/%s/" % (SITE, post["slug"])
