@@ -9,7 +9,7 @@ bridge: TC358743
 spec.Bridge: Toshiba TC358743, behind a GSV2001 splitter
 spec.Input: HDMI, up to 4K60; 4K is scaled down to 1080p at the same refresh rate
 spec.HDMI out: pass-through (VIDEO-OUT), the same picture as the input; not tried yet
-spec.HDMI audio: I2S on its own connector; not captured yet
+spec.HDMI audio: I2S on its own connector, as on the C790; not tried on this board
 spec.15-pin ribbon: yes, on the front (1.0 mm, the Pi 4 kind); cable in the box
 spec.22-pin ribbon: yes, on the back (0.5 mm, the Pi 5 kind); cable in the box
 spec.24-pin ribbon (M5Stack): no
@@ -29,4 +29,4 @@ For a target that should keep its own monitor. The splitter sends the HDMI pictu
 - **4K becomes 1080p, not slower.** A 4K60 source arrives as 1080p60, which is again too fast. 4K30 arrives as 1080p30 and works.
 - **Power it from its own 5 V input.** Geekworm asks for it for stable operation.
 - **Use the connector that fits the board,** as with the C790: the 22-pin ribbon for the P4-ETH, the 15-pin one for most other boards.
-- The I2S audio comes out on its own connector, as on the C790. The firmware does not capture it yet.
+- The I2S audio comes out on its own connector, as on the C790. Wired the same way it should work; not tried on this board yet.

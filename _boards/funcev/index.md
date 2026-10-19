@@ -38,4 +38,4 @@ round at 1080p: about 155 ms over H.264 and 160 ms over MJPEG (2026-10-10,
 
 - Holding BOOT while pressing RST puts this board into download mode: the firmware never starts, and it looks hung. For the password reset: press RST, release, then hold BOOT.
 - A "DS3231 for Pi" clock module plugs straight onto pins 1-9 of the Raspberry Pi header: those pins are 3V3, GND and the capture chip's I2C bus. Tested on this board.
-- It has a Raspberry Pi header. The C790's audio cable lands on pins 6, 12, 35 and 38 there (audio capture is not in the firmware yet); pin 12 is GPIO 22, which is also the round LCD's default chip select.
+- It has a Raspberry Pi header. The C790's audio cable lands on pins 6, 12, 35 and 38 there (GPIO 22 SCK, 27 SD, 53 WFS: pick those in Settings -> Audio); pin 12 is GPIO 22, which is also the round LCD's default chip select.
