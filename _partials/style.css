@@ -1878,6 +1878,31 @@
         font-size: 14px;
         cursor: pointer;
       }
+      .share .share-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+      }
+      .share .share-copied {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      /* A phone: the label on its own line, so the seven icons fit in one row. */
+      @media (max-width: 480px) {
+        .share {
+          gap: 6px;
+        }
+        .share-label {
+          flex-basis: 100%;
+        }
+        .share .share-icon {
+          width: 36px;
+          height: 36px;
+        }
+      }
 
       /* ---- tags ------------------------------------------------------------ */
 

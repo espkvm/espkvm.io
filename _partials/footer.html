@@ -61,9 +61,11 @@
       b.hidden = false;
       b.addEventListener("click", function () {
         navigator.clipboard.writeText(b.getAttribute("data-url")).then(function () {
-          b.textContent = "Copied";
+          b.title = "Copied";
+          b.classList.add("share-copied");
           setTimeout(function () {
-            b.textContent = "Copy link";
+            b.title = "Copy link";
+            b.classList.remove("share-copied");
           }, 1500);
         });
       });
