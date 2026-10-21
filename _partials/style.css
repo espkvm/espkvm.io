@@ -2086,8 +2086,11 @@
       .post-thumb img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
+      }
+      .post-thumb[data-fill] img {
+        object-fit: cover;
       }
       .post-item.has-thumb:hover .post-thumb {
         border-color: var(--muted);

@@ -1928,6 +1928,19 @@ def render_markdown(text, where="post"):
     return "\n".join(out)
 
 
+def thumb_shape(src):
+    """The box takes the picture's own shape, so a hero with words on it is
+    never cut. A picture taller than 4:3 is a photo of a board or a logo with
+    room around it: it fills a 4:3 box instead of floating in one."""
+    path = os.path.join(ROOT, src.lstrip("/"))
+    if not src.lower().endswith((".webp", ".png", ".jpg", ".jpeg")):
+        return ""  # an SVG scales to any box
+    w, h = image_size(path)
+    if w * 3 >= h * 4:
+        return ' style="aspect-ratio: %d / %d"' % (w, h)
+    return ' style="aspect-ratio: 4 / 3" data-fill=""'
+
+
 def human_date(date):
     return "%d %s %d" % (date.day, MONTHS[date.month - 1], date.year)
 
@@ -2100,8 +2113,9 @@ def index_page(shell, posts, tag=None, all_tags=None):
                 # post is, and a screen reader repeating that helps nobody.
                 thumb_class=" has-thumb" if p["thumb"] else "",
                 thumb=('          <a class="post-thumb" href="/blog/%s/" tabindex="-1" '
-                       'aria-hidden="true"><img src="%s" alt="" loading="lazy" /></a>\n'
-                       % (p["slug"], html.escape(p["thumb"])) if p["thumb"] else ""),
+                       'aria-hidden="true"%s><img src="%s" alt="" loading="lazy" /></a>\n'
+                       % (p["slug"], thumb_shape(p["thumb"]), html.escape(p["thumb"]))
+                       if p["thumb"] else ""),
             )
             for p in posts
         )
