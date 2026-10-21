@@ -152,7 +152,8 @@ def read_posts(include_drafts):
 #
 # Front matter a board takes: title, kind (device or capture), status (tested
 # or untested), order, role, summary, photo, photo_style (product or photo),
-# flasher (its id in the firmware's boards.json), capture (ids of the capture
+# flasher (its id in the firmware's boards.json), rev3 ("image only" when a rev
+# 3.x image exists but no rev 3.x board has been seen), capture (ids of the capture
 # boards it takes), and any number of "spec.<Label>: value" rows and
 # "link.<Label>: url" links, shown in the order written. A case takes title,
 # author, summary, boards (ids it fits), photo, photo_credit and links.
@@ -366,7 +367,7 @@ def family_page(shell, slug, name, items):
 
 # The rows of the comparison, in this order; a spec not listed here comes after.
 # Memory and Network are split into one row per part.
-COMPARE_ROWS = ["Status", "Chip", "PSRAM", "Flash", "Ethernet", "PoE", "Wi-Fi", "HDMI capture",
+COMPARE_ROWS = ["Status", "Fit for a KVM", "Chip", "PSRAM", "Flash", "Ethernet", "PoE", "Wi-Fi", "HDMI capture",
                 "Capture connector",
                 "To the target", "microSD", "HDMI-CEC", "HDMI audio", "Measured"]
 
@@ -451,6 +452,10 @@ def compare_cells(d, catalog):
     tested = d["meta"]["status"] == "tested"
     cells["Status"] = ('<span class="cat-status">Tested</span>' if tested
                        else '<span class="cat-status untested">Untested</span>', int(tested))
+    halves, parts = fit(d)
+    earned = ",".join("%g" % (p * g) for (p, _), (_, g) in zip(FIT, parts))
+    cells["Fit for a KVM"] = ('<span class="cat-fit" data-fit="%s">%s</span> <span class="fit-t">%s</span>'
+                              % (earned, fit_icons(halves), fit_text(halves)), halves)
     chip = specs.get("Chip", "")
     cells["Chip"] = (chip, int("rev 3" in chip))
 
@@ -465,8 +470,8 @@ def compare_cells(d, catalog):
     cells["Ethernet"] = (m.group(1) if m else "", int(bool(m)))
     if "802.3at" in net:
         poe = ("802.3at", 2)
-    elif "PoE header" in net:
-        poe = ("header only", 1)
+    elif "add-on" in net:
+        poe = ("with an add-on module", 1)
     elif "PoE" in net:
         poe = ("yes", 2)
     else:
@@ -512,7 +517,7 @@ def compare_page(shell, catalog, capture=False):
 
     def cell(d, key):
         text, score = cells[d["id"]].get(key, ("", None))
-        if key == "Status":
+        if key in ("Status", "Fit for a KVM"):
             body = text
         else:
             body = inline(text, d["path"]) if text else '<span class="cmp-none">-</span>'
@@ -560,7 +565,8 @@ def compare_page(shell, catalog, capture=False):
         lead = ("The ESP32-P4 boards ESP-KVM runs on, side by side. Pick the ones you are "
                 "choosing between; the address of this page keeps the choice, so it can "
                 "be sent to someone. \"Untested\" means built from the vendor's schematic "
-                "and not yet run by anyone. Green marks the best of the boards shown.")
+                "and not yet run by anyone. Green marks the best of the boards shown. "
+                "The first row is the board's rating for a KVM, out of five.")
         other = '<a href="/boards/compare/capture/">Compare the capture boards &rarr;</a> &middot; <a href="/boards/all/">Every ESP32-P4 board, supported or not &rarr;</a>'
 
     content = """
@@ -571,6 +577,7 @@ def compare_page(shell, catalog, capture=False):
       <p class="cat-note">{other}</p>
       <div class="cat-filters" id="cmp-picks" hidden>{picks}</div>
       <label class="cmp-diff" id="cmp-diff-wrap" hidden><input type="checkbox" id="cmp-diff" /> Only the rows that differ</label>
+      {fit_tune}
       <div class="table-scroll">
         <table class="cmp-table" id="cmp-table">
           <thead><tr><th scope="col"></th>{head}</tr></thead>
@@ -618,6 +625,7 @@ def compare_page(shell, catalog, capture=False):
         picks.hidden = false;
         document.getElementById("cmp-diff-wrap").hidden = false;
         diff.addEventListener("change", show);
+        document.addEventListener("fit-change", show);
         picks.addEventListener("click", function (e) {{
           var b = e.target.closest("button");
           if (!b) return;
@@ -630,8 +638,16 @@ def compare_page(shell, catalog, capture=False):
         }});
         show();
       }})();
+{fit_tune_js}
     </script>
 """.format(picks=picks, head=head, rows=rows, tested=tested, store=store,
+           fit_tune="" if capture else fit_tune_html(
+               "Untick what does not matter to you; the rating row follows, and this browser "
+               "remembers it, here and on the board list."),
+           fit_tune_js="" if capture else fit_tune_js("""function (els) {
+          els.forEach(function (el) { el.closest("td").dataset.score = el.dataset.halves; });
+          document.dispatchEvent(new Event("fit-change"));
+        }"""),
            h1=h1, lead=html.escape(lead).replace("&amp;rarr;", "&rarr;"), other=other)
 
     if capture:
@@ -643,8 +659,8 @@ def compare_page(shell, catalog, capture=False):
     else:
         meta = {"title": "Compare ESP32-P4 boards for ESP-KVM, an open-source IP-KVM",
                 "og_title": "Compare ESP-KVM boards",
-                "description": "The ESP32-P4 boards ESP-KVM runs on side by side: chip revision, "
-                               "memory, network, HDMI capture, USB to the target, microSD and "
+                "description": "The ESP32-P4 boards ESP-KVM runs on side by side, with their rating "
+                               "for an IP-KVM: chip revision, memory, network, HDMI capture, USB to the target, microSD and "
                                "measured frame rates."}
     meta.update({"canonical": url, "og_type": "website"})
     return render_page(shell, meta, content, json_ld(breadcrumbs(
@@ -683,6 +699,197 @@ def features(item):
     return out
 
 
+# How well a board suits a KVM, read off its specs: (points, what it means).
+# Ten points in all, shown as five screens with halves, rounded to the nearest half.
+FIT = [(3, "tested on hardware"),
+       (1.5, "rev 3.x chip (faster H.264)"),
+       (1.5, "Ethernet"),
+       (0.5, "Wi-Fi"),
+       (1, "PoE"),
+       (0.5, "microSD"),
+       (1, "plain USB cable to the target"),
+       (0.5, "capture ribbon fits as is"),
+       (0.5, "small board")]
+
+
+# The same criteria, short, for the buttons that leave one out of the rating.
+FIT_SHORT = ["Tested", "rev 3.x", "Ethernet", "Wi-Fi", "PoE", "microSD", "Plain USB cable",
+             "Ribbon fits", "Small board"]
+
+
+def board_area(size):
+    """Square centimetres from a "78 x 21 mm" spec, or None."""
+    m = re.match(r"\s*([\d.]+)\s*x\s*([\d.]+)", size)
+    return float(m.group(1)) * float(m.group(2)) / 100 if m else None
+
+
+def has_rev3(item):
+    """A rev 3.x chip someone has seen on this board. "rev3: image only" in the
+    front matter marks a board with a rev 3.x image ready and no such chip
+    seen yet."""
+    return "rev 3" in dict(item["specs"]).get("Chip", "") and item["meta"].get("rev3") != "image only"
+
+
+def sold_both(item):
+    """Sold with either chip revision, so a buyer cannot choose."""
+    return has_rev3(item) and "rev 1" in dict(item["specs"]).get("Chip", "")
+
+
+def fit(item):
+    """(halves of a screen out of 10, [(label, share of its points)]) for a device board."""
+    m = item["meta"]
+    specs = dict(item["specs"])
+    net = specs.get("Network", "")
+    usb = specs.get("To the target", "")
+    sd = specs.get("microSD", "")
+    area = board_area(specs.get("Size", ""))
+    got = [m.get("status") == "tested",
+           has_rev3(item),
+           "Ethernet" in net,
+           "Wi-Fi" in net,
+           "PoE" in net,
+           sd.startswith("yes") and "not confirmed" not in sd,
+           bool(usb) and not re.search(r"wire cut|jumper|header|MX1\.25", usb),
+           "22-pin" not in specs.get("Capture connector", ""),
+           0 if area is None else 1 if area <= 20 else 0.5 if area <= 40 else 0]
+    labels = [label for _, label in FIT]
+    labels[-1] = ("board size not known" if area is None else "%s board (%d cm\u00b2)" % (
+        "small" if area <= 20 else "medium" if area <= 40 else "large", round(area)))
+    points = sum(p * float(g) for (p, _), g in zip(FIT, got))
+    item["fit_points"] = points
+    return int(points + 0.5 + 1e-9), [(l, float(g)) for l, g in zip(labels, got)]
+
+
+def logo_pixels():
+    """The pixel letters of the site's logo (assets/icon.svg) as two paths,
+    one unit a pixel: ESP (rows 0-4) and KVM (rows 6-10), 17 wide."""
+    with open(os.path.join(ROOT, "assets", "icon.svg"), encoding="utf-8") as fh:
+        svg = fh.read()
+    cells = sorted({((int(x) - 6) // 3, (int(y) - 15) // 3) for x, y in
+                    re.findall(r'<rect x="(\d+)" y="(\d+)" width="3" height="3"', svg)})
+    path = lambda rows: "".join("M%d %dh1v1h-1z" % c for c in cells if c[1] in rows)
+    return path(range(0, 6)), path(range(6, 11))
+
+
+LOGO_ESP, LOGO_KVM = logo_pixels()
+
+
+def fit_icon(state):
+    """One small screen showing the logo: blue letters for a point (state 2),
+    grey for none (0); half a point (1) lights ESP and leaves KVM grey."""
+    esp, kvm = ("on", "on") if state == 2 else ("on", "off") if state == 1 else ("off", "off")
+    frame = "f-on" if state else "f-off"
+    return ('<svg class="fit-i" viewBox="0 0 23 20" width="27" height="23" aria-hidden="true">'
+            '<rect x="0.6" y="0.6" width="21.8" height="15.8" rx="2" class="scr %s"/>'
+            '<g transform="translate(3 3)"><path d="%s" class="%s"/><path d="%s" class="%s"/></g>'
+            '<path d="M9 17h5v1.2h-5zM7 18.2h9v1.6h-9z" class="%s"/></svg>'
+            % (frame, LOGO_ESP, esp, LOGO_KVM, kvm, frame))
+
+
+def fit_icons(halves):
+    """Five screens for a score in halves."""
+    return "".join(fit_icon(min(2, max(0, halves - 2 * i))) for i in range(5))
+
+
+def fit_text(halves):
+    return "%s of 5" % ("%d" % (halves // 2) if halves % 2 == 0 else "%.1f" % (halves / 2))
+
+
+class RawHTML(str):
+    """A spec cell that is already HTML, not prose to escape."""
+
+
+def fit_breakdown(item):
+    """The score and every point behind it, for a board's own page."""
+    halves, parts = fit(item)
+    def row(p, label, g):
+        state = "has" if g == 1 else "part" if g else "lacks"
+        mark = {"has": "&#10003;", "part": "&#9680;", "lacks": "&#10007;"}[state]
+        pts = ("+%g" % (p * g)) if g == 1 else ("+%g of %g" % (p * g, p)) if g else "0 of %g" % p
+        return ('<li class="%s"><span class="fit-mark">%s</span>%s<span class="fit-pts">%s</span></li>'
+                % (state, mark, html.escape(label), pts))
+    rows = "".join(row(p, label, g) for (p, _), (label, g) in zip(FIT, parts))
+    warn = ""
+    if sold_both(item):
+        warn = ('<p class="fit-warn"><strong>Rated for a unit with the rev 3.x chip.</strong> '
+                "This board is also sold with rev 1.x, and the product code does not say "
+                "which one arrives. With rev 1.x it scores %s. "
+                '<a href="/tools/#board-check">Read the chip in the browser</a>.</p>'
+                % fit_text(int(item["fit_points"] - FIT[1][0] + 0.5 + 1e-9)))
+    return ('<span class="cat-fit">%s</span> <strong>%s</strong> <span class="fit-sum">%g of 10 points</span>'
+            '<ul class="fit-list">%s</ul>%s' % (fit_icons(halves), fit_text(halves), item["fit_points"], rows, warn))
+
+
+def fit_title(item):
+    """The same, as plain lines for a card's tooltip."""
+    halves, parts = fit(item)
+    note = ("\nRated for a rev 3.x unit; with rev 1.x it scores %s"
+            % fit_text(int(item["fit_points"] - FIT[1][0] + 0.5 + 1e-9))
+            if sold_both(item) else "")
+    return "Fit for a KVM: %s%s\n%s" % (fit_text(halves), note, "\n".join(
+        ("\u2713 " if g == 1 else "\u25d0 " if g else "\u2717 ") + label for label, g in parts))
+
+
+def fit_tune_html(note):
+    """The rating's criteria as ticks, folded away; a script fills it in."""
+    picks = "".join('<li><label><input type="checkbox" data-i="%d" data-name="%s" checked /> %s'
+                    '<span class="fit-pts">%g</span></label></li>'
+                    % (i, html.escape(n), html.escape(n), FIT[i][0]) for i, n in enumerate(FIT_SHORT))
+    return ('<details class="fit-tune" id="fit-picks" hidden>\n'
+            '        <summary>What counts in the rating <span id="fit-off"></span></summary>\n'
+            '        <p>%s</p>\n        <ul>%s</ul>\n      </details>' % (note, picks))
+
+
+def fit_tune_js(after):
+    """The rating with only what matters to the reader: every .cat-fit with a
+    data-fit list is scored again without the unticked criteria, then
+    after(elements) runs. The choice is kept in this browser, for both pages."""
+    return """      (function () {
+        var bar = document.getElementById("fit-picks");
+        if (!bar) return;
+        var W = %s, ICONS = %s, KEY = "espkvm-fit-off", off = [];
+        try { off = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
+        var els = Array.prototype.slice.call(document.querySelectorAll(".cat-fit[data-fit]"));
+        function apply() {
+          var max = 0, names = [];
+          W.forEach(function (w, i) { if (off.indexOf(i) < 0) max += w; });
+          bar.querySelectorAll("input").forEach(function (b) {
+            b.checked = off.indexOf(+b.dataset.i) < 0;
+            if (!b.checked) names.push(b.dataset.name);
+          });
+          document.getElementById("fit-off").textContent = names.length ? "(without " + names.join(", ") + ")" : "";
+          els.forEach(function (el) {
+            var got = 0;
+            el.dataset.fit.split(",").forEach(function (v, i) { if (off.indexOf(i) < 0) got += +v; });
+            var h = max ? Math.floor(got / max * 10 + 0.5 + 1e-9) : 0, out = "";
+            for (var i = 0; i < 5; i++) out += ICONS[Math.min(2, Math.max(0, h - 2 * i))];
+            el.innerHTML = out;
+            el.setAttribute("aria-label", "Fit for a KVM: " + h / 2 + " of 5");
+            var t = el.nextElementSibling;
+            if (t && t.classList.contains("fit-t")) t.textContent = h / 2 + " of 5";
+            el.dataset.score = max ? got / max : 0;
+            el.dataset.halves = h;
+          });
+          (%s)(els);
+        }
+        bar.hidden = false;
+        bar.addEventListener("change", function (e) {
+          var i = +e.target.dataset.i, k = off.indexOf(i);
+          if (k >= 0) off.splice(k, 1); else off.push(i);
+          try { localStorage.setItem(KEY, JSON.stringify(off)); } catch (e) {}
+          apply();
+        });
+        if (off.length) apply();
+      })();""" % (json.dumps([p for p, _ in FIT]), json.dumps([fit_icon(st) for st in range(3)]), after)
+
+
+def by_fit(devices):
+    """Best suited first; the catalog's own order among equals."""
+    for d in devices:
+        fit(d)
+    return sorted(devices, key=lambda i: (-i["fit_points"], i["order"], i["meta"]["title"]))
+
+
 def split_title(item):
     """"Waveshare ESP32-P4-NANO" -> ("Waveshare", "ESP32-P4-NANO"); a case is
     shown under its author."""
@@ -714,16 +921,22 @@ def tile(item):
     chips = "".join('<span class="cat-chip">%s</span>' % html.escape(label)
                     for _, label in feats)
     keys = " ".join([k for k, _ in feats] + ([] if untested else ["tested"]))
-    fit = " cat-photo-cover" if m.get("photo_style") == "photo" else ""
+    cover = " cat-photo-cover" if m.get("photo_style") == "photo" else ""
+    rating = ""
+    if m.get("kind") == "device" and item["section"] == "boards":
+        halves, parts = fit(item)
+        earned = ",".join("%g" % (p * g) for (p, _), (_, g) in zip(FIT, parts))
+        rating = ('\n              <span class="cat-fit" data-fit="{e}" title="{tip}" aria-label="Fit for a KVM: {t}">{i}</span>'
+                  .format(e=earned, tip=html.escape(fit_title(item)), t=fit_text(halves), i=fit_icons(halves)))
     return """          <a class="cat-card" href="{url}" data-f="{keys}" data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
             <span class="cat-photo{fit}"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></span>
             <span class="cat-body">
               <span class="cat-maker">{maker}{status}</span>
-              <span class="cat-model">{model}</span>
+              <span class="cat-model">{model}</span>{rating}
               <span class="cat-chips">{chips}</span>
             </span>
           </a>""".format(
-        url=item["url"], keys=keys, fit=fit, photo=item["photo"],
+        url=item["url"], keys=keys, fit=cover, photo=item["photo"], rating=rating,
         iid=html.escape(item["id"]), iname=html.escape(html.unescape(m["title"])), icat=item_category(item),
         w=item["photo_w"], h=item["photo_h"], maker=html.escape(maker),
         status=status, model=html.escape(model), chips=chips)
@@ -843,7 +1056,7 @@ def fill_catalog(body, catalog):
     """Swap the <!-- catalog:<group> --> markers a page leaves for tiles."""
     def swap(match):
         group = match.group(1)
-        devices = catalog["tested"] + catalog["untested"]
+        devices = by_fit(catalog["tested"] + catalog["untested"])
         if group == "teaser":  # the start of the catalog, fading out on the home page
             return tiles(devices[:8])
         if group == "count":
@@ -895,6 +1108,7 @@ def spec_table(item):
     if m.get("kind") == "device":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Built from the schematic, not run on one yet"))
+        rows.insert(1, ("Fit for a KVM", RawHTML(fit_breakdown(item))))
     elif item["section"] == "modules":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Written from the datasheet, not run on one yet"))
@@ -906,7 +1120,8 @@ def spec_table(item):
         return ""
     return ('<div class="table-scroll"><table class="board-specs"><tbody>\n%s\n'
             "</tbody></table></div>" % "\n".join(
-                "<tr><th>%s</th><td>%s</td></tr>" % (html.escape(k), inline(v, item["path"]))
+                "<tr><th>%s</th><td>%s</td></tr>" % (html.escape(k), v if isinstance(v, RawHTML)
+                                                    else inline(v, item["path"]))
                 for k, v in rows))
 
 
@@ -1089,7 +1304,9 @@ def item_page(shell, item, catalog):
     return render_page(shell, {
         "title": "%s - %s with ESP-KVM" % (m["title"], what),
         "og_title": m["title"],
-        "description": m.get("description") or m["summary"],
+        "description": (m.get("description") or m["summary"]) + (
+            " Rated %s for an IP-KVM." % fit_text(fit(item)[0])
+            if kind == "device" and item["section"] == "boards" else ""),
         "canonical": SITE + item["url"],
         "image": SITE + item["photo"],
         "image_alt": m["title"],
@@ -1098,7 +1315,7 @@ def item_page(shell, item, catalog):
 
 
 def catalog_page(shell, catalog):
-    devices = catalog["tested"] + catalog["untested"]
+    devices = by_fit(catalog["tested"] + catalog["untested"])
     filters = [("all", "All"), ("tested", "Tested"), ("ethernet", "Ethernet"),
                ("wifi", "Wi-Fi"), ("poe", "PoE"), ("rev3", "rev 3.x")]
     buttons = "".join(
@@ -1119,8 +1336,10 @@ def catalog_page(shell, catalog):
 
       <h2 class="cat-head" id="devices">ESP32-P4 boards <span class="cat-count" id="cat-count">{n}</span></h2>
       <div class="cat-filters" id="cat-filters" hidden>{buttons}</div>
+      <p class="cat-note">Sorted by how well a board suits a KVM, out of five screens. Tested on hardware counts most, then a rev 3.x chip, Ethernet, PoE, a plain USB cable to the target, Wi-Fi, microSD, a capture ribbon that fits as is and a small board (up to 20 cm² for the whole half point, up to 40 for half of it). Each board's page says what it has and what it lacks.</p>
+      {fit_tune}
       <div class="cmp-cta">
-        <p><strong>Choosing between a few?</strong> Put them side by side: chip, memory, Ethernet, PoE, Wi-Fi, microSD and the measured frame rate, with the best marked.</p>
+        <p><strong>Choosing between a few?</strong> Put them side by side: the rating, chip, memory, Ethernet, PoE, Wi-Fi, microSD and the measured frame rate, with the best marked.</p>
         <div class="cmp-cta-btns"><a class="btn btn-primary" href="/boards/compare/">Compare boards</a> <a class="btn" href="/boards/all/">Is my board supported?</a></div>
       </div>
       <div class="cat-grid" id="cat-devices">
@@ -1200,6 +1419,7 @@ def catalog_page(shell, catalog):
           count.textContent = shown;
         }});
       }})();
+{fit_tune_js}
       // A scales button on each board adds it to the comparison; the choice
       // is kept in this browser and the compare page starts from it.
       (function () {{
@@ -1261,6 +1481,17 @@ def catalog_page(shell, catalog):
                    for slug, (name, _) in sorted(families(catalog).items()))
                if families(catalog) else ""),
            n=len(devices), buttons=buttons, devices=tiles(devices),
+           fit_tune=fit_tune_html("Untick what does not matter to you; the screens and the order "
+                                  "follow, and this browser remembers it."),
+           fit_tune_js=fit_tune_js("""function (els) {
+          var grid = document.getElementById("cat-devices"), add = grid.querySelector(".cat-card-add");
+          els.map(function (el, n) { return [el, n]; }).sort(function (a, b) {
+            return b[0].dataset.score - a[0].dataset.score || a[1] - b[1];
+          }).forEach(function (p) {
+            var c = p[0].closest(".cat-card");
+            grid.insertBefore(c.parentNode.classList.contains("cat-item") ? c.parentNode : c, add);
+          });
+        }"""),
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
            n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
@@ -1270,9 +1501,10 @@ def catalog_page(shell, catalog):
            n_cases=len(catalog["cases"]), cases=tiles(catalog["cases"]))
 
     return render_page(shell, {
-        "title": "Supported boards and cases - ESP-KVM, an open-source ESP32-P4 IP-KVM",
-        "og_title": "ESP-KVM boards and cases",
-        "description": "The ESP32-P4 boards ESP-KVM runs on, which ones have been run on "
+        "title": "ESP32-P4 boards for an IP-KVM, rated - ESP-KVM boards and cases",
+        "og_title": "ESP-KVM boards, rated",
+        "description": "The ESP32-P4 boards ESP-KVM runs on, rated for an IP-KVM out of "
+                       "five and sorted best first, which ones have been run on "
                        "hardware, the HDMI capture boards, status displays, clocks, "
                        "serial adapters and "
                        "printed cases for them.",

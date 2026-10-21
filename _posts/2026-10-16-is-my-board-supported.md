@@ -25,4 +25,6 @@ The most promising new one is the Wireless-Tag WT32P4C5-43S, out this month: eve
 
 There is a second table at the bottom for [ESP-KVM terminal](/terminal/): boards with a screen that could show a KVM's picture. Today that is the Tab5; the Function EV with its 7" screen is the next candidate.
 
+Among the supported boards, the [catalog](/boards/) now rates each one for a KVM out of five, so the best fits come first.
+
 If your board is not on the page, [open an issue](https://github.com/espkvm/espkvm/issues/new) with a link to its schematic and I will add it.

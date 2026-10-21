@@ -929,6 +929,116 @@
       .cat-card:hover .cat-model {
         color: var(--accent);
       }
+      .cat-fit {
+        display: flex;
+        gap: 3px;
+        margin-top: 4px;
+        color: var(--accent);
+      }
+      .fit-i {
+        shape-rendering: crispEdges;
+      }
+      .fit-i .scr {
+        fill: #0e1116;
+        stroke-width: 1.2;
+      }
+      .fit-i .scr.f-on {
+        stroke: #4c9aff;
+      }
+      .fit-i path.f-on {
+        fill: #4c9aff;
+      }
+      .fit-i path.f-off {
+        fill: #5d6975;
+      }
+      .fit-i .scr.f-off {
+        stroke: #5d6975;
+      }
+      .fit-i .on {
+        fill: #4c9aff;
+      }
+      .fit-i .off {
+        fill: #5d6975;
+      }
+      .board-specs .cat-fit {
+        display: inline-flex;
+        vertical-align: -2px;
+        margin: 0 6px 0 0;
+      }
+      .fit-list {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+        font-size: 13px;
+      }
+      .fit-list li {
+        display: flex;
+        gap: 6px;
+        padding: 1px 0;
+      }
+      .fit-list li.lacks {
+        color: var(--faint);
+      }
+      .fit-mark {
+        width: 1em;
+        color: var(--ok);
+      }
+      .fit-list li.part .fit-mark {
+        color: var(--accent);
+      }
+      .fit-list li.lacks .fit-mark {
+        color: var(--faint);
+      }
+      .fit-tune {
+        margin: 0 0 16px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .fit-tune summary {
+        cursor: pointer;
+        color: var(--accent);
+      }
+      .fit-tune p {
+        margin: 8px 0;
+      }
+      .fit-tune ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 4px 16px;
+      }
+      .fit-tune label {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        cursor: pointer;
+      }
+      .fit-tune .fit-pts {
+        color: var(--faint);
+      }
+      .fit-sum {
+        color: var(--faint);
+        font-size: 13px;
+      }
+      .fit-warn {
+        margin: 10px 0 0;
+        padding: 8px 10px;
+        font-size: 13px;
+        border: 1px solid var(--warn);
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--warn) 10%, transparent);
+      }
+      .fit-warn strong {
+        color: var(--warn);
+      }
+      .fit-pts {
+        margin-left: auto;
+        padding-left: 12px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
       .cat-chips {
         display: flex;
         flex-wrap: wrap;

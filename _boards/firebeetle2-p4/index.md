@@ -11,6 +11,7 @@ spec.Chip: ESP32-P4, rev 1.x
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 60 x 25.4 mm
 spec.Network: Wi-Fi 6 (ESP32-C6) only
+spec.microSD: yes
 spec.To the target: USB-C, the OTG-HS one
 spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.Measured: about 9 fps of 1080p MJPEG over Wi-Fi (0.56.2)

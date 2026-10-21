@@ -11,9 +11,9 @@ capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); v1.2 boards carry rev 3.1
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 85 x 56.5 mm
-spec.Network: 100M Ethernet with PoE, Wi-Fi 6 (ESP32-C6)
-spec.To the target: USB-A port 1 (A-to-A cable; jumper, see below)
-spec.Capture connector: camera connector
+spec.Network: 100M Ethernet, PoE with an add-on module (not in the kits), Wi-Fi 6 (ESP32-C6)
+spec.To the target: USB-A port 1 (jumper; A-to-A cable, 5 V wire cut)
+spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
 spec.Measured: H.264 at about 23 fps (rev 3.1)
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm
@@ -22,7 +22,7 @@ photo: board.webp
 photo_style: product
 ---
 
-A 100M magjack that also takes PoE, plus the ESP32-C6. Same pins as the other
+A 100M magjack that takes PoE with an add-on module, plus the ESP32-C6. Same pins as the other
 Waveshare boards, so the build is almost the stock one.
 
 Confirmed by [@brooklyn5w4g](https://github.com/brooklyn5w4g) on a v1.2 board
@@ -31,7 +31,7 @@ with a rev 3.1 chip, using the rev 3.x image: H.264 at about 23 fps.
 ## Wiring
 
 A jumper switches the P4's USB between USB-A **port 1**, wired straight to the
-chip, and a hub on ports 2-4. The target goes on port 1, with an A-to-A cable.
+chip, and a hub on ports 2-4. The target goes on port 1, with an A-to-A cable. The board drives 5 V on every USB-A socket, so that cable needs its **5 V wire cut**.
 Waveshare swapped the jumper's labels between board versions:
 
 | Board version | Jumper for port 1 |

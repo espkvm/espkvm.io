@@ -33,8 +33,8 @@ H.264 at 23 fps ([#51](https://github.com/espkvm/espkvm/issues/51)).
 
 **PoE and the USB-A port do not mix as they are.** On PoE, the USB cable to the target must have its 5 V wire cut, or the target's port and the board's PoE supply both drive the same 5 V line. Waveshare's support confirmed it (#54). Without PoE, a normal cable is fine.
 
-Waveshare said in August 2026 that these ship rev 1.3, but the one tested was
-rev 3.x. **Check the boot log before flashing**: it prints `chip revision:`. The
+Waveshare's wiki names the rev 1.x chip and the product page the rev 3.x one,
+and the one tested was rev 3.x. **Check the boot log before flashing**: it prints `chip revision:`. The
 pre-3.0 image has not been run on this board yet.
 
 Its 40-pin header has the Raspberry Pi layout, with the capture chip's I2C bus on pins 3 and 5, so a "DS3231 for Pi" clock module should plug straight onto pins 1-9 (read from the vendor pinout, not tried on this board).

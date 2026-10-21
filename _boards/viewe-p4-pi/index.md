@@ -27,7 +27,7 @@ firmware's defaults.
 
 - The Type-C marked UART is power, flashing and the log.
 - The other Type-C is the OTG-HS that goes to the target, so that lead is C to A.
-- The Type-A socket is a host port the KVM does not use.
+- The Type-A socket is a host port the KVM does not use. VIEWE's README puts the high-speed USB on the Type-A; their own schematic has it on the USB-C, and so does the firmware.
 - PoE is only half wired: the magjack's centre taps reach a 4-pin header, but the module's 5 V has to go back in through the expansion header.
 
 Built from the schematic, not yet run on one.

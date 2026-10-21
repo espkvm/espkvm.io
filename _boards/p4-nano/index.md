@@ -11,7 +11,8 @@ capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 50 x 50 mm
-spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
+spec.Network: 100M Ethernet, PoE with the add-on PoE module (in kits B, C and D), Wi-Fi 6 (ESP32-C6)
+spec.microSD: yes, pins not confirmed on hardware yet
 spec.To the target: USB-A (A-to-A cable, 5 V wire cut)
 spec.Capture connector: 15-pin Raspberry Pi camera connector
 link.Waveshare product page: https://www.waveshare.com/esp32-p4-nano.htm

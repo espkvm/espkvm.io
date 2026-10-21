@@ -30,3 +30,6 @@ _drafts/
 
 # Editor leftovers
 *.kate-swp
+
+# Python bytecode from importing the builder
+__pycache__/

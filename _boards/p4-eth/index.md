@@ -8,10 +8,11 @@ role: The device - the one this project is built on
 summary: ESP32-P4 with 100M Ethernet, a 22-pin camera connector, USB OTG and a microSD slot.
 flasher: p4-eth
 capture: c790, c792, waveshare-19137
-spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
+spec.Chip: ESP32-P4, rev 1.x; an image for rev 3.x is ready, but no rev 3.x board has been seen yet
+rev3: image only
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 78 x 21 mm
-spec.Network: 100M Ethernet
+spec.Network: 100M Ethernet, PoE with an add-on module (in the ESP32-P4-POE-ETH kits)
 spec.To the target: USB 2.0 OTG on an MX1.25 connector
 spec.Capture connector: 22-pin 0.5 mm camera connector (the Pi 5 / Zero kind)
 spec.microSD: yes
