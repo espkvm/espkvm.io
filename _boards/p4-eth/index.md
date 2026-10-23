@@ -8,8 +8,7 @@ role: The device - the one this project is built on
 summary: ESP32-P4 with 100M Ethernet, a 22-pin camera connector, USB OTG and a microSD slot.
 flasher: p4-eth
 capture: c790, c792, waveshare-19137
-spec.Chip: ESP32-P4, rev 1.x; an image for rev 3.x is ready, but no rev 3.x board has been seen yet
-rev3: image only
+spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 32 MB flash
 spec.Size: 78 x 21 mm
 spec.Network: 100M Ethernet, PoE with an add-on module (in the ESP32-P4-POE-ETH kits)
@@ -51,7 +50,7 @@ smoothness. A rev 3.x chip does 22-24 fps at 1080p.
 
 - The BOOT button (GPIO 35) is also an Ethernet pin, so the device reads it once, early in start-up. For the password reset: press reset, release, then hold BOOT.
 - The microSD writes at 40 MHz because the slot's power comes from the chip's LDO 4.
-- Waveshare ships rev 1.3 today, and the product code does not tell the revision. The boot log prints `chip revision:`.
+- Waveshare sells it with either revision, and the product code does not tell which. The boot log prints `chip revision:`.
 
 Another ESP32-P4 board with Ethernet and the same camera connector can run it
 too. The pins are set in

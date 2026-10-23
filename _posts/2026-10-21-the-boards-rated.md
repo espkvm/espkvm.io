@@ -36,6 +36,6 @@ Not everyone needs PoE or a small board. Open "What counts in the rating" above 
 
 The screens are on the [board list](/boards/), on the front page and in the first row of [Compare boards](/boards/compare/). A board's own page lists every point it got and every one it did not.
 
-The ESP32-P4-ETH, the board this project started on, gets three and a half: it is small and takes PoE with an add-on module, but it has no Wi-Fi, a USB lead on an MX1.25 connector, a 22-pin camera socket, and nobody has seen one with a rev 3.x chip yet. The Function EV gets four and a half: it has all of that, but no PoE, and at 88 by 74 mm it gets nothing for size.
+The ESP32-P4-ETH, the board this project started on, gets four: it is small and takes PoE with an add-on module, but it has no Wi-Fi, a USB lead on an MX1.25 connector and a 22-pin camera socket. The Function EV gets four and a half: it has all of that, but no PoE, and at 88 by 74 mm it gets nothing for size.
 
 If a rating looks wrong, the cause is usually a spec on the board's page. Leave a comment below and I will fix it.
