@@ -633,7 +633,7 @@ output: index.html
               It matters for two reasons. An image built for one revision does not
               start on the other, so the flasher asks which one you have (a wrong
               pick damages nothing; flash the other one). And revision 3.x is much
-              faster at H.264: about 27&nbsp;fps at 1080p against 5-7.
+              faster at H.264: about 25&nbsp;fps at 1080p against 5-7, and about 60&nbsp;ms from mouse to picture.
             </p>
           </div>
         </details>
@@ -917,12 +917,12 @@ output: index.html
               <tr>
                 <td>Frame rate &mdash; <a href="/boards/funcev/">Function EV</a> (rev&nbsp;v3.2)</td>
                 <td class="num">23 fps</td>
-                <td class="num">26&ndash;27 fps</td>
+                <td class="num">25 fps (1080p50)</td>
               </tr>
               <tr>
                 <td>Mouse moved to picture shown &mdash; <a href="/boards/funcev/">Function EV</a></td>
                 <td class="num">~160 ms</td>
-                <td class="num">~120 ms</td>
+                <td class="num">~60 ms</td>
               </tr>
               <tr>
                 <td>Mouse moved to picture shown &mdash; <a href="/boards/m5-poe-p4/">M5Stack Unit PoE-P4</a>, 720p</td>
@@ -978,7 +978,7 @@ output: index.html
           <p>
             On the Espressif Function EV board (revision v3.2) that detour is gone:
             the capture feeds YUV422 straight into the encoder, no conversion pass.
-            H.264 goes from ~7&nbsp;fps to <strong>26&ndash;27&nbsp;fps</strong> at
+            H.264 goes from ~7&nbsp;fps to <strong>25&ndash;27&nbsp;fps</strong> at
             1080p (and 59&nbsp;fps at 720p) &mdash; faster than MJPEG (23&nbsp;fps), and
             at a fraction of the bandwidth &mdash; and the chip runs
             <strong>cooler</strong> doing it,

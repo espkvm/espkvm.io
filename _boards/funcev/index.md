@@ -5,7 +5,7 @@ kind: device
 status: tested
 order: 20
 role: The device - rev 3.2
-summary: Espressif's own ESP32-P4 board, with Ethernet and an ESP32-C6. On a rev 3.x chip, 1080p H.264 at about 27 fps.
+summary: Espressif's own ESP32-P4 board, with Ethernet and an ESP32-C6. On a rev 3.x chip, 1080p H.264 with about 60 ms from mouse to picture.
 flasher: funcev
 capture: c790, c792, waveshare-19137
 spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each); the unit here is rev 3.2
@@ -15,7 +15,7 @@ spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
 spec.To the target: USB-C, the HS OTG one
 spec.Capture connector: 15-pin Raspberry Pi camera connector
 spec.microSD: yes
-spec.Measured: 1080p H.264 at 26-27 fps, 720p at 59; about 120 ms from mouse to picture
+spec.Measured: 1080p50 H.264 at 25 fps, 720p at 59; about 60 ms from mouse to picture
 link.Espressif user guide: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32p4/esp32-p4x-function-ev-board/user_guide.html
 photo: board.webp
 photo_style: product
@@ -26,11 +26,11 @@ Wi-Fi: station, access point and the rescue hotspot.
 
 The newer chip captures YUV422 straight into the H.264 and JPEG encoders, with
 no colour-convert pass. That frees about 4 MB of PSRAM for a deeper capture ring
-and lifts 1080p H.264 to 22-24 fps, 28 at 720p. From 0.69.0 the memory runs at 250 MHz instead of 200, which only rev 3.x allows, and 1080p goes to 26-27 fps. From 0.69.1, with the frame rate limit at 60, 720p from a 60 Hz source runs at 59.
+and lifts 1080p H.264 to 22-24 fps, 28 at 720p. From 0.69.0 the memory runs at 250 MHz instead of 200, which only rev 3.x allows, and 1080p goes to 26-27 fps. From 0.69.1, with the frame rate limit at 60, 720p from a 60 Hz source runs at 59. From 0.70.0 the target sends 1080p50 by default and the encoder starts on a frame while it is still arriving: 25 fps at 1080p.
 
 From the pointer moved on the target to the browser showing it, the whole way
-round at 1080p: about 160 ms over MJPEG (2026-10-10, 0.62.0) and 118 ms over
-H.264 with WebRTC (2026-10-24, 0.69.0). The encoder takes 36 ms of it.
+round at 1080p: about 160 ms over MJPEG (2026-10-10, 0.62.0) and about 60 ms
+over H.264 at 1080p50 (0.70.0, 118 ms in 0.69.0). The encoder takes 36 ms of it.
 
 ## Good to know
 

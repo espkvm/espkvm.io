@@ -44,7 +44,7 @@ MJPEG at quality 70, rev 1.3 chip:
 A still screen costs nothing, since unchanged frames are skipped. H.264 on this
 chip runs at 5-7 fps at 1080p and 17 fps at 720p, but an idle desktop costs
 170 kbit/s against MJPEG's 8.5 Mbit/s: it is for narrow links, not for
-smoothness. A rev 3.x chip does about 27 fps at 1080p.
+smoothness. A rev 3.x chip does 25-27 fps at 1080p.
 
 ## Good to know
 

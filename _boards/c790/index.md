@@ -15,7 +15,7 @@ spec.HDMI-CEC: yes, tried with a Steam Deck, a Nintendo Switch and an Android TV
 spec.HDMI out: no
 spec.HDMI audio: yes, I2S on its own 5-pin connector; three wires and a ground to the P4
 spec.Size: 45 x 30 mm
-spec.Measured: 1080p H.264 at about 27 fps on the Function EV, 1080p MJPEG at 20 fps on the P4-ETH; my own figures on this site are all with this board
+spec.Measured: 1080p50 H.264 at 25 fps on the Function EV, 1080p MJPEG at 20 fps on the P4-ETH; my own figures on this site are all with this board
 link.Geekworm wiki page: https://wiki.geekworm.com/C790
 photo: board.webp
 photo_style: product
