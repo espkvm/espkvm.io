@@ -1,9 +1,9 @@
 ---
-title: 0.69.0 - Faster memory, faster H.264
-description: On boards with a rev 3.x chip the memory now runs at 250 MHz instead of 200, and 1080p H.264 goes from 22 to 27 frames a second.
+title: 0.69.0 and 0.69.1 - Faster memory, faster H.264
+description: On boards with a rev 3.x chip the memory now runs at 250 MHz instead of 200, and 1080p H.264 goes from 22 to 27 frames a second. In 0.69.1 720p goes from 26 to 59.
 tags: video, hardware
 date: 2026-10-24 12:00
-image: /assets/blog/0-69-0-faster-memory-faster-h264/hero.webp
+image: /assets/blog/0-69-0-faster-memory-faster-h264/hero2.webp
 ---
 
 On a rev 3.x chip, 1080p H.264 ran at 22-24 frames a second. I wanted to know what holds it there.
@@ -25,7 +25,7 @@ I measured both builds on the same Function EV, one after the other, with "Measu
 
 The delay drops by more than the 7 ms the encoder saves: with frames closer together, the pointer's move gets into a frame sooner too. Over the phone network the two measurements did not get the same connection: the round trip was 23 ms while I measured the 200 MHz build and 43 ms while I measured the 250 MHz one. The 250 MHz build was faster all the same.
 
-At 720p the encoder was not the limit before, so the frame rate stays at about 26. A frame encodes in 16 ms instead of 18.5, and the delay goes from 79 to 67 ms.
+At 720p a frame encodes in 16 ms instead of 18.5, and the delay goes from 79 to 67 ms. The frame rate stayed at about 26, and the encoder was busy only 41 % of the time. More on that below.
 
 It is one line in the build settings of every rev 3.x board. Builds for rev 1.x chips are the same as before.
 
@@ -37,4 +37,24 @@ Espressif gives 30 frames a second at 1080p for this encoder, but with YUV420 in
 
 The rev 3.x chip has a block in the camera input that should turn YUV422 into YUV420 on the way in, for free. I could not get it to write anything in that mode. The other way is a second pass through the memory, and memory is what is short here. So it stays at 27 for now.
 
-[Release 0.69.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.69.0)
+## 0.69.1: 720p at 59
+
+720p stopped at 26 with the encoder half idle. With the frame rate limit raised from 30 to 60 in the settings it went to 51-54 at once. So the limit held it, and the limit also counted wrong.
+
+The source sends 60 frames a second, a frame every 16.7 ms. With a 30 fps limit every second frame should go out, 33.3 ms after the last one. The check threw away a frame that came a fraction of a millisecond early, and then the next one went out after 50 ms. On average that gave 25-26 instead of 30.
+
+Now the device keeps a schedule: every 33.3 ms the next frame is due, and a frame that comes a little early is taken. With the limit at 30 it gives 30.0, with the limit at 60 it gives 59.
+
+The default limit is now 60. If you set the limit yourself, your value stays. 1080p does not change: the source sends 30 frames a second, and the encoder manages 27 of them.
+
+One trap with the higher limit: the encoder shares the bitrate out by the frame rate it is told. Told 60 while the source sends 30, it gives each frame half the bits. So the encoder now gets the lower of the two, the limit and the source's rate.
+
+| 720p from a 60 Hz source | 0.69.0 | 0.69.1 |
+|---|---|---|
+| Frames a second | 26 | 59 |
+| Encoder busy | 41 % | 93 % |
+| Delay, same network | 67 ms | 70 ms |
+
+The delay stayed about the same; the spread between tries is bigger than the difference.
+
+[Release 0.69.0 on GitHub](https://github.com/espkvm/espkvm/releases/tag/v.0.69.0), [release 0.69.1](https://github.com/espkvm/espkvm/releases/tag/v.0.69.1)
