@@ -190,7 +190,7 @@ output: compare/index.html
     {
       "@type": "Question",
       "name": "What frame rate does ESP-KVM reach at 1080p?",
-      "acceptedAnswer": { "@type": "Answer", "text": "About 20-23 fps over MJPEG on every board. Over H.264, 22-24 fps on ESP32-P4 chips of revision 3.x and about 7 fps on the older revision 1.3." }
+      "acceptedAnswer": { "@type": "Answer", "text": "About 20-23 fps over MJPEG on every board. Over H.264, about 27 fps on ESP32-P4 chips of revision 3.x and about 7 fps on the older revision 1.3." }
     },
     {
       "@type": "Question",
@@ -278,7 +278,7 @@ output: compare/index.html
         </tr>
         <tr>
           <td>Video</td>
-          <td class="us">1080p: 20-23 fps MJPEG; H.264 22-24 fps on rev 3.x chips, ~7 on rev 1.3. About 155 ms from mouse to picture, measured</td>
+          <td class="us">1080p: 20-23 fps MJPEG; H.264 about 27 fps on rev 3.x chips, ~7 on rev 1.3. About 120 ms from mouse to picture, measured</td>
           <td>Up to 1920x1200 at 60 fps, MJPEG and H.264</td>
           <td>1080p60 H.264, 30-60 ms claimed</td>
           <td>1080p30 or 720p60, H.264</td>
@@ -459,7 +459,7 @@ output: compare/index.html
     <h3>Does ESP-KVM run Linux?</h3>
     <p>No. It is firmware on an ESP32-P4 microcontroller, built on ESP-IDF. There is no operating system to update or secure, a power cut cannot corrupt one, and a bad update rolls back by itself.</p>
     <h3>What frame rate does it reach at 1080p?</h3>
-    <p>About 20-23 fps over MJPEG on every board. Over H.264, 22-24 fps on ESP32-P4 chips of revision 3.x and about 7 fps on revision 1.3.</p>
+    <p>About 20-23 fps over MJPEG on every board. Over H.264, about 27 fps on ESP32-P4 chips of revision 3.x and about 7 fps on revision 1.3.</p>
     <h3>Which of these work with Home Assistant?</h3>
     <p>All but the JetKVM Mini, whose pages do not say yet. ESP-KVM and JetKVM have it built in: the device announces itself over MQTT and shows up by itself. PiKVM, NanoKVM and GL.iNet Comet have community integrations you install from HACS. On ESP-KVM it brings sensors, the power buttons, a camera with the screen and runbooks.</p>
     <h3>Can I reach it from outside without port forwarding?</h3>
