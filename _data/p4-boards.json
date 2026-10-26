@@ -332,6 +332,36 @@
    "checked": "2026-10",
    "src": "https://www.adafruit.com/product/6536",
    "note": "16 MB of PSRAM and a rev 1.x chip. The high-speed USB comes out on a Type-A host port with its own 5 V supply, the Type-C is full speed. A C6 for Wi-Fi, no Ethernet. No schematic yet."
+  },
+  {
+   "id": "jetkvm-mini",
+   "name": "JetKVM Mini",
+   "maker": "JetKVM",
+   "verdict": "maybe",
+   "psram": "y",
+   "camera": "n",
+   "ribbon": "HDMI built in",
+   "usb": "y",
+   "network": "y",
+   "chip": "3.x",
+   "checked": "2026-10",
+   "src": "https://jetkvm.com/products/jetkvm-mini",
+   "note": "A finished KVM on an ESP32-P4X with 32 MB of PSRAM and 16 MB of flash: HDMI in, high-speed USB-C to the target, 100 Mbit Ethernet, a 240x240 screen and a microSD slot. The capture chip and the pins are not published, and there is no schematic. Its optional secure boot takes signed firmware only, so other firmware needs it left off."
+  },
+  {
+   "id": "jetkvm-mini-w",
+   "name": "JetKVM Mini W",
+   "maker": "JetKVM",
+   "verdict": "maybe",
+   "psram": "y",
+   "camera": "n",
+   "ribbon": "HDMI built in",
+   "usb": "y",
+   "network": "y",
+   "chip": "3.x",
+   "checked": "2026-10",
+   "src": "https://jetkvm.com/products/jetkvm-mini",
+   "note": "The Mini with an ESP32-C5 for Wi-Fi 6 (2.4 and 5 GHz) in place of Ethernet. The same unknowns: capture chip, pins, how the C5 is wired to the P4."
   }
  ],
  "terminal": [
