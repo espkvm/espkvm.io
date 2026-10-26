@@ -190,12 +190,13 @@ output: features/index.html
     <div class="table-scroll">
       <table class="feat-table">
         <tr><td>Runbooks</td><td>A macro that waits for words on the screen: <code>wait Press F2</code>, then <code>key f2</code>. Runs on the device, with the browser closed. Character screens only.</td></tr>
+        <tr><td>Screen areas <span class="tag tag-new">new</span></td><td>Draw a rectangle on the picture and the device watches it: for a change, a picture that stops moving, one it has seen before, or a colour. A notification, a dashcam clip, a Home Assistant sensor, or <code>wait area Name</code> in a runbook. Any screen, not only text.</td></tr>
         <tr><td>Scheduler</td><td>Actions on a cron timetable: Wake-on-LAN in the morning, a runbook overnight, a reset every Sunday.</td></tr>
         <tr><td>Notifications</td><td>To Telegram, with a screenshot or a clip, or to a webhook: a watched phrase, a blank screen, a panic in the target's log.</td></tr>
         <tr><td>Home Assistant</td><td>Over MQTT, found by itself: sensors, buttons for each runbook, an update entity, and a camera with a still of the screen. Off by default.</td></tr>
         <tr><td>REST API</td><td>Everything the console does, for scripts. An AI agent can use it too, behind a switch that is off by default.</td></tr>
         <tr><td>Guess the target's OS</td><td>From the way it talks to the USB keyboard. A Nintendo Switch, a Steam Deck or a TV stick says its name over HDMI-CEC.</td></tr>
-        <tr><td>Device profiles</td><td>Pointer, gamepad and video settings for each target. The device switches to one by itself when that target is attached, from HDMI-CEC or USB. Presets for a Steam Deck, a Switch and a Mi TV Stick.</td></tr>
+        <tr><td>Device profiles</td><td>Pointer, gamepad and video settings for each target. The device switches to one by itself when that target is attached, from HDMI-CEC or USB. Presets for a Steam Deck, a Switch and a Mi TV Stick. A new device asks once what it will be plugged into.</td></tr>
       </table>
     </div>
   </section>

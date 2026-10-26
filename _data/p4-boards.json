@@ -317,6 +317,21 @@
    "chip": "?",
    "checked": "2026-09",
    "note": "8 MB of PSRAM. USB and Ethernet come out only on the M.2 edge, with no PHY and no socket for the target, and the 24-pin camera connector has no 3.3 V and a 1.8 V I2C."
+  },
+  {
+   "id": "adafruit-metro-p4",
+   "name": "Adafruit Metro ESP32-P4 Hydra",
+   "maker": "Adafruit",
+   "verdict": "no",
+   "psram": "n",
+   "camera": "?",
+   "ribbon": "22-pin, Pi format",
+   "usb": "?",
+   "network": "y",
+   "chip": "1.x",
+   "checked": "2026-10",
+   "src": "https://www.adafruit.com/product/6536",
+   "note": "16 MB of PSRAM and a rev 1.x chip. The high-speed USB comes out on a Type-A host port with its own 5 V supply, the Type-C is full speed. A C6 for Wi-Fi, no Ethernet. No schematic yet."
   }
  ],
  "terminal": [
