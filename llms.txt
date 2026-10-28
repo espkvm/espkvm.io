@@ -30,6 +30,10 @@ Key facts:
   `key f2`), run on the device itself so it carries on with the browser closed;
   each one is a button in Home Assistant. Macros are the same language without
   the waits, played by the console. The language: https://espkvm.io/scripts/
+- espkvm-agent, an optional program for the target (Linux, Windows, macOS),
+  talks to the device over the USB cable: the machine's name and addresses,
+  the clipboard both ways, a clean shutdown. Reading the clipboard and power
+  are allowed only by flags on the target. https://espkvm.io/agent/
 - A scheduler: five-field cron lines that fire an action on the device on a
   timetable - Wake-on-LAN, an ATX button, a runbook, or a restart, and recording
   or a timelapse. The device sets its clock over SNTP (a LAN time server works
