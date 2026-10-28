@@ -1064,6 +1064,9 @@
       .cat-status.untested {
         color: var(--warn);
       }
+      .cat-status.planned {
+        color: var(--violet);
+      }
       .cat-card-add .cat-photo {
         background: var(--bg);
       }

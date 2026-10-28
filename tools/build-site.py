@@ -150,8 +150,8 @@ def read_posts(include_drafts):
 # page it writes, /boards/<id>/ or /cases/<id>/, and draws the tiles on the
 # front page and on /boards/ from the same data, so a board is described once.
 #
-# Front matter a board takes: title, kind (device or capture), status (tested
-# or untested), order, role, summary, photo, photo_style (product or photo),
+# Front matter a board takes: title, kind (device or capture), status (tested,
+# untested, or planned: a device with no image yet, listed apart), order, role, summary, photo, photo_style (product or photo),
 # flasher (its id in the firmware's boards.json), rev3 ("image only" when a rev
 # 3.x image exists but no rev 3.x board has been seen), capture (ids of the capture
 # boards it takes), and any number of "spec.<Label>: value" rows and
@@ -261,8 +261,10 @@ def read_catalog():
         m = b["meta"]
         if m.get("kind") not in ("device", "capture"):
             sys.exit("%s: kind must be device or capture" % b["path"])
-        if m.get("status") not in ("tested", "untested"):
-            sys.exit("%s: status must be tested or untested" % b["path"])
+        if m.get("status") not in ("tested", "untested", "planned"):
+            sys.exit("%s: status must be tested, untested or planned" % b["path"])
+        if m.get("status") == "planned" and (m.get("kind") != "device" or m.get("flasher")):
+            sys.exit("%s: a planned board is a device with no flasher id" % b["path"])
         for c in id_list(m.get("capture")):
             if c not in ids:
                 sys.exit("%s: capture names a board that is not in _boards/: %s" % (b["path"], c))
@@ -293,6 +295,7 @@ def read_catalog():
                           and b["meta"]["status"] == "tested"], key=key),
         "untested": sorted([b for b in boards if b["meta"]["kind"] == "device"
                             and b["meta"]["status"] == "untested"], key=key),
+        "planned": sorted([b for b in boards if b["meta"]["status"] == "planned"], key=key),
         "capture": sorted([b for b in boards if b["meta"]["kind"] == "capture"], key=key),
         "cases": sorted(cases, key=key),
         "displays": sorted([m for m in modules if m["meta"]["kind"] == "display"], key=key),
@@ -914,16 +917,19 @@ def tile(item):
     maker, model = split_title(item)
     feats = features(item)
     untested = m.get("status") == "untested"
+    planned = m.get("status") == "planned"
     status = ""
-    if m.get("kind") == "device" or item["section"] == "modules":
+    if planned:
+        status = '<span class="cat-status planned">In progress</span>'
+    elif m.get("kind") == "device" or item["section"] == "modules":
         status = ('<span class="cat-status untested">Untested</span>' if untested
                   else '<span class="cat-status">Tested</span>')
     chips = "".join('<span class="cat-chip">%s</span>' % html.escape(label)
                     for _, label in feats)
-    keys = " ".join([k for k, _ in feats] + ([] if untested else ["tested"]))
+    keys = " ".join([k for k, _ in feats] + ([] if untested or planned else ["tested"]))
     cover = " cat-photo-cover" if m.get("photo_style") == "photo" else ""
     rating = ""
-    if m.get("kind") == "device" and item["section"] == "boards":
+    if m.get("kind") == "device" and item["section"] == "boards" and not planned:
         halves, parts = fit(item)
         earned = ",".join("%g" % (p * g) for (p, _), (_, g) in zip(FIT, parts))
         rating = ('\n              <span class="cat-fit" data-fit="{e}" title="{tip}" aria-label="Fit for a KVM: {t}">{i}</span>'
@@ -1105,7 +1111,9 @@ def fill_catalog(body, catalog):
 def spec_table(item):
     rows = list(item["specs"])
     m = item["meta"]
-    if m.get("kind") == "device":
+    if m.get("status") == "planned":
+        rows.insert(0, ("Status", "In progress: no ESP-KVM image for it yet"))
+    elif m.get("kind") == "device":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Built from the schematic, not run on one yet"))
         rows.insert(1, ("Fit for a KVM", RawHTML(fit_breakdown(item))))
@@ -1167,7 +1175,8 @@ def item_page(shell, item, catalog):
     for label, url in item["links"]:
         actions.append('<a class="btn" href="%s" rel="noopener">%s</a>'
                        % (html.escape(url), html.escape(label)))
-    if kind == "device":
+    planned = m.get("status") == "planned"
+    if kind == "device" and not planned:
         # This board next to the first two tested others.
         others = [b["id"] for b in catalog["tested"] if b["id"] != item["id"]][:2]
         actions.append('<a class="btn" href="/boards/compare/?b=%s">Compare</a>'
@@ -1215,7 +1224,7 @@ def item_page(shell, item, catalog):
     else:
         back = '<a href="/boards/">&larr; All boards</a>'
 
-    untested = " untested" if m.get("status") == "untested" else ""
+    untested = " untested" if m.get("status") in ("untested", "planned") else ""
     role = m.get("role") or ("A case by " + m["author"] if m.get("author") else "")
     credit = ('<p class="board-credit">%s</p>' % html.escape(m["photo_credit"])
               if m.get("photo_credit") else "")
@@ -1224,7 +1233,13 @@ def item_page(shell, item, catalog):
     # Someone who lands here from a search for the board has never heard of the
     # project: say in two lines what it is before the specs.
     name = html.escape(m["title"])
-    if kind == "device":
+    if planned:
+        intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
+                 "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
+                 "mouse in your browser, from the BIOS up, with no Linux and no cloud. "
+                 "An ESP-KVM image for the %s is in progress: the chip inside is "
+                 "the same." % name)
+    elif kind == "device":
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns the "
                  "%s into an IP-KVM: the screen, keyboard and mouse of another computer "
                  "in your browser, from the BIOS up. Add an HDMI capture board, flash it "
@@ -1302,11 +1317,11 @@ def item_page(shell, item, catalog):
     ld = json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), section,
                              (html.unescape(m["title"]), SITE + item["url"])))
     return render_page(shell, {
-        "title": "%s - %s with ESP-KVM" % (m["title"], what),
+        "title": m.get("page_title") or "%s - %s with ESP-KVM" % (m["title"], what),
         "og_title": m["title"],
         "description": (m.get("description") or m["summary"]) + (
             " Rated %s for an IP-KVM." % fit_text(fit(item)[0])
-            if kind == "device" and item["section"] == "boards" else ""),
+            if kind == "device" and item["section"] == "boards" and not planned else ""),
         "canonical": SITE + item["url"],
         "image": SITE + item["photo"],
         "image_alt": m["title"],
@@ -1353,7 +1368,7 @@ def catalog_page(shell, catalog):
             </span>
           </a>
       </div>
-
+{planned}
       <h2 class="cat-head" id="capture">HDMI capture <span class="cat-count">{n_capture}</span></h2>
       <p class="cat-note"><a href="/boards/compare/capture/">Compare the capture boards &rarr;</a></p>
       <div class="cat-grid">
@@ -1492,6 +1507,13 @@ def catalog_page(shell, catalog):
             grid.insertBefore(c.parentNode.classList.contains("cat-item") ? c.parentNode : c, add);
           });
         }"""),
+           planned=("""
+      <h2 class="cat-head" id="planned">In progress <span class="cat-count">%d</span></h2>
+      <p class="cat-note">Devices on the same chip that ESP-KVM does not run on yet. There is no image to flash for them.</p>
+      <div class="cat-grid">
+%s
+      </div>
+""" % (len(catalog["planned"]), tiles(catalog["planned"]))) if catalog["planned"] else "",
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
            n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),

@@ -94,6 +94,7 @@ Key facts:
 - [Flash from the browser](https://espkvm.io/flash/)
 - [Supported boards, rated for an IP-KVM out of five, with capture boards and cases](https://espkvm.io/boards/)
 - [Every ESP32-P4 board, supported or not, and why some cannot work](https://espkvm.io/boards/all/)
+- [JetKVM Mini and Mini W: an ESP-KVM image as custom firmware, in progress](https://espkvm.io/boards/jetkvm-mini/)
 - [Serial monitor in the browser](https://espkvm.io/serial/)
 - [Tools: read a firmware image, decode a panic, inspect an EDID](https://espkvm.io/tools/)
 - [ESP-KVM terminal on an M5Stack Tab5 (experimental)](https://espkvm.io/terminal/)

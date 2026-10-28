@@ -335,6 +335,7 @@
   },
   {
    "id": "jetkvm-mini",
+   "url": "/boards/jetkvm-mini/",
    "name": "JetKVM Mini",
    "maker": "JetKVM",
    "verdict": "maybe",
@@ -350,6 +351,7 @@
   },
   {
    "id": "jetkvm-mini-w",
+   "url": "/boards/jetkvm-mini/",
    "name": "JetKVM Mini W",
    "maker": "JetKVM",
    "verdict": "maybe",
