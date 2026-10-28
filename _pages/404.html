@@ -1,0 +1,766 @@
+---
+title: No signal - ESP-KVM
+description: There is no page at this address.
+canonical: https://espkvm.io/
+output: 404.html
+noindex: yes
+---
+<!--
+  GitHub Pages serves /404.html for any address it has nothing for, with a 404
+  status. The page can be reached from any depth, so every link is absolute.
+
+  The monitor shows NO SIGNAL until the loose HDMI plug under it goes into its
+  port (drag it, or click it). Then it "boots", finds no page, and leaves a
+  small shell: ls and cd walk the site. The guesses come from the sitemap: the
+  pages whose address shares the most words with the one asked for. F1 goes
+  home, the way a BIOS would offer it.
+-->
+<style>
+  .rig {
+    position: relative;
+    max-width: 600px;
+    margin: 8px auto 0;
+    padding-bottom: 96px;
+  }
+
+  .nosig {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border: 10px solid #1d232c;
+    border-bottom-width: 24px;
+    border-radius: 10px;
+    background: #05070a;
+    font-family: var(--mono);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .nosig-inner {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .nosig-box {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 2px solid currentColor;
+    color: var(--accent);
+    padding: 6px 16px;
+    font-size: clamp(15px, 4vw, 24px);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    text-align: center;
+    will-change: transform;
+  }
+
+  .nosig-box small {
+    display: block;
+    font-size: 0.55em;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+  }
+
+  .nosig-led {
+    position: absolute;
+    right: 14px;
+    bottom: -17px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--warn);
+    box-shadow: 0 0 8px var(--warn);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .on .nosig-led {
+    background: var(--ok);
+    box-shadow: 0 0 8px var(--ok);
+  }
+
+  /* The HDMI port on the bottom of the bezel. */
+  .nosig-port {
+    position: absolute;
+    left: 62%;
+    bottom: -24px;
+    width: 34px;
+    height: 8px;
+    margin-left: -17px;
+    background: #0a0d11;
+    border: 1px solid #39424f;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+  }
+
+  .cable {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .plug {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 30px;
+    height: 40px;
+    margin-left: -15px;
+    border-radius: 4px 4px 6px 6px;
+    background: linear-gradient(#3a4350, #232a33);
+    border: 1px solid #4b5563;
+    cursor: grab;
+    touch-action: none;
+    transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.6, 1);
+  }
+
+  .plug::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: -7px;
+    height: 7px;
+    background: #9aa7b4;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .plug.dragging {
+    cursor: grabbing;
+    transition: none;
+  }
+
+  .plug-hint {
+    position: absolute;
+    font-size: 13px;
+    color: var(--faint);
+    width: 150px;
+    line-height: 1.3;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .on .plug-hint {
+    opacity: 0;
+  }
+
+  /* The screen once a signal comes. */
+  .term {
+    position: absolute;
+    inset: 0;
+    padding: 10px 12px 14px;
+    color: #c9d4e3;
+    font-size: clamp(10px, 2.4vw, 13px);
+    line-height: 1.45;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    text-align: left;
+    display: none;
+    cursor: text;
+  }
+
+  .on .term {
+    display: block;
+  }
+
+  .on .nosig-box {
+    display: none;
+  }
+
+  .term .ok { color: #46c17c; }
+  .term .bad { color: #ff6b6b; }
+  .term .dim { color: #7d8a97; }
+  .term a { color: #6bb0ff; }
+
+  .term-line {
+    display: flex;
+  }
+
+  .term-in {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+    caret-color: #46c17c;
+  }
+
+  /* iOS zooms the page into an input under 16px. */
+  @media (pointer: coarse) {
+    .term-in {
+      font-size: 16px;
+    }
+  }
+
+  .nosig-bar {
+    max-width: 600px;
+    margin: 32px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--faint);
+    position: relative;
+    pointer-events: none;
+  }
+
+  .nosig-bar b {
+    color: var(--warn);
+    font-weight: normal;
+  }
+
+
+  .nf {
+    max-width: 640px;
+    margin: 0 auto 60px;
+    text-align: center;
+  }
+
+  .nf-path {
+    font-family: var(--mono);
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .nf-guess {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 22px;
+    font-family: var(--mono);
+  }
+
+  .nf-guess li {
+    margin: 4px 0;
+  }
+
+  .nf-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-top: 26px;
+    text-align: left;
+  }
+
+  .nf-group {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: var(--bg-raised);
+  }
+
+  .nf-group h2 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+  }
+
+  .nf-group a {
+    display: block;
+    padding: 3px 0;
+  }
+
+  .nf-keys {
+    margin-top: 22px;
+    color: var(--faint);
+    font-size: 14px;
+  }
+
+  .nf-keys kbd {
+    font-family: var(--mono);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0 5px;
+    color: var(--text);
+  }
+</style>
+
+<div class="wrap">
+  <div class="nosig-bar" aria-hidden="true">
+    <span id="bar-res">0x0</span><span id="bar-fps">0 fps</span><span>HDMI <b id="bar-link">no link</b></span><span id="nosig-hits">corners hit: 0</span>
+  </div>
+  <div class="rig" id="rig">
+    <div class="nosig" id="nosig">
+      <div class="nosig-inner">
+        <div class="nosig-box" id="nosig-box" aria-hidden="true">NO SIGNAL<small>404</small></div>
+        <div class="term" id="term" aria-live="polite"></div>
+      </div>
+      <span class="nosig-led"></span>
+      <span class="nosig-port" id="port"></span>
+    </div>
+    <svg class="cable" id="cable" aria-hidden="true"><path id="cable-path" fill="none" stroke="#2b333e" stroke-width="9" stroke-linecap="round" /></svg>
+    <div class="plug" id="plug" role="button" tabindex="0" aria-label="Plug the HDMI cable in"></div>
+    <span class="plug-hint" id="plug-hint">&larr; the cable is out. Plug it in?</span>
+  </div>
+
+  <div class="nf">
+    <h1>Nothing on this input</h1>
+    <p>
+      There is no page at <span class="nf-path" id="nf-path"></span>. I checked
+      the cable, then the other cable, then rebooted twice. It is still not
+      here. It may have moved, or the link has a typo.
+    </p>
+
+    <div id="nf-guesses" hidden>
+      <p>The closest pages by address:</p>
+      <ul class="nf-guess" id="nf-list"></ul>
+    </div>
+
+    <div class="nf-groups">
+      <div class="nf-group">
+        <h2>Start</h2>
+        <a href="/">What ESP-KVM is</a>
+        <a href="/#hardware">Get started</a>
+        <a href="/boards/">Boards</a>
+        <a href="/flash/">Flash from the browser</a>
+        <a href="https://demo.espkvm.io/" rel="noopener">Try the demo</a>
+      </div>
+      <div class="nf-group">
+        <h2>Read</h2>
+        <a href="/features/">Features</a>
+        <a href="/compare/">Compared to other KVMs</a>
+        <a href="/scripts/">Macros and runbooks</a>
+        <a href="/agent/">Agent for the target</a>
+        <a href="/blog/">Blog</a>
+      </div>
+      <div class="nf-group">
+        <h2>Help</h2>
+        <a href="/serial/">Serial monitor</a>
+        <a href="/tools/">Tools</a>
+        <a href="https://github.com/espkvm/espkvm/discussions">Ask in Discussions</a>
+        <a href="https://github.com/espkvm/espkvm/issues">Report a bug</a>
+        <a href="https://t.me/espkvm" rel="noopener">Telegram</a>
+      </div>
+    </div>
+
+    <p class="nf-keys">Press <kbd>F1</kbd> to go home. <kbd>Del</kbd> to enter setup is not offered.</p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var path = location.pathname;
+    document.getElementById("nf-path").textContent = path;
+
+    var rig = document.getElementById("rig");
+    var screen = document.getElementById("nosig");
+    var inner = screen.querySelector(".nosig-inner");
+    var box = document.getElementById("nosig-box");
+    var term = document.getElementById("term");
+    var port = document.getElementById("port");
+    var plug = document.getElementById("plug");
+    var hint = document.getElementById("plug-hint");
+    var cablePath = document.getElementById("cable-path");
+    var hits = document.getElementById("nosig-hits");
+    var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var on = false;
+    var touch = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+
+    // ---- pages, from the sitemap: the guesses and the shell's ls and cd.
+    var GENERIC = ["blog", "tags", "boards", "family", "compare", "cases", "modules"];
+    var SECTIONS = {
+      home: "/", boards: "/boards/", flash: "/flash/", blog: "/blog/", features: "/features/",
+      compare: "/compare/", tools: "/tools/", serial: "/serial/", scripts: "/scripts/",
+      agent: "/agent/", demo: "https://demo.espkvm.io/", github: "https://github.com/espkvm/espkvm",
+    };
+    var urls = [];
+    var sitemap = fetch("/sitemap.xml")
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (xml) {
+        urls = (xml.match(/<loc>[^<]+<\/loc>/g) || []).map(function (l) {
+          return new URL(l.slice(5, -6)).pathname;
+        });
+      })
+      .catch(function () {});
+
+    function words(p) {
+      return p.toLowerCase().split(/[\/\-_.]+/).filter(function (w) {
+        return w && w !== "index" && w !== "html";
+      });
+    }
+
+    function guess(p, n) {
+      var want = words(p);
+      if (!want.length) return [];
+      var scored = urls.map(function (u) {
+        var have = words(u);
+        // A shared "blog" or "boards" says little, a shared name says a lot.
+        var score = want.reduce(function (s, w) {
+          return s + (have.indexOf(w) < 0 ? 0 : GENERIC.indexOf(w) >= 0 ? 0.2 : 1);
+        }, 0);
+        return { url: u, score: score / Math.max(have.length, want.length) };
+      }).filter(function (s) { return s.score >= 0.3; });
+      scored.sort(function (a, b) { return b.score - a.score || a.url.length - b.url.length; });
+      return scored.slice(0, n).map(function (s) { return s.url; });
+    }
+
+    sitemap.then(function () {
+      var list = document.getElementById("nf-list");
+      guess(path, 3).forEach(function (u) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = u;
+        a.textContent = u;
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+      if (list.children.length) document.getElementById("nf-guesses").hidden = false;
+    });
+
+    // ---- F1 to continue, as a BIOS says.
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "F1") {
+        e.preventDefault();
+        location.href = "/";
+      }
+    });
+
+    // ---- NO SIGNAL drifts and bounces, and changes colour on every wall.
+    // Everyone waits for the corner.
+    var colours = ["#4c9aff", "#46c17c", "#e3a33c", "#a98bfa", "#ff6b6b", "#3fd0d4"];
+    var x = 30, y = 20, dx = 1.1, dy = 0.8, c = 0, corners = 0;
+    function bounce() {
+      if (on) return;
+      var w = inner.clientWidth - box.offsetWidth;
+      var h = inner.clientHeight - box.offsetHeight;
+      x += dx;
+      y += dy;
+      var wall = 0;
+      if (x <= 0 || x >= w) { dx = -dx; x = Math.max(0, Math.min(x, w)); wall++; }
+      if (y <= 0 || y >= h) { dy = -dy; y = Math.max(0, Math.min(y, h)); wall++; }
+      if (wall) {
+        c = (c + 1) % colours.length;
+        box.style.color = colours[c];
+      }
+      if (wall === 2) hits.textContent = "corners hit: " + ++corners;
+      box.style.transform = "translate(" + x + "px," + y + "px)";
+      requestAnimationFrame(bounce);
+    }
+    box.style.transform = "translate(30px,20px)";
+    if (!still) requestAnimationFrame(bounce);
+
+    // ---- the cable: a plug on a loose wire, dragged or clicked into the port.
+    var px = 0, py = 0;
+    function portAt() {
+      var r = rig.getBoundingClientRect();
+      var p = port.getBoundingClientRect();
+      return { x: p.left + p.width / 2 - r.left, y: p.bottom - r.top + 6 };
+    }
+    function restAt() {
+      var p = portAt();
+      return { x: p.x - 70, y: p.y + 34 };
+    }
+    function drawCable() {
+      var h = rig.clientHeight;
+      var sx = -40, sy = h - 18;
+      cablePath.setAttribute("d",
+        "M" + sx + " " + sy + " C " + (sx + 160) + " " + sy + ", " + px + " " + (py + 100) + ", " + px + " " + (py + 38));
+    }
+    function placePlug(p, tilt) {
+      px = p.x;
+      py = p.y;
+      plug.style.transform = "translate(" + px + "px," + py + "px) rotate(" + (tilt || 0) + "deg)";
+      drawCable();
+      hint.style.left = px + 26 + "px";
+      hint.style.top = py + 12 + "px";
+    }
+    function settle() {
+      placePlug(on ? portAt() : restAt(), on ? 0 : -14);
+    }
+    settle();
+    window.addEventListener("resize", settle);
+
+    var drag = null;
+    plug.addEventListener("pointerdown", function (e) {
+      plug.setPointerCapture(e.pointerId);
+      plug.classList.add("dragging");
+      drag = { sx: e.clientX, sy: e.clientY, ox: px, oy: py, moved: false };
+    });
+    plug.addEventListener("pointermove", function (e) {
+      if (!drag) return;
+      var mx = e.clientX - drag.sx, my = e.clientY - drag.sy;
+      if (Math.abs(mx) + Math.abs(my) > 4) drag.moved = true;
+      placePlug({ x: drag.ox + mx, y: drag.oy + my }, 0);
+      // Pulls itself in when it gets close, as a real plug almost does, and
+      // comes out once pulled far enough.
+      var d = Math.hypot(px - portAt().x, py - portAt().y);
+      if (!on && d < 28) {
+        drag = null;
+        plug.classList.remove("dragging");
+        connect();
+      } else if (on && d > 40) {
+        disconnect();
+      }
+    });
+    function letGo() {
+      if (!drag) return;
+      var clicked = !drag.moved;
+      drag = null;
+      plug.classList.remove("dragging");
+      if (clicked) {
+        if (on) disconnect();
+        else connect();
+      }
+      settle();
+    }
+    plug.addEventListener("pointerup", letGo);
+    plug.addEventListener("pointercancel", letGo);
+    plug.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        if (on) disconnect();
+        else connect();
+        settle();
+      }
+    });
+
+    // ---- signal: a short boot, then the shell.
+    var input = null;
+    function print(text, cls) {
+      var line = document.createElement("div");
+      if (cls) line.className = cls;
+      line.textContent = text;
+      term.insertBefore(line, input ? input.parentNode : null);
+      term.scrollTop = term.scrollHeight;
+      return line;
+    }
+    function printLink(text, href) {
+      var line = document.createElement("div");
+      var a = document.createElement("a");
+      a.href = href;
+      a.textContent = text;
+      line.appendChild(a);
+      term.insertBefore(line, input ? input.parentNode : null);
+    }
+
+    function connect() {
+      on = true;
+      rig.classList.add("on");
+      screen.classList.add("on");
+      settle();
+      plug.setAttribute("aria-label", "The HDMI cable is in");
+      document.getElementById("bar-res").textContent = "1920x1080";
+      document.getElementById("bar-fps").textContent = "60 fps";
+      var link = document.getElementById("bar-link");
+      link.textContent = "up";
+      link.style.color = "var(--ok)";
+      boot();
+    }
+
+    function disconnect() {
+      on = false;
+      rig.classList.remove("on");
+      screen.classList.remove("on");
+      term.textContent = "";
+      input = null;
+      plug.setAttribute("aria-label", "Plug the HDMI cable in");
+      document.getElementById("bar-res").textContent = "0x0";
+      document.getElementById("bar-fps").textContent = "0 fps";
+      var link = document.getElementById("bar-link");
+      link.textContent = "no link";
+      link.style.color = "";
+      hint.textContent = "Back to no signal. Happy now?";
+      if (!still) requestAnimationFrame(bounce);
+    }
+
+    function boot() {
+      term.textContent = "";
+      input = null;
+      var lines = [
+        ["ESP-KVM BIOS v0.74, an ESP32-P4 at 400 MHz", ""],
+        ["Memory test: 32768 KB PSRAM ... OK", "ok"],
+        ["HDMI: signal, 1920x1080 @ 60", "ok"],
+        ["USB: keyboard, mouse ... OK", "ok"],
+        ["Booting from https://espkvm.io" + path, ""],
+        ["", ""],
+        ["ERROR 404: no page at " + path, "bad"],
+        ["No bootable page found. Not even on the second try.", "dim"],
+        ["", ""],
+      ];
+      var i = 0;
+      (function next() {
+        if (i < lines.length) {
+          print(lines[i][0], lines[i][1]);
+          i++;
+          setTimeout(next, still ? 0 : 160);
+          return;
+        }
+        sitemap.then(function () {
+          var g = guess(path, 3);
+          if (g.length) {
+            print("Pages that look like it:", "dim");
+            g.forEach(function (u) { printLink("  " + u, u); });
+          }
+          print(touch ? "Tap here and type help." : "Type help, or press F1 to go home.", "dim");
+          prompt();
+        });
+      })();
+    }
+
+    function prompt() {
+      var line = document.createElement("label");
+      line.className = "term-line";
+      var ps = document.createElement("span");
+      ps.className = "ok";
+      ps.textContent = "guest@espkvm:~$ ";
+      input = document.createElement("input");
+      input.className = "term-in";
+      input.setAttribute("aria-label", "Command");
+      input.setAttribute("autocomplete", "off");
+      input.setAttribute("autocapitalize", "off");
+      input.setAttribute("spellcheck", "false");
+      line.appendChild(ps);
+      line.appendChild(input);
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+      input.addEventListener("keydown", onKey);
+      // On a phone the keyboard would cover the screen before anything is
+      // read: there it waits for a tap.
+      if (!touch) input.focus({ preventScroll: true });
+    }
+    term.addEventListener("click", function (e) {
+      if (input && e.target.tagName !== "A") input.focus({ preventScroll: true });
+    });
+
+    var history = [], back = 0;
+    function onKey(e) {
+      if (e.key === "ArrowUp" && history.length) {
+        back = Math.min(back + 1, history.length);
+        input.value = history[history.length - back];
+        e.preventDefault();
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        back = Math.max(back - 1, 0);
+        input.value = back ? history[history.length - back] : "";
+        e.preventDefault();
+        return;
+      }
+      if (e.key !== "Enter") return;
+      var cmd = input.value.trim();
+      input.value = "";
+      back = 0;
+      print("guest@espkvm:~$ " + cmd);
+      if (cmd) history.push(cmd);
+      run(cmd);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function go(where) {
+      var to = SECTIONS[where.replace(/^\/|\/$/g, "").toLowerCase()];
+      if (!to && where.charAt(0) === "/") to = where;
+      if (!to) {
+        var g = guess(where, 1);
+        to = g[0];
+      }
+      if (!to) {
+        print("cd: " + where + ": No such page. Try ls.", "bad");
+        return;
+      }
+      print("Switching input to " + to + " ...", "ok");
+      setTimeout(function () { location.href = to; }, still ? 0 : 400);
+    }
+
+    function run(cmd) {
+      var parts = cmd.split(/\s+/);
+      var name = (parts[0] || "").toLowerCase();
+      var arg = parts.slice(1).join(" ");
+      switch (name) {
+        case "":
+          return;
+        case "help":
+        case "?":
+          print("ls             what is here");
+          print("cd <page>      go there: cd boards, cd flash, cd blog");
+          print("find <word>    look for a page");
+          print("whoami, pwd, uptime, ping, reboot, unplug, clear, exit");
+          return;
+        case "ls":
+        case "dir":
+          print(Object.keys(SECTIONS).join("  "));
+          return;
+        case "cd":
+        case "open":
+          if (!arg || arg === "~") return go("home");
+          if (arg === "..") return go("home");
+          return go(arg);
+        case "find":
+        case "search":
+          if (!arg) { print("find what?", "dim"); return; }
+          var g = guess(arg, 5);
+          if (!g.length) print("Nothing. Not even close.", "dim");
+          g.forEach(function (u) { printLink(u, u); });
+          return;
+        case "pwd":
+          print(path + "  (which is the problem)");
+          return;
+        case "whoami":
+          print("guest. The machine you came to control is somewhere else.");
+          return;
+        case "uptime":
+          print("up " + Math.round(performance.now() / 1000) + " s, 1 user, load average: 0.00 (it has nothing to do)");
+          return;
+        case "ping":
+          print("64 bytes from espkvm.io: time=1 ms. The site is up. The page is not.");
+          return;
+        case "sudo":
+          print("guest is not in the sudoers file. This incident will be reported to /dev/null.", "bad");
+          return;
+        case "rm":
+          print("rm: read-only file system. It is a static site, nice try.", "bad");
+          return;
+        case "unplug":
+          print("Pulling the cable ...", "dim");
+          setTimeout(function () { disconnect(); settle(); }, still ? 0 : 500);
+          return;
+        case "reboot":
+        case "reset":
+          boot();
+          return;
+        case "clear":
+        case "cls":
+          while (term.firstChild !== input.parentNode) term.removeChild(term.firstChild);
+          return;
+        case "exit":
+        case "logout":
+        case "home":
+          return go("home");
+        case "flash":
+        case "boards":
+        case "blog":
+        case "demo":
+        case "agent":
+          return go(name);
+        case "vim":
+        case "vi":
+        case "emacs":
+        case "nano":
+          print("Not here. Also, how do you get out of this one? Type exit.", "dim");
+          return;
+        case "make":
+          print("make: *** No rule to make target '" + (arg || "page") + "'. Stop.", "bad");
+          return;
+        case "hello":
+        case "hi":
+          print("Hi. The page is still not here.");
+          return;
+        case "coffee":
+        case "tea":
+          print("418 I'm a teapot. Wrong error, but close.");
+          return;
+        default:
+          print(name + ": command not found. Try help.", "bad");
+      }
+    }
+  })();
+</script>

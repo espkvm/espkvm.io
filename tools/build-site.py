@@ -1737,6 +1737,10 @@ def build_pages(shell, catalog):
                 head.append("    " + block.strip())
                 body = body.replace(block, "", 1)
 
+        # The 404 page: not for search engines and not in the sitemap.
+        if meta.get("noindex") == "yes":
+            head.insert(0, '    <meta name="robots" content="noindex" />')
+
         out = meta["output"]
         url = "/" + out[: -len("index.html")] if out.endswith("index.html") else "/" + out
         # A page asks for a share row by leaving this comment where it goes.
@@ -1747,7 +1751,8 @@ def build_pages(shell, catalog):
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
         write_redirects(meta.get("redirect_from", ""), url)
-        written.append(out)
+        if meta.get("noindex") != "yes":
+            written.append(out)
     return written
 
 
