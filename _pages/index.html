@@ -229,7 +229,9 @@ output: index.html
             <h3>An update undoes itself</h3>
             <p>
               Two firmware slots. An image that fails to come up puts the device
-              back on the one that worked, with nobody on site.
+              back on the one that worked, with nobody on site. So does one that
+              boots but cuts you off with a broken Wi-Fi or VPN: the device waits
+              for your console to come back and keep it.
             </p>
           </div>
           <div class="card">
@@ -737,7 +739,9 @@ output: index.html
               newer build is published and installs it in one click. Your browser
               does the checking and the download; the device itself never reaches
               the internet. An update that fails to start rolls back to the version
-              that worked.
+              that worked. The same happens when the console cannot reach the
+              device within 10 minutes of the update, so a broken network setting
+              undoes itself too.
             </p>
             <p>
               To go back to an older release, turn on <strong>Let the device fetch
