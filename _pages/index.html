@@ -921,12 +921,22 @@ output: index.html
               <tr>
                 <td>Frame rate &mdash; <a href="/boards/funcev/">Function EV</a> (rev&nbsp;v3.2)</td>
                 <td class="num">23 fps</td>
-                <td class="num">25 fps (1080p50)</td>
+                <td class="num">27 fps (25 at 1080p50)</td>
               </tr>
               <tr>
                 <td>Mouse moved to picture shown &mdash; <a href="/boards/funcev/">Function EV</a></td>
                 <td class="num">~160 ms</td>
-                <td class="num">~60 ms</td>
+                <td class="num">~60 ms at 1080p50, ~85 ms at 1080p30</td>
+              </tr>
+              <tr>
+                <td>Mouse moved to picture shown &mdash; <a href="/boards/funcev/">Function EV</a>, 720p</td>
+                <td class="num">&mdash;</td>
+                <td class="num">~40 ms</td>
+              </tr>
+              <tr>
+                <td>Mouse moved to picture shown &mdash; <a href="/boards/p4-eth/">Waveshare ESP32-P4-ETH</a>, 720p</td>
+                <td class="num">&mdash;</td>
+                <td class="num">~185 ms</td>
               </tr>
               <tr>
                 <td>Mouse moved to picture shown &mdash; <a href="/boards/m5-poe-p4/">M5Stack Unit PoE-P4</a>, 720p</td>
@@ -1041,6 +1051,12 @@ output: index.html
               <li>A Let's Encrypt certificate over Tailscale</li>
             </ul>
           </li>
+          <li class="tl-month">
+            <span class="tl-when">November 2026</span>
+            <ul>
+              <li>A view-only sign-in, keyboard shortcuts</li>
+            </ul>
+          </li>
           <li class="tl-now">
             <span class="tl-when">Now</span>
             <p>About 110 releases in three months, fifteen boards. <a href="https://github.com/espkvm/espkvm/blob/main/CHANGELOG.md">Every change</a>.</p>
@@ -1073,7 +1089,7 @@ output: index.html
                 <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Multiple viewers, one in control at a time with takeover</td>
+                <td>Multiple viewers, one in control at a time with takeover, a view-only sign-in</td>
                 <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
@@ -1306,6 +1322,7 @@ output: index.html
             <li><a href="https://jinbel.cn/post/1487.html" rel="noopener">私人定制 Blog</a> &mdash; &ldquo;GitHub 开源 ESP-KVM：$45 把 ESP32-P4 变成 IP 远程控制卡——HDMI 采集 + 浏览器键鼠 + 虚拟光驱，替代 $300 商业方案&rdquo; (in Chinese)</li>
             <li><a href="https://log8.kr/library/esp32-ip-kvm-out-of-band-recovery-2026/" rel="noopener">log8.kr</a> &mdash; &ldquo;ESP32 IP-KVM 홈랩 원격 복구 설계&rdquo;, a recovery-and-security checklist built around the device (in Korean)</li>
             <li><a href="https://bearblogtech.ca/espkvm.html" rel="noopener">BearBlogtech</a> &mdash; &ldquo;ESPKVM an Open Source Kvm with IP and an ESp32&rdquo;, a build log written after the author&rsquo;s $800 datacentre KVM died</li>
+            <li><a href="https://blog.wiki4what.com/e7u9umv0nmm/" rel="noopener">Wiki4What</a> &mdash; &ldquo;ESP-KVM: Give Your AI a Spare Keyboard&rdquo;, a field guide to letting an AI agent watch a spare computer through it, and what to keep it from doing (also <a href="https://www.youtube.com/watch?v=E7U9UMV0NmM" rel="noopener">on video</a>)</li>
           </ul>
           <p>
             Also picked up and translated internationally &mdash; French, Greek,

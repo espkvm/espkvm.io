@@ -2,9 +2,9 @@
 title: Waveshare ESP32-P4-Module-DEV-KIT
 family: Waveshare
 kind: device
-status: untested
+status: tested
 order: 120
-role: Not tested on hardware
+role: The device - community-tested
 summary: The P4, an ESP32-C6 and flash in one module, on a carrier with Ethernet and a card slot.
 flasher: p4-module-devkit
 capture: c790, c792, waveshare-19137
@@ -29,7 +29,5 @@ and -C kits are the same board with a different screen in the box.
 
 - A jumper switches the OTG-HS between one Type-A socket and an internal hub. The KVM wants the socket.
 - That socket drives its own 5 V, so the lead to the target is an **A-to-A cable with the 5 V wire cut**.
-
-Built from the schematic, not yet run on one.
 
 Its 40-pin header has the Raspberry Pi layout, with the capture chip's I2C bus on pins 3 and 5, so a "DS3231 for Pi" clock module should plug straight onto pins 1-9 (read from the vendor pinout, not tried on this board).
