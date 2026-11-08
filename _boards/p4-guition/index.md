@@ -7,8 +7,7 @@ role: The device - community-tested
 summary: A display board that also carries Ethernet and an ESP32-C6. The capture ribbon goes into J3.
 flasher: p4-guition
 capture: c790, c792, waveshare-19137
-spec.Chip: ESP32-P4, rev 1.x; an image for rev 3.x is ready, but no rev 3.x board has been seen yet
-rev3: image only
+spec.Chip: ESP32-P4, rev 1.x or rev 3.x (an image for each)
 spec.Memory: 32 MB PSRAM, 16 MB flash
 spec.Size: 92 x 62 mm
 spec.Network: 100M Ethernet, Wi-Fi 6 (ESP32-C6)
