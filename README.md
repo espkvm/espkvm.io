@@ -102,7 +102,7 @@ in the nav and the footer come back with the first post.
 
 The builder carries a small Markdown of its own rather than pulling one in,
 covering headings, paragraphs, fenced code, lists, quotes, rules, tables, images
-and inline emphasis, code and links. Anything outside that makes the build stop
+and inline emphasis, code and links. `[[Ctrl+Shift+P]]` draws the keys as key caps. Anything outside that makes the build stop
 and say so, so a post cannot render wrong quietly. The one piece of raw markup
 it passes through is an `<iframe>`, for a video player: it goes into a box that
 keeps its aspect ratio on a phone.

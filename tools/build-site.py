@@ -1761,7 +1761,7 @@ def build_pages(shell, catalog):
 # A deliberately small Markdown, written here rather than pulled in, so that
 # building the site needs nothing but Python. It covers what these posts
 # actually use - headings, paragraphs, fenced code, lists, quotes, rules,
-# images, and inline emphasis, code and links - and refuses anything else
+# images, and inline emphasis, code, links and [[Ctrl+K]] keys - and refuses anything else
 # loudly, so a post can never render wrong in silence.
 
 INLINE_CODE = re.compile(r"`([^`]+)`")
@@ -1769,6 +1769,16 @@ LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 BOLD = re.compile(r"\*\*(\S(?:[^*]*\S)?)\*\*")
 ITALIC = re.compile(r"(?<![*\w])\*(\S(?:[^*]*\S)?)\*(?!\*)")
 IMAGE_ONLY = re.compile(r"^!\[([^\]]*)\]\(([^)\s]+)\)$")
+# [[Ctrl+Shift+P]] draws keys: each name between the pluses as a key cap.
+KEYS = re.compile(r"\[\[([^\[\]]+)\]\]")
+
+
+def keys_html(combo):
+    caps = [k.strip() for k in combo.split("+")]
+    if not all(caps):
+        sys.exit("keys [[%s]]: an empty key name" % combo)
+    return '<span class="keys">%s</span>' % "+".join(
+        "<kbd>%s</kbd>" % html.escape(k) for k in caps)
 
 
 def inline(text, where):
@@ -1783,10 +1793,19 @@ def inline(text, where):
     if "`" in text:
         sys.exit("%s: an inline code span is never closed" % where)
 
+    keys = []
+
+    def stash_keys(match):
+        keys.append(keys_html(match.group(1)))
+        return "\x01%d\x01" % (len(keys) - 1)
+
+    text = KEYS.sub(stash_keys, text)
+
     text = html.escape(text)
     text = LINK.sub(r'<a href="\2">\1</a>', text)
     text = BOLD.sub(r"<strong>\1</strong>", text)
     text = ITALIC.sub(r"<em>\1</em>", text)
+    text = re.sub(r"\x01(\d+)\x01", lambda m: keys[int(m.group(1))], text)
     return re.sub(r"\x00(\d+)\x00",
                   lambda m: "<code>%s</code>" % spans[int(m.group(1))], text)
 
