@@ -180,7 +180,7 @@ output: compare/index.html
     {
       "@type": "Question",
       "name": "How is ESP-KVM different from JetKVM Mini?",
-      "acceptedAnswer": { "@type": "Answer", "text": "They use the same ESP32-P4 chip. JetKVM Mini is a finished product, on sale since 26 October 2026, with its firmware promised to be open. ESP-KVM is open-source firmware available today for fifteen off-the-shelf ESP32-P4 boards that you connect to an HDMI capture board yourself." }
+      "acceptedAnswer": { "@type": "Answer", "text": "They use the same ESP32-P4 chip. JetKVM Mini is a finished product, on sale since 26 October 2026, and its firmware is open source. ESP-KVM is open-source firmware for seventeen ESP32-P4 devices: off-the-shelf boards you connect to an HDMI capture board yourself, and now the JetKVM Mini and Mini W themselves (a first version, still being tested)." }
     },
     {
       "@type": "Question",
@@ -269,7 +269,7 @@ output: compare/index.html
         </tr>
         <tr>
           <td>What you get</td>
-          <td class="us win">Firmware for <a href="/boards/">fifteen off-the-shelf boards</a> from several makers (ten run on hardware so far), plus an HDMI capture board you connect</td>
+          <td class="us win">Firmware for <a href="/boards/">seventeen devices</a> from several makers, the JetKVM Mini among them (ten run on hardware so far), plus an HDMI capture board you connect</td>
           <td>Finished appliance</td>
           <td>Finished appliance</td>
           <td>Finished appliance, on sale since 26 October 2026</td>
@@ -344,7 +344,7 @@ output: compare/index.html
           <td class="us win">Apache-2.0</td>
           <td>GPL-3.0</td>
           <td>GPL-2.0</td>
-          <td>Promised open, not on GitHub at launch</td>
+          <td>MIT</td>
           <td>GPL-3.0</td>
           <td>GPL-3.0 (a fork of PiKVM's kvmd)</td>
         </tr>
@@ -415,9 +415,10 @@ output: compare/index.html
     the same chip ESP-KVM runs on, which says something good about the idea: a
     microcontroller is enough for a KVM. The Mini is a finished product from a
     company, with a case and support, on sale since 26 October 2026. Its firmware is
-    promised to be open source but was not on GitHub on launch day.
-    An ESP-KVM image for the Mini itself is
-    <a href="/boards/jetkvm-mini/">in progress</a>.
+    open source, at <a href="https://github.com/jetkvm/mini" rel="noopener">github.com/jetkvm/mini</a>.
+    ESP-KVM has images for the <a href="/boards/jetkvm-mini/">Mini</a> and the
+    <a href="/boards/jetkvm-mini-w/">Mini W</a> too, made from the pins in that
+    firmware. It is a first version, still being tested.
     ESP-KVM is open-source firmware you can flash today onto boards from
     Waveshare, Espressif, M5Stack, Guition and others. The original JetKVM, on a
     Rockchip chip running Linux, is the one to pick for 1080p60 video. Its

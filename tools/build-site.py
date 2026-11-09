@@ -489,6 +489,21 @@ def compare_cells(d, catalog):
     cells["HDMI capture"] = (" or ".join(
         "[%s](%s)" % (c["meta"]["title"], c["url"]) for c in caps), None)
 
+    # Sound and CEC come from the capture board, so a board shows what the
+    # captures it takes can do. A board that says it itself (one with the
+    # capture built in, such as the JetKVM Mini) keeps its own words.
+    for row in ("HDMI audio", "HDMI-CEC"):
+        own = specs.get(row)
+        if own:
+            cells[row] = (own, int(own.startswith("yes")))
+            continue
+        able = [c for c in caps if c["specs"] and dict(c["specs"]).get(row, "").startswith("yes")]
+        if able:
+            cells[row] = ("yes, with the " + " or the ".join(
+                "[%s](%s)" % (c["meta"]["title"], c["url"]) for c in able), 1)
+        elif caps:
+            cells[row] = ("no", 0)
+
     sd = specs.get("microSD", "")
     cells["microSD"] = (sd, int(bool(sd)))
     # fps at 1080p; a figure with no resolution next to it is 1080p too

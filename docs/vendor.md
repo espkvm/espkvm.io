@@ -40,3 +40,15 @@ npm init -y && npm i esptool-js@0.7.0 esbuild
 node build.mjs   # esbuild with a plugin that swaps stub_flasher/*.json for {}
 ```
 
+
+`assets/js/flashbackup.js` is the same esptool-js 0.7.0 with one entry of ours
+(`backupFlash(port)`, in `tools/flashbackup/`) that reads the whole flash to a
+file. It needs esptool-js's flasher stub, so the ESP32-P4 stubs are kept and
+every other chip's is left out. It is loaded only when someone presses "Back up
+the flash" on the flasher. Rebuild it with:
+
+```sh
+npm init -y && npm i esptool-js@0.7.0 esbuild
+# entry.js and build.mjs are in tools/flashbackup/
+node build.mjs
+```

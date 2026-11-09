@@ -168,10 +168,33 @@ output: flash/index.html
         font-size: 13px;
         padding: 10px 12px;
         background: var(--bg-raised);
-        border-left: 3px solid var(--accent, #4c9aff);
+        /* A thin box all round: a thick left stripe read as a progress bar stuck at 0. */
+        border: 1px solid var(--border, #2a313c);
+        border-radius: 6px;
+      }
+      /* The flash backup's progress: 16 MB takes minutes, so show it moving. */
+      .backup-bar {
+        flex-basis: 100%;
+        height: 8px;
+        border: none;
+        border-radius: 4px;
+        background: var(--bg-raised);
+        accent-color: var(--accent, #4c9aff);
+      }
+      .backup-bar::-webkit-progress-bar {
+        background: var(--bg-raised);
+        border-radius: 4px;
+      }
+      .backup-bar::-webkit-progress-value {
+        background: var(--accent, #4c9aff);
+        border-radius: 4px;
+      }
+      .backup-bar::-moz-progress-bar {
+        background: var(--accent, #4c9aff);
+        border-radius: 4px;
       }
       .detect-out.warn {
-        border-left-color: var(--warn);
+        border-color: var(--warn);
       }
       /* A board the read says does not fit: still clickable, only quieter. */
       .board-card.board-mismatch {
@@ -355,6 +378,16 @@ output: flash/index.html
             the image that fits. The board restarts afterwards.
           </span>
           <p class="detect-out" id="detect-out" hidden></p>
+        </div>
+        <div class="detect">
+          <button type="button" class="btn btn-sm" id="backup-btn">Back up the flash</button>
+          <span class="detect-note">
+            Optional. Saves everything on the device's flash to a file on this computer
+            first, so you can go back to the firmware it came with. Worth it on a device
+            with signed firmware, like the JetKVM Mini. Takes a few minutes.
+          </span>
+          <p class="detect-out" id="backup-out" hidden></p>
+          <progress class="backup-bar" id="backup-bar" max="1" value="0" hidden></progress>
         </div>
         <div class="board-grid" id="board-grid" hidden role="group" aria-label="Choose your board"></div>
         <p class="rev-help" id="rev-help" hidden>
@@ -623,10 +656,12 @@ output: flash/index.html
         for (const r of revBtns) {
           r.setAttribute("aria-pressed", String(pair && r.dataset.rev === rev));
         }
-        note.textContent = [board.untested ? UNTESTED_NOTE : "", pair ? REV_NOTE : ""]
+        // A board can carry a note of its own in the published list, which
+        // says more than the general one (the JetKVM Mini's backup, for one).
+        note.textContent = [board.note || (board.untested ? UNTESTED_NOTE : ""), pair ? REV_NOTE : ""]
           .filter(Boolean)
           .join(" ");
-        note.classList.toggle("warn", !!board.untested);
+        note.classList.toggle("warn", !!board.untested || !!board.note);
       };
 
       const select = (b, card, auto) => {
@@ -985,6 +1020,55 @@ output: flash/index.html
         }
       });
 
+      // "Back up the flash": the whole flash to a file, before anything is written.
+      const backupBtn = document.getElementById("backup-btn");
+      const backupOut = document.getElementById("backup-out");
+      const backupBar = document.getElementById("backup-bar");
+      backupBtn.addEventListener("click", async () => {
+        if (!("serial" in navigator)) {
+          backupOut.hidden = false;
+          backupOut.classList.add("warn");
+          backupOut.textContent = "This browser cannot talk to serial devices. Use Chrome or Edge.";
+          return;
+        }
+        backupBtn.disabled = true;
+        backupOut.hidden = false;
+        backupOut.classList.remove("warn");
+        backupOut.textContent = "Pick the device's port in the browser's list...";
+        try {
+          const port = await navigator.serial.requestPort();
+          backupOut.textContent = "Connecting...";
+          const { backupFlash } = await import("/assets/js/flashbackup.js");
+          const r = await backupFlash(port, {
+            log: (s) => (backupOut.textContent = "Connecting: " + String(s).trim()),
+            progress: (f) => {
+              backupBar.hidden = false;
+              backupBar.value = f;
+              backupOut.textContent = "Reading the flash: " + Math.floor(f * 100) + "%";
+            },
+          });
+          const name = "flash-backup-" + String(r.mac || "device").replace(/:/g, "") + ".bin";
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(new Blob([r.data], { type: "application/octet-stream" }));
+          a.download = name;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+          track("flash_backup", { mb: Math.round(r.size / 1048576) });
+          backupOut.textContent =
+            "Saved " + name + " (" + Math.round(r.size / 1048576) + " MB). Keep it: writing it back with " +
+            "esptool (write-flash 0x0 " + name + ") restores the device as it was.";
+        } catch (e) {
+          backupOut.classList.add("warn");
+          const msg = e && e.message ? e.message : String(e);
+          backupOut.textContent = /No port selected|cancel/i.test(msg)
+            ? "No port chosen."
+            : "Could not read the flash: " + msg + ". Hold BOOT while pressing RESET, then try again.";
+        } finally {
+          backupBtn.disabled = false;
+          backupBar.hidden = true;
+        }
+      });
+
       // Take the published list when it answers, and keep the built-in one when
       // it does not: a flasher that shows nothing because a fetch failed would be
       // worse than one board short.
@@ -1000,6 +1084,7 @@ output: flash/index.html
             // without a commit.
             image: IMAGES[b.id] || (b.image ? RELEASES + b.image : undefined),
             untested: !!b.untested,
+            note: b.note || undefined,
             manifest: RELEASES + b.manifest,
             manifestRev3: b.manifestRev3 ? RELEASES + b.manifestRev3 : undefined,
           }));
