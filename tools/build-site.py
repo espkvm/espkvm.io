@@ -14,7 +14,7 @@ that fetches nothing.
 
 Writes index.html, flash/index.html, blog/index.html, blog/<slug>/index.html,
 blog/tags/<tag>/index.html, blog/feed.xml, boards/ and cases/ (from _boards/
-and _cases/), and rewrites sitemap.xml. All of those are generated and none of
+and _cases/), integrations/ (from _integrations/), and rewrites sitemap.xml. All of those are generated and none of
 them are committed.
 """
 
@@ -151,7 +151,9 @@ def read_posts(include_drafts):
 # front page and on /boards/ from the same data, so a board is described once.
 #
 # Front matter a board takes: title, kind (device or capture), status (tested,
-# untested, or planned: a device with no image yet, listed apart), order, role, summary, photo, photo_style (product or photo),
+# untested, or candidate: a device with no image yet, grey in the catalog until
+# someone who has one asks; it also takes verdict (candidate or maybe), checked
+# (YYYY-MM) and check.psram/camera/usb/network (y, n or ?)), order, role, summary, photo, photo_style (product or photo),
 # flasher (its id in the firmware's boards.json), rev3 ("image only" when a rev
 # 3.x image exists but no rev 3.x board has been seen), capture (ids of the capture
 # boards it takes), and any number of "spec.<Label>: value" rows and
@@ -261,10 +263,19 @@ def read_catalog():
         m = b["meta"]
         if m.get("kind") not in ("device", "capture"):
             sys.exit("%s: kind must be device or capture" % b["path"])
-        if m.get("status") not in ("tested", "untested", "planned"):
-            sys.exit("%s: status must be tested, untested or planned" % b["path"])
-        if m.get("status") == "planned" and (m.get("kind") != "device" or m.get("flasher")):
-            sys.exit("%s: a planned board is a device with no flasher id" % b["path"])
+        if m.get("status") not in ("tested", "untested", "candidate"):
+            sys.exit("%s: status must be tested, untested or candidate" % b["path"])
+        if m.get("status") == "candidate":
+            if m.get("kind") != "device" or m.get("flasher"):
+                sys.exit("%s: a candidate is a device with no flasher id" % b["path"])
+            if m.get("verdict") not in ("candidate", "maybe"):
+                sys.exit("%s: a candidate needs verdict: candidate or maybe" % b["path"])
+            for k, *_ in EVERY_CHECKS:
+                if m.get("check." + k) not in ("y", "n", "?"):
+                    sys.exit("%s: a candidate needs check.%s: y, n or ?" % (b["path"], k))
+            # Only boards the capture board's ribbon plugs straight into get a page.
+            if m.get("check.camera") != "y":
+                sys.exit("%s: a candidate needs a camera connector the ribbon fits (check.camera: y)" % b["path"])
         for c in id_list(m.get("capture")):
             if c not in ids:
                 sys.exit("%s: capture names a board that is not in _boards/: %s" % (b["path"], c))
@@ -295,7 +306,8 @@ def read_catalog():
                           and b["meta"]["status"] == "tested"], key=key),
         "untested": sorted([b for b in boards if b["meta"]["kind"] == "device"
                             and b["meta"]["status"] == "untested"], key=key),
-        "planned": sorted([b for b in boards if b["meta"]["status"] == "planned"], key=key),
+        "candidate": sorted([b for b in boards if b["meta"]["status"] == "candidate"],
+                            key=lambda i: ({"candidate": 0, "maybe": 1}[i["meta"]["verdict"]], i["meta"]["title"])),
         "capture": sorted([b for b in boards if b["meta"]["kind"] == "capture"], key=key),
         "cases": sorted(cases, key=key),
         "displays": sorted([m for m in modules if m["meta"]["kind"] == "display"], key=key),
@@ -693,7 +705,8 @@ def features(item):
     out = []
     if m.get("kind") == "device":
         net = specs.get("Network", "")
-        if "Ethernet" in net:
+        # "no Ethernet" or "an external PHY on the header" is not Ethernet on the board
+        if "Ethernet" in net and not re.search(r"no Ethernet|external (Ethernet )?PHY", net, re.I):
             out.append(("ethernet", "Ethernet"))
         if "Wi-Fi" in net:
             out.append(("wifi", "Wi-Fi"))
@@ -932,10 +945,10 @@ def tile(item):
     maker, model = split_title(item)
     feats = features(item)
     untested = m.get("status") == "untested"
-    planned = m.get("status") == "planned"
+    planned = m.get("status") == "candidate"
     status = ""
     if planned:
-        status = '<span class="cat-status planned">In progress</span>'
+        status = '<span class="cat-status planned">Not supported yet</span>'
     elif m.get("kind") == "device" or item["section"] == "modules":
         status = ('<span class="cat-status untested">Untested</span>' if untested
                   else '<span class="cat-status">Tested</span>')
@@ -949,7 +962,7 @@ def tile(item):
         earned = ",".join("%g" % (p * g) for (p, _), (_, g) in zip(FIT, parts))
         rating = ('\n              <span class="cat-fit" data-fit="{e}" title="{tip}" aria-label="Fit for a KVM: {t}">{i}</span>'
                   .format(e=earned, tip=html.escape(fit_title(item)), t=fit_text(halves), i=fit_icons(halves)))
-    return """          <a class="cat-card" href="{url}" data-f="{keys}" data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
+    return """          <a class="cat-card{off}" href="{url}" data-f="{keys}" data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
             <span class="cat-photo{fit}"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></span>
             <span class="cat-body">
               <span class="cat-maker">{maker}{status}</span>
@@ -957,7 +970,7 @@ def tile(item):
               <span class="cat-chips">{chips}</span>
             </span>
           </a>""".format(
-        url=item["url"], keys=keys, fit=cover, photo=item["photo"], rating=rating,
+        url=item["url"], off=" cat-card-off" if planned else "", keys=keys, fit=cover, photo=item["photo"], rating=rating,
         iid=html.escape(item["id"]), iname=html.escape(html.unescape(m["title"])), icat=item_category(item),
         w=item["photo_w"], h=item["photo_h"], maker=html.escape(maker),
         status=status, model=html.escape(model), chips=chips)
@@ -987,6 +1000,24 @@ def try_url(name):
             % (quote("Tried it: " + name), quote(body)))
 
 
+def request_url(name=""):
+    """A new discussion asking for a board, with the questions already in it."""
+    body = ("Board: %s\nShop or product page: \nSchematic (if you have a link): \n"
+            "Chip marking (NRW32 or NRW32X), or what Read the board on espkvm.io/tools/ says: \n"
+            "Capture board you have or plan to get: \n"
+            "I can flash a test build and report back: yes\n" % name)
+    return ("https://github.com/espkvm/espkvm/discussions/new?category=general&title=%s&body=%s"
+            % (quote("Board request: " + (name or "")), quote(body)))
+
+
+REQUEST_STEPS = """<ol class="every-steps">
+          <li><a href="{url}" rel="noopener">Open a board request</a> in Discussions. The form asks for the board's shop page, its schematic if there is a link, the chip marking and the capture board you have.</li>
+          <li>I make a test image from the schematic and post it in the thread.</li>
+          <li>You flash it on the <a href="/flash/">flasher</a> with Install another version from a file, and tell me what works. The flasher's Back up the flash keeps the board's old firmware.</li>
+          <li>Once the picture, the keyboard and the network work, the board goes into the catalog with its own image and updates.</li>
+        </ol>"""
+
+
 def source_note(e):
     bits = []
     if e.get("src"):
@@ -1013,9 +1044,15 @@ def every_rows(catalog):
                   else "works with the C790" if "c790" in id_list(d["meta"].get("capture")) else conn or "?")
         rows.append(("supported", d["id"], '<a href="%s">%s</a>' % (d["url"], html.escape(d["meta"]["title"])),
                      status, ["y"] * 4, revs, html.escape(specs.get("Network", "")), ribbon))
-    for e in every_data()["kvm"]:
-        name = html.escape(e["name"])
-        name = '<a href="%s">%s</a>' % (e["url"], name) if e.get("url") else name
+    in_catalog = set(catalog["by_id"])
+    data = [e for e in every_data()["kvm"] if e["id"] not in in_catalog]
+    for d in catalog["candidate"]:
+        m = d["meta"]
+        data.append(dict(candidate_marks(m), id=d["id"], url=d["url"], name=html.unescape(m["title"]),
+                         verdict=m["verdict"], chip=m.get("chip", "?"), ribbon=m.get("ribbon", ""),
+                         note=html.unescape(m["summary"]), checked=m.get("checked", "")))
+    for e in data:
+        name = '<a href="%s">%s</a>' % (every_url(e), html.escape(e["name"]))
         v = e["verdict"]
         if v == "terminal":
             status = '<a class="st st-alt" href="#terminal">As a terminal</a>'
@@ -1025,10 +1062,105 @@ def every_rows(catalog):
         note = html.escape(e["note"]) + source_note(e)
         if v == "candidate":
             note += (' <a class="every-try" href="%s" rel="noopener" target="_blank" data-try>'
-                     'Have one? Post your result &rarr;</a>' % html.escape(try_url(e["name"])))
+                     'Have one? Request it &rarr;</a>' % html.escape(request_url(e["name"])))
         rows.append((v, e["id"], name, status, [e["psram"], e["camera"], e["usb"], e["network"]],
                      html.escape(e.get("chip", "?")), note, e.get("ribbon", "")))
     return rows
+
+
+def every_url(e):
+    return e.get("url") or "/boards/all/%s/" % e["id"]
+
+
+# What each mark of a checked board means, in words, for its own page.
+EVERY_CHECKS = [
+    ("psram", "32 MB of PSRAM",
+     "It has the 32 MB of PSRAM the video needs.",
+     "It does not have 32 MB of PSRAM, and the video needs that much.",
+     "Not known whether it has 32 MB of PSRAM, which the video needs."),
+    ("camera", "A camera connector the capture board fits",
+     "The HDMI capture board's Raspberry Pi camera ribbon fits its camera connector.",
+     "The HDMI capture board's camera ribbon does not fit, or there is no free camera connector.",
+     "Not known whether the HDMI capture board's camera ribbon fits its camera connector."),
+    ("usb", "High-speed USB towards the target",
+     "Its high-speed USB comes out where it can face the target as a device.",
+     "Its high-speed USB cannot face the target as a device.",
+     "Not known whether its high-speed USB can face the target as a device."),
+    ("network", "A network",
+     "It has a network: Ethernet, or Wi-Fi through a co-processor.",
+     "It has no network: no Ethernet and no Wi-Fi co-processor.",
+     "How it would reach the network is the open question, see above."),
+]
+EVERY_VERDICT_TEXT = {
+    "candidate": "It looks like it should work. There is no ESP-KVM image for it yet, because nobody has run one on it.",
+    "maybe": "It might work, but something important is not known yet.",
+    "no": "It cannot work as an IP-KVM with ESP-KVM, for the reason below.",
+    "terminal": "Not as an IP-KVM, but it can run ESP-KVM terminal, the firmware that shows a target's screen in your hand.",
+}
+
+
+def every_page(shell, e):
+    """A page for one checked board outside the catalog: the verdict, the four
+    checks in words and where the facts come from."""
+    v = e["verdict"]
+    checks = check_list(e, e.get("ribbon", ""))
+    chip = e.get("chip", "?")
+    chip_line = ("Chip revision: %s." % chip) if chip != "?" else "The chip revision is not known."
+    src = ""
+    if e.get("src"):
+        src = '<p>Read from <a href="%s" rel="noopener">the maker&rsquo;s documents</a>%s, not from a board in hand.</p>' % (
+            html.escape(e["src"]), (", checked " + html.escape(e["checked"])) if e.get("checked") else "")
+    ask = ""
+    if v in ("candidate", "maybe"):
+        ask = ('<h2>Have one?</h2><p>One request is enough: I add a board as soon as someone who has it '
+               'can try a test build.</p>' + REQUEST_STEPS.format(url=html.escape(request_url(e["name"]))))
+    elif v == "terminal":
+        ask = '<p><a href="/terminal/">ESP-KVM terminal &rarr;</a></p>'
+    status = dict(VERDICTS)[v]
+    content = """
+    <article class="post every-page">
+      <p class="post-back"><a href="/boards/all/">&larr; Every ESP32-P4 board</a></p>
+      <header class="post-head">
+        <h1>{name} as an IP-KVM</h1>
+        <p class="lead"><span class="st {cls}">{status}</span> {verdict}</p>
+      </header>
+      <div class="post-body">
+        <p>{note}</p>
+        <h2>What ESP-KVM needs from a board</h2>
+        <ul class="every-checks">
+{checks}
+        </ul>
+        <p>{chip}</p>
+        {src}
+        {ask}
+        <p><strong>ESP-KVM</strong> is free, open-source firmware that turns an ESP32-P4 board into an IP-KVM: another computer&rsquo;s screen, keyboard and mouse in your browser, from the BIOS up. <a href="/boards/">The boards it runs on &rarr;</a></p>
+      </div>
+    </article>
+""".format(name=html.escape(e["name"]), cls={"no": "st-no", "terminal": "st-alt"}.get(v, "st-new"),
+           status=status, verdict=html.escape(EVERY_VERDICT_TEXT[v]), note=html.escape(e["note"]),
+           checks=checks, chip=html.escape(chip_line), src=src, ask=ask)
+    url = SITE + every_url(e)
+    title = "%s as an IP-KVM - %s - ESP-KVM" % (e["name"], {
+        "candidate": "a candidate", "maybe": "maybe", "no": "why not", "terminal": "as a terminal"}[v])
+    return render_page(shell, {
+        "title": title,
+        "og_title": e["name"],
+        "description": "Can the %s run ESP-KVM, the open-source IP-KVM firmware? %s %s" % (
+            e["name"], EVERY_VERDICT_TEXT[v], e["note"].split(". ")[0].rstrip(".") + "."),
+        "canonical": url,
+    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
+                                    ("Every ESP32-P4 board", SITE + "/boards/all/"), (e["name"], url))))
+
+
+def every_pages():
+    """The checked boards that get a page of their own (not the catalog ones)."""
+    return [e for e in every_data()["kvm"] if not e.get("url")
+            and not os.path.isdir(os.path.join(BOARDS_DIR, e["id"]))]
+
+
+def write_every_pages(shell):
+    for e in every_pages():
+        write(os.path.join(ROOT, "boards", "all", e["id"], "index.html"), every_page(shell, e))
 
 
 def every_kvm_table(catalog):
@@ -1084,6 +1216,8 @@ def fill_catalog(body, catalog):
             return str(len(devices))
         if group == "all_kvm":  # /boards/all/: every P4 board, catalog + _data
             return every_kvm_table(catalog)
+        if group == "request_steps":
+            return "        " + REQUEST_STEPS.format(url=html.escape(request_url()))
         if group == "all_filters":
             return every_filters(catalog)
         if group == "all_terminal":
@@ -1126,8 +1260,10 @@ def fill_catalog(body, catalog):
 def spec_table(item):
     rows = list(item["specs"])
     m = item["meta"]
-    if m.get("status") == "planned":
-        rows.insert(0, ("Status", "In progress: no ESP-KVM image for it yet"))
+    if m.get("status") == "candidate":
+        rows.insert(0, ("Status", "Not supported yet: no ESP-KVM image for it. "
+                        + {"candidate": "It looks like it should work.",
+                           "maybe": "Something important is not known yet."}[m["verdict"]]))
     elif m.get("kind") == "device":
         rows.insert(0, ("Status", "Run on hardware" if m["status"] == "tested"
                         else "Built from the schematic, not run on one yet"))
@@ -1146,6 +1282,38 @@ def spec_table(item):
                 "<tr><th>%s</th><td>%s</td></tr>" % (html.escape(k), v if isinstance(v, RawHTML)
                                                     else inline(v, item["path"]))
                 for k, v in rows))
+
+
+def check_list(marks, ribbon=""):
+    """The four needs of a board as marks with a sentence each."""
+    return "\n".join(
+        '          <li class="every-check c-%s">%s <strong>%s.</strong> %s</li>'
+        % ({"?": "q"}.get(marks[k], marks[k]), MARKS[marks[k]], label,
+           html.escape({"y": yes, "n": no, "?": unk}[marks[k]]
+                       + (" Connector: %s." % ribbon if k == "camera" and ribbon else "")))
+        for k, label, yes, no, unk in EVERY_CHECKS)
+
+
+def candidate_marks(m):
+    return {k: m["check." + k] for k, *_ in EVERY_CHECKS}
+
+
+def candidate_checks(item):
+    m = item["meta"]
+    if m.get("status") != "candidate":
+        return ""
+    checked = (", checked %s" % html.escape(m["checked"])) if m.get("checked") else ""
+    return ('<h2>What ESP-KVM needs from a board</h2>\n<ul class="every-checks">\n%s\n</ul>\n'
+            '<p class="board-revnote">Read from the maker&rsquo;s documents%s, not from a board in hand.</p>\n'
+            % (check_list(candidate_marks(m), m.get("ribbon", "")), checked))
+
+
+def candidate_request(item):
+    m = item["meta"]
+    if m.get("status") != "candidate":
+        return ""
+    return ('\n<h2>Have one?</h2>\n<p>One request is enough: I add a board as soon as someone who has it '
+            'can try a test build.</p>\n' + REQUEST_STEPS.format(url=html.escape(request_url(html.unescape(m["title"])))))
 
 
 def rev_note(item):
@@ -1190,7 +1358,7 @@ def item_page(shell, item, catalog):
     for label, url in item["links"]:
         actions.append('<a class="btn" href="%s" rel="noopener">%s</a>'
                        % (html.escape(url), html.escape(label)))
-    planned = m.get("status") == "planned"
+    planned = m.get("status") == "candidate"
     if kind == "device" and not planned:
         # This board next to the first two tested others.
         others = [b["id"] for b in catalog["tested"] if b["id"] != item["id"]][:2]
@@ -1239,7 +1407,7 @@ def item_page(shell, item, catalog):
     else:
         back = '<a href="/boards/">&larr; All boards</a>'
 
-    untested = " untested" if m.get("status") in ("untested", "planned") else ""
+    untested = " untested" if m.get("status") in ("untested", "candidate") else ""
     role = m.get("role") or ("A case by " + m["author"] if m.get("author") else "")
     credit = ('<p class="board-credit">%s</p>' % html.escape(m["photo_credit"])
               if m.get("photo_credit") else "")
@@ -1252,8 +1420,8 @@ def item_page(shell, item, catalog):
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
                  "mouse in your browser, from the BIOS up, with no Linux and no cloud. "
-                 "An ESP-KVM image for the %s is in progress: the chip inside is "
-                 "the same." % name)
+                 "There is no ESP-KVM image for the %s yet, and one request from "
+                 "someone who has it is enough to make one." % name)
     elif kind == "device":
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns the "
                  "%s into an IP-KVM: the screen, keyboard and mouse of another computer "
@@ -1306,17 +1474,18 @@ def item_page(shell, item, catalog):
         </div>
       </div>
       <div class="post-body">
-{body}
+{checks}{body}{request}
       </div>{extra}
     </article>
 """.format(iid=html.escape(item["id"]), iname=html.escape(html.unescape(m["title"])),
            icat=item_category(item),
            back=back, intro=intro, is_photo=is_photo, photo=item["photo"], w=item["photo_w"],
            h=item["photo_h"], alt=safe(m["title"]), untested=untested,
-           role=html.escape(role), title=html.escape(m["title"]),
+           role=html.escape(role), title=html.escape(m.get("h1") or m["title"]),
            summary=html.escape(m["summary"]), specs=spec_table(item),
            revnote=rev_note(item), trynote=try_note(item),
            actions=" ".join(actions), credit=credit,
+           checks=candidate_checks(item), request=candidate_request(item),
            body=link_boards(render_markdown(item["body"], item["path"]),
                             set(catalog["by_id"]), skip={item["id"]}),
            extra=extra)
@@ -1329,8 +1498,10 @@ def item_page(shell, item, catalog):
                                                      else "a case for an IP-KVM")
         section = (("Cases", SITE + "/boards/#cases") if item["section"] == "cases"
                    else ("Boards", SITE + "/boards/"))
+    faq = faq_ld(item["body"], item["path"])
     ld = json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), section,
-                             (html.unescape(m["title"]), SITE + item["url"])))
+                             (html.unescape(m["title"]), SITE + item["url"])),
+                 *([faq] if faq else []))
     return render_page(shell, {
         "title": m.get("page_title") or "%s - %s with ESP-KVM" % (m["title"], what),
         "og_title": m["title"],
@@ -1422,8 +1593,8 @@ def catalog_page(shell, catalog):
       </div>
 
       <p class="cat-note">
-        Not the board you have? See <a href="/boards/all/">every ESP32-P4 board I have looked at</a>, and why some cannot work, or <a href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">open an issue</a>
-        with a link to its schematic. Printed a case? Post it in
+        Not the board you have? See <a href="/boards/all/">every ESP32-P4 board I have looked at</a>, and why some cannot work.
+        If yours can, <a href="/boards/all/#add">one request is enough</a>: I add a board as soon as someone who has it can try a test build. Printed a case? Post it in
         <a href="https://github.com/orgs/espkvm/discussions" rel="noopener">Discussions</a>.
       </p>
     </article>
@@ -1523,12 +1694,12 @@ def catalog_page(shell, catalog):
           });
         }"""),
            planned=("""
-      <h2 class="cat-head" id="planned">In progress <span class="cat-count">%d</span></h2>
-      <p class="cat-note">Devices on the same chip that ESP-KVM does not run on yet. There is no image to flash for them.</p>
+      <h2 class="cat-head" id="candidates">Not supported yet <span class="cat-count">%d</span></h2>
+      <p class="cat-note">Boards that look like they could run ESP-KVM, read from their schematics. There is no image for them yet. <a href="/boards/all/#add">One request is enough</a>: I add a board as soon as someone who has it can try a test build.</p>
       <div class="cat-grid">
 %s
       </div>
-""" % (len(catalog["planned"]), tiles(catalog["planned"]))) if catalog["planned"] else "",
+""" % (len(catalog["candidate"]), tiles(catalog["candidate"]))) if catalog["candidate"] else "",
            n_capture=len(catalog["capture"]), capture=tiles(catalog["capture"]),
            n_displays=len(catalog["displays"]), displays=tiles(catalog["displays"]),
            n_clocks=len(catalog["clocks"]), clocks=tiles(catalog["clocks"]),
@@ -1639,6 +1810,158 @@ def write_catalog(shell, catalog):
 
 # ---------------------------------------------------------------- page shell
 
+
+# ---------------------------------------------------------------- integrations
+#
+# One folder per thing ESP-KVM plugs into, in _integrations/: an index.md and
+# the mark as a one-path SVG (Simple Icons, CC0). Front matter: name (the
+# label under the mark), title, description, tip (the mark's tooltip), summary
+# (its line on /integrations/), mark, order, and link.<label>: <url> lines. A body makes a page at
+# /integrations/<folder>/. An entry with no body is a mark only, and its href
+# says where the mark leads, so the row on the front page can carry a name
+# before its page is written.
+
+INTEGRATIONS_DIR = os.path.join(ROOT, "_integrations")
+INTEGRATION_FOOT = ("%s is a trademark of its owner. ESP-KVM is an independent "
+                    "open-source project and is not affiliated with or endorsed by it.")
+
+
+def read_integrations():
+    items = []
+    names = sorted(os.listdir(INTEGRATIONS_DIR)) if os.path.isdir(INTEGRATIONS_DIR) else []
+    for name in names:
+        folder = os.path.join(INTEGRATIONS_DIR, name)
+        index = os.path.join(folder, "index.md")
+        if not os.path.isfile(index):
+            continue
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
+            sys.exit("%s: a folder name must be lowercase letters, digits and dashes" % folder)
+        with open(index, encoding="utf-8") as fh:
+            meta, body = split_front_matter(fh.read(), index)
+        for required in ("name", "tip", "mark"):
+            if required not in meta:
+                sys.exit("%s: front matter needs a %s" % (index, required))
+        with open(os.path.join(folder, meta["mark"]), encoding="utf-8") as fh:
+            paths = re.findall(r'<path d="([^"]+)"', fh.read())
+        if len(paths) != 1:
+            sys.exit("%s: the mark must be one <path>" % index)
+        page = bool(body.strip())
+        if page:
+            for required in ("title", "description"):
+                if required not in meta:
+                    sys.exit("%s: a page needs a %s" % (index, required))
+        elif "href" not in meta:
+            sys.exit("%s: a mark with no page needs an href" % index)
+        items.append({
+            "id": name,
+            "path": index,
+            "meta": meta,
+            "body": body,
+            "page": page,
+            "url": "/integrations/%s/" % name if page else meta["href"],
+            "mark": paths[0],
+            "links": [(k[5:], v) for k, v in meta.items() if k.startswith("link.")],
+            "order": int(meta.get("order", "999")),
+        })
+    items.sort(key=lambda i: (i["order"], i["id"]))
+    return items
+
+
+def mark_svg(item, size=None):
+    dims = ' width="%d" height="%d"' % (size, size) if size else ""
+    return ('<svg viewBox="0 0 24 24"%s aria-hidden="true"><path d="%s"/></svg>'
+            % (dims, item["mark"]))
+
+
+def integrations_row(items):
+    """The quiet row of marks on the front page."""
+    lis = "\n".join(
+        '          <li><a href="%s" title="%s">%s<span>%s</span></a></li>'
+        % (html.escape(i["url"]), safe(i["meta"]["tip"]), mark_svg(i), html.escape(i["meta"]["name"]))
+        for i in items)
+    return ('<nav class="works" aria-label="Connects to">\n'
+            '        <p class="works-label">Connects to</p>\n'
+            '        <ul>\n%s\n        </ul>\n      </nav>' % lis)
+
+
+def integration_page(shell, item):
+    m = item["meta"]
+    links = ""
+    if item["links"]:
+        links = '<ul class="board-links">%s</ul>' % "".join(
+            '<li><a href="%s">%s</a></li>' % (html.escape(u), html.escape(t)) for t, u in item["links"])
+    content = """
+    <article class="post integration-page">
+      <header class="post-head">
+        <p class="post-back"><a href="/integrations/">&larr; Integrations</a></p>
+        <span class="integration-mark">{mark}</span>
+        <h1>{title}</h1>
+        <p class="integration-lead">{description}</p>
+      </header>
+      <div class="post-body">
+{body}
+      </div>
+      <footer class="post-foot">
+        {links}
+        <p class="post-meta">{foot}</p>
+      </footer>
+    </article>
+""".format(mark=mark_svg(item), title=html.escape(m["title"]), description=m["description"],
+           body=render_markdown(item["body"], item["path"]), links=links,
+           foot=html.escape(INTEGRATION_FOOT % m["name"]))
+    url = SITE + item["url"]
+    ld = json_ld(
+        {"@type": "TechArticle", "headline": m["title"], "description": html.unescape(m["description"]),
+         "url": url, "mainEntityOfPage": url, "author": PUBLISHER, "publisher": PUBLISHER},
+        breadcrumbs(("ESP-KVM", SITE + "/"), ("Integrations", SITE + "/integrations/"), (m["title"], url)))
+    return render_page(shell, {
+        "title": m.get("page_title") or "%s - ESP-KVM" % m["title"],
+        "og_title": m["title"],
+        "description": m["description"],
+        "canonical": url,
+    }, content, ld)
+
+
+def integrations_index(shell, items):
+    tiles = "\n".join(
+        '        <li><a href="%s">%s<span class="integration-name">%s</span>'
+        '<span class="integration-tip">%s</span></a></li>'
+        % (html.escape(i["url"]), mark_svg(i), html.escape(i["meta"]["name"]),
+           safe(i["meta"].get("summary") or i["meta"]["tip"]))
+        for i in items)
+    content = """
+    <article class="post integration-page">
+      <header class="post-head">
+        <h1>Integrations</h1>
+        <p class="integration-lead">What ESP-KVM plugs into, and how to set each one up.</p>
+      </header>
+      <ul class="integration-list">
+{tiles}
+      </ul>
+      <footer class="post-foot">
+        <p class="post-meta">{foot}</p>
+      </footer>
+    </article>
+""".format(tiles=tiles, foot=html.escape(
+        "The names and marks belong to their owners. ESP-KVM is an independent open-source "
+        "project and is not affiliated with or endorsed by any of them."))
+    url = SITE + "/integrations/"
+    return render_page(shell, {
+        "title": "Integrations - ESP-KVM",
+        "description": "Home Assistant, Tailscale and the other things ESP-KVM, the open-source "
+                       "IP-KVM on the ESP32-P4, plugs into.",
+        "canonical": url,
+    }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Integrations", url))))
+
+
+def write_integrations(shell, items):
+    for item in items:
+        if item["page"]:
+            write(os.path.join(ROOT, "integrations", item["id"], "index.html"),
+                  integration_page(shell, item))
+    write(os.path.join(ROOT, "integrations", "index.html"), integrations_index(shell, items))
+
+
 def read_partial(name):
     path = os.path.join(PARTIALS_DIR, name)
     if not os.path.exists(path):
@@ -1677,6 +2000,20 @@ def json_ld(*objs):
         '    <script type="application/ld+json">%s</script>\n'
         % json.dumps(dict({"@context": "https://schema.org"}, **o), ensure_ascii=False)
         .replace("</", "<\\/") for o in objs)
+
+
+def faq_ld(body, where):
+    """A page's "## Questions" section as FAQPage data: each "### " heading is
+    a question, the text under it up to the next heading its answer."""
+    m = re.search(r"^## Questions\s*$(.*?)(?=^## |\Z)", body, re.M | re.S)
+    if not m:
+        return None
+    items = []
+    for q, a in re.findall(r"^### (.+?)\s*$(.*?)(?=^### |\Z)", m.group(1), re.M | re.S):
+        text = re.sub(r"<[^>]+>", "", inline(a.strip().replace("\n", " "), where))
+        items.append({"@type": "Question", "name": q.strip(),
+                      "acceptedAnswer": {"@type": "Answer", "text": html.unescape(text)}})
+    return {"@type": "FAQPage", "mainEntity": items} if items else None
 
 
 def breadcrumbs(*crumbs):
@@ -1732,7 +2069,7 @@ def render_page(shell, meta, content, page_head=""):
 # <style> block, because rules belong in the head, and a JSON-LD block, because
 # that is where a search engine goes looking for it.
 
-def build_pages(shell, catalog):
+def build_pages(shell, catalog, integrations=()):
     written = []
     for name in sorted(os.listdir(PAGES_DIR)):
         if not name.endswith(".html"):
@@ -1761,6 +2098,7 @@ def build_pages(shell, catalog):
         # A page asks for a share row by leaving this comment where it goes.
         body = body.replace("<!-- share -->", share_links(SITE + url, meta["title"]))
         body = fill_catalog(body, catalog)
+        body = body.replace("<!-- integrations -->", integrations_row(integrations))
         body = link_boards(body, set(catalog["by_id"]))
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
@@ -2339,7 +2677,7 @@ def page_urls(pages):
     return urls
 
 
-def sitemap(posts, tags=None, pages=None, catalog=None):
+def sitemap(posts, tags=None, pages=None, catalog=None, integrations=()):
     entries = "".join(
         "  <url>\n    <loc>%s%s</loc>\n    <priority>%s</priority>\n  </url>\n"
         % (SITE, path, priority)
@@ -2355,6 +2693,14 @@ def sitemap(posts, tags=None, pages=None, catalog=None):
         entries += "".join(
             "  <url>\n    <loc>%s/boards/family/%s/</loc>\n    <priority>0.6</priority>\n  </url>\n"
             % (SITE, slug) for slug in families(catalog))
+    entries += "".join(
+        "  <url>\n    <loc>%s%s</loc>\n    <priority>0.5</priority>\n  </url>\n"
+        % (SITE, every_url(e)) for e in every_pages())
+    if integrations:
+        entries += "  <url>\n    <loc>%s/integrations/</loc>\n    <priority>0.7</priority>\n  </url>\n" % SITE
+        entries += "".join(
+            "  <url>\n    <loc>%s%s</loc>\n    <priority>0.7</priority>\n  </url>\n"
+            % (SITE, i["url"]) for i in integrations if i["page"])
     entries += "".join(
         "  <url>\n    <loc>%s/blog/%s/</loc>\n    <lastmod>%s</lastmod>\n"
         "    <priority>0.6</priority>\n  </url>\n"
@@ -2415,8 +2761,11 @@ def main():
     shell = load_shell()
 
     catalog = read_catalog()
-    pages = build_pages(shell, catalog)
+    integrations = read_integrations()
+    pages = build_pages(shell, catalog, integrations)
     write_catalog(shell, catalog)
+    write_integrations(shell, integrations)
+    write_every_pages(shell)
 
     for post in posts:
         write(os.path.join(OUT_DIR, post["slug"], "index.html"),
@@ -2431,7 +2780,7 @@ def main():
     write(os.path.join(OUT_DIR, "index.html"),
           index_page(shell, posts, all_tags=tags))
     write(os.path.join(OUT_DIR, "feed.xml"), feed(posts))
-    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags, pages, catalog))
+    write(os.path.join(ROOT, "sitemap.xml"), sitemap(posts, tags, pages, catalog, integrations))
 
     print("pages:")
     for output in pages:

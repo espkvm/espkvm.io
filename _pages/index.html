@@ -142,6 +142,12 @@ output: index.html
         </figcaption>
       </figure>
 
+      <!-- What it plugs into, as one quiet row of one-colour marks, built from
+           _integrations/. The marks are from Simple Icons (CC0); the names
+           belong to their owners, see the footer. -->
+      <!-- integrations -->
+
+
       <section class="prose" style="border: 0">
         <p>
           A commercial KVM-over-IP does this too, for a great deal more money.
@@ -332,7 +338,7 @@ output: index.html
             </p>
           </div>
 
-          <div class="card">
+          <div class="card" id="video">
             <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3z"/></svg>
             </span>
@@ -390,7 +396,7 @@ output: index.html
             </p>
           </div>
 
-          <div class="card">
+          <div class="card" id="home-assistant">
             <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
             </span>
@@ -401,7 +407,7 @@ output: index.html
             </p>
           </div>
 
-          <div class="card">
+          <div class="card" id="vpn">
             <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
             </span>
@@ -459,7 +465,7 @@ output: index.html
             </p>
           </div>
 
-          <div class="card">
+          <div class="card" id="alerts">
             <span class="ico" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8 11h6"/></svg>
             </span>
@@ -582,9 +588,11 @@ output: index.html
               They are Linux computers; this is firmware on a microcontroller. They
               win on video - 1080p at 60 fps and more, where this does about 20. It
               wins on having no operating system to maintain or break, VPN built
-              into the firmware, and running on fifteen boards you can buy from
+              into the firmware, and running on seventeen devices you can buy from
               several makers. JetKVM Mini, announced in September 2026, uses the
-              same ESP32-P4 chip. The full side-by-side, with sources and the cases
+              same ESP32-P4 chip, and ESP-KVM has a first version of
+              <a href="/boards/jetkvm-mini/">custom firmware for the JetKVM Mini</a>.
+              The full side-by-side, with sources and the cases
               where you should buy one of the others:
               <a href="/compare/">ESP-KVM compared</a>.
             </p>
@@ -1055,11 +1063,17 @@ output: index.html
             <span class="tl-when">November 2026</span>
             <ul>
               <li>A view-only sign-in, keyboard shortcuts</li>
+              <li>Tailscale without an auth key, its peers in the console</li>
+              <li>Alerts in the browser, the picture in a window on top</li>
+              <li>A command palette, your own buttons under the picture</li>
+              <li>JetKVM Mini and Mini W: a first version, not tested enough yet</li>
+              <li>Recordings and screenshots to a NAS, by hand or on their own</li>
+              <li>A table of which alert goes to which channel</li>
             </ul>
           </li>
           <li class="tl-now">
             <span class="tl-when">Now</span>
-            <p>About 110 releases in three months, fifteen boards. <a href="https://github.com/espkvm/espkvm/blob/main/CHANGELOG.md">Every change</a>.</p>
+            <p>About 130 releases since July, seventeen devices, twelve of them tested. <a href="https://github.com/espkvm/espkvm/blob/main/CHANGELOG.md">Every change</a>.</p>
           </li>
           <li class="tl-next">
             <span class="tl-when">Next</span>
@@ -1122,6 +1136,10 @@ output: index.html
               </tr>
               <tr>
                 <td>Timelapse, keystroke subtitles, playback and text search in the console</td>
+                <td class="yes"><span class="st st-ok">Works</span></td>
+              </tr>
+              <tr>
+                <td>Upload recordings and screenshots to a WebDAV folder (Nextcloud, a NAS), by hand or as soon as they are saved</td>
                 <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>

@@ -24,6 +24,8 @@ Contributed by [@nwomn](https://github.com/nwomn), who has one: capture through
 the C790 and the USB keyboard and mouse both work, and the expansion header is
 checked against the board.
 
+The ESP32-P4-WIFI6-M is the same board with the 2 x 20 pin headers soldered on. Waveshare lists it on the same product page with the same features, so the same image should run on it. Nobody has told me about one yet.
+
 ## Wiring
 
 - USB OTG is on an **MX1.25 4-pin header**, so the target needs an MX1.25 to USB-A cable.

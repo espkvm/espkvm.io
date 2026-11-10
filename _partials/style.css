@@ -448,6 +448,64 @@
 
       /* ---- screenshot ---------------------------------------------------- */
 
+      /* The row of marks under the screenshot: one colour, one size. */
+      .works {
+        margin: 36px auto 8px;
+        text-align: center;
+      }
+      .works-label {
+        margin: 0 0 24px;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .works ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 22px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .works a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: var(--faint);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .works a:hover,
+      .works a:focus-visible {
+        color: var(--text);
+      }
+      .works svg {
+        width: 44px;
+        height: 44px;
+        fill: currentColor;
+      }
+      .works span {
+        font-size: 14px;
+      }
+      @media (max-width: 520px) {
+        .works ul {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 22px 8px;
+        }
+        .works svg {
+          width: 36px;
+          height: 36px;
+        }
+        .works span {
+          font-size: 13px;
+        }
+      }
+
       .shot {
         margin: 40px 0 8px;
       }
@@ -684,6 +742,22 @@
         border: 1px solid var(--border);
         border-radius: 12px;
         background: var(--bg-raised);
+      }
+
+      /* A card reached from the row of marks under the screenshot: clear of
+         the sticky bar, and lit for a moment so the eye finds it. */
+      .card[id] {
+        scroll-margin-top: 96px;
+      }
+      .card:target {
+        animation: card-lit 2.4s ease-out;
+      }
+      @keyframes card-lit {
+        0%,
+        40% {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px var(--accent-soft);
+        }
       }
 
       /* The icon carries the meaning, so it is drawn at a size you can read
@@ -1065,7 +1139,19 @@
         color: var(--warn);
       }
       .cat-status.planned {
-        color: var(--violet);
+        color: var(--faint);
+      }
+      /* A board ESP-KVM does not support yet: grey until someone asks for it. */
+      .cat-card-off .cat-photo img {
+        filter: grayscale(1);
+        opacity: 0.55;
+      }
+      .cat-card-off .cat-model {
+        color: var(--muted);
+      }
+      .cat-card-off:hover .cat-photo img {
+        filter: none;
+        opacity: 0.9;
       }
       .cat-card-add .cat-photo {
         background: var(--bg);
@@ -1798,6 +1884,68 @@
 
       /* ---- blog ---------------------------------------------------------- */
 
+      /* ---- integrations ------------------------------------------------- */
+
+      .integration-mark svg {
+        display: block;
+        width: 48px;
+        height: 48px;
+        margin: 4px 0 14px;
+        fill: currentColor;
+        color: var(--muted);
+      }
+      /* Screenshots of a phone app are tall: keep them phone-sized. */
+      .integration-page .post-body img {
+        max-width: 340px;
+        margin: 0 auto;
+      }
+      .integration-lead {
+        margin: 10px 0 0;
+        font-size: 18px;
+        color: var(--muted);
+      }
+      .integration-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+        margin: 24px 0;
+        padding: 0;
+        list-style: none;
+      }
+      .integration-list a {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto;
+        align-content: center;
+        column-gap: 14px;
+        row-gap: 2px;
+        height: 100%;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-raised);
+        color: var(--text);
+        text-decoration: none;
+      }
+      .integration-list a:hover {
+        border-color: var(--accent);
+      }
+      .integration-list svg {
+        grid-row: 1 / span 2;
+        align-self: center;
+        width: 36px;
+        height: 36px;
+        fill: currentColor;
+        color: var(--muted);
+      }
+      .integration-name {
+        font-weight: 600;
+      }
+      .integration-tip {
+        font-size: 14px;
+        color: var(--muted);
+      }
+
       .post {
         max-width: var(--maxw);
         margin: 0 auto;
@@ -2148,3 +2296,12 @@
       .post-list {
         margin-bottom: 48px;
       }
+
+/* A checked board's own page (/boards/all/<id>/): the four needs as marks. */
+.every-checks { list-style: none; padding-left: 0; }
+.every-checks li { margin-bottom: 8px; padding-left: 26px; text-indent: -26px; }
+.every-checks .mk { display: inline-block; width: 26px; text-indent: 0; font-weight: 700; }
+.every-checks .mk-y { color: var(--ok); }
+.every-checks .mk-n { color: var(--warn); }
+.every-checks .mk-q { color: var(--faint); }
+.every-steps li { margin-bottom: 6px; }

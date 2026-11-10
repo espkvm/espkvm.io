@@ -1,6 +1,6 @@
 ---
 title: 0.80.0 - ESP-KVM for the JetKVM Mini
-description: The first ESP-KVM version for the JetKVM Mini and Mini W. Along the way every board got a Buttons section with up to four buttons, a brightness setting and a page time for the status display.
+description: Open-source custom firmware for the JetKVM Mini and Mini W: the first ESP-KVM version for both. Along the way every board got a Buttons section with up to four buttons, a brightness setting and a page time for the status display.
 tags: hardware, boards, display
 date: 2026-11-09 22:00
 image: /assets/blog/0-80-0-esp-kvm-for-the-jetkvm-mini/hero.webp
@@ -10,7 +10,7 @@ The JetKVM Mini is a small finished KVM, 42 x 42 x 23 mm. Inside is the ESP32-P4
 
 ## A first version
 
-This is the first ESP-KVM version for the Mini, and it has not been through enough testing yet. It cannot harm the device: at worst the image does not start, and you flash it again over USB. Still, for now flashing it is at your own risk. Back up the flash first, as described below: the backup is the only way back to JetKVM's firmware. Once the testing is done, I will say so on the [Mini's page](/boards/jetkvm-mini/), and from then on it can be installed without any worry.
+This is the first ESP-KVM version for the Mini, and it has not been through enough testing yet. It cannot harm the device: at worst the image does not start, and you flash it again over USB. Still, for now flashing it is at your own risk. Back up the flash first, as described below. Once the testing is done, I will say so on the [Mini's page](/boards/jetkvm-mini/), and from then on it can be installed without any worry.
 
 ## What the images use
 
@@ -34,10 +34,13 @@ The same panel type, ST7789 240x240, also works as a separate module on any boar
 
 JetKVM's firmware takes only updates signed by JetKVM, so ESP-KVM goes on over USB:
 
-1. Check the eFuses with `espefuse.py summary`. With Secure Boot or flash encryption on, the device will not run anything unsigned.
-2. Turn on "USB debugging" in JetKVM's settings, so the USB port stays open for the flasher.
-3. Back up the whole flash. The [flasher](/flash/) has a new button for it, Back up the flash, which saves the 16 MB to a file. It works on any ESP32-P4 board.
-4. Flash ESP-KVM from the flasher.
+1. Turn on USB Debugging in JetKVM's Settings, Advanced, and restart the Mini. Without it the flashing port turns off soon after start.
+2. Unplug the Mini from the target and connect its EXT port to your computer with a USB-C cable that carries data.
+3. Check the eFuses with `espefuse.py summary`. With Secure Boot or flash encryption on, the device will not run anything unsigned.
+4. Back up the whole flash. The [flasher](/flash/) has a new button for it, Back up the flash, which saves the 16 MB to a file. It works on any ESP32-P4 board.
+5. Flash ESP-KVM from the flasher.
+
+The way back is the [Mini's page](/boards/jetkvm-mini/): your backup, or JetKVM's own recovery image.
 
 ![The new button on the flasher.](/assets/blog/0-80-0-esp-kvm-for-the-jetkvm-mini/backup.webp)
 

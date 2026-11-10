@@ -25,6 +25,7 @@ output: boards/all/index.html
   .mk-n { color: var(--warn); }
   .mk-q { color: var(--faint); }
   .every-try { display: block; margin-top: 4px; font-size: 13px; }
+  .every-steps li { margin-bottom: 6px; }
   /* Eight columns do not fit the 820 px text column: the tables break out of it. */
   .every-wide { width: min(1200px, calc(100vw - 32px)); margin-left: 50%; transform: translateX(-50%); }
   .every-table { font-size: 14px; }
@@ -58,6 +59,16 @@ output: boards/all/index.html
       <li><strong>The P4's high-speed USB on a connector it can drive as a device.</strong> That port is the keyboard and mouse the target sees. Behind a hub, or not brought out at all, it cannot be.</li>
       <li><strong>A network.</strong> An Ethernet PHY on the board, or an ESP32-C6, C5 or C61 for Wi-Fi.</li>
     </ul>
+  </section>
+
+  <section id="add">
+    <h2>Have a board that is not supported yet?</h2>
+    <p>
+      If it is a candidate or a maybe below, or not in the list at all, one
+      request is enough: I add a board as soon as someone who has it can try
+      a test build.
+    </p>
+<!-- catalog:request_steps -->
   </section>
 
   <section>
