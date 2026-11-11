@@ -1,6 +1,6 @@
 ---
 title: 0.42.0 - two things can no longer share a pin
-description: A settings write that would put two things on one GPIO is refused, a capture driver announces itself instead of being called by name, and a keyboard the target has forgotten can be re-plugged from the console.
+description: A settings write that would put two things on one GPIO is refused, and a capture driver announces itself instead of being called by name. A keyboard the target has forgotten can be re-plugged from the console.
 tags: hardware, console, video
 date: 2026-09-03
 image:

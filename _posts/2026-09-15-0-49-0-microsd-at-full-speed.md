@@ -1,6 +1,6 @@
 ---
 title: 0.49.0 - microSD at full speed
-description: The microSD card now runs at 40 MHz on the Function EV and the P4-ETH, the P4-ETH can write it, and an upload through the console is fifty times faster than before.
+description: The microSD card now runs at 40 MHz on the Function EV and the P4-ETH, and the P4-ETH can write it. An upload through the console is fifty times faster than before.
 tags: storage, media, hardware
 date: 2026-09-15
 ---

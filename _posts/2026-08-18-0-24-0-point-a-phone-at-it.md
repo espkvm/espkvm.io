@@ -1,6 +1,6 @@
 ---
 title: 0.24.0 - point a phone at the screen to get in
-description: The round LCD shows the rescue hotspot as a QR code, the certificate finally names the address DHCP gave the device, and the reset button shows that it heard you.
+description: The round LCD shows the rescue hotspot as a QR code, and the certificate finally names the address DHCP gave the device. The reset button shows that it heard you.
 tags: display, network, security, video
 date: 2026-08-18
 image: /assets/blog/0-24-0-point-a-phone-at-it/qr.webp

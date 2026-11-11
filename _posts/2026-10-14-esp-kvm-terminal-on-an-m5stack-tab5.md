@@ -1,6 +1,6 @@
 ---
 title: An experiment - ESP-KVM terminal on an M5Stack Tab5
-description: ESP-KVM terminal is new, experimental firmware for the M5Stack Tab5 - the target's screen in your hand, with touch, a keyboard and the power buttons, and no browser.
+description: ESP-KVM terminal is new, experimental firmware for the M5Stack Tab5. The target's screen in your hand, with touch, a keyboard and the power buttons, and no browser.
 tags: hardware, terminal
 date: 2026-10-14 22:00
 image: /assets/terminal.webp

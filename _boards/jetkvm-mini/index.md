@@ -1,7 +1,7 @@
 ---
 title: JetKVM Mini
 h1: JetKVM Mini custom firmware
-page_title: JetKVM Mini custom firmware - open-source ESP-KVM for the Mini and Mini W
+page_title: JetKVM Mini custom firmware for the Mini and Mini W - ESP-KVM
 description: Open-source custom firmware for the JetKVM Mini and Mini W, which are built on the ESP32-P4X. ESP-KVM has a first version for each.
 kind: device
 status: untested

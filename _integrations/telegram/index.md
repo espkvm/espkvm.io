@@ -42,6 +42,7 @@ Each of these is a row in the table, so Telegram can get some and a webhook or a
 - **A dashcam clip.** A clip under 50 MB comes as a video that plays in the chat. A bigger one is named, and the file stays on the card.
 - **The Tailscale key.** A reminder 14 days before the node key runs out, or as many days as you set.
 - **The target's log.** With Receive the target's log on, a line with a watched word sends an alert.
+- **New firmware.** With Offer firmware updates on, the device looks once a day for a newer release and says so once, with a link to what changed.
 
 ## What comes with it
 
@@ -54,4 +55,4 @@ An alert that cannot go out waits and goes out later, oldest first. With a micro
 
 ## Good to know
 
-- The same alerts can also go to a webhook and to browsers (Web Push), in any mix.
+- The same alerts can also go to a [webhook](/integrations/webhook/), to [browsers](/integrations/web-push/) and to [ntfy](/integrations/ntfy/), in any mix.

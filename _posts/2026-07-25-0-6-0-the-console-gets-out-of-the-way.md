@@ -1,6 +1,6 @@
 ---
 title: 0.6.0 - the console gets out of the way
-description: The firmware version becomes a badge that shows updates and their progress, diagnostics and media move out of Settings, and the whole button rail can switch sides.
+description: The firmware version becomes a badge that shows updates and their progress. Diagnostics and media move out of Settings, and the whole button rail can switch sides.
 tags: console, update
 date: 2026-07-25
 image: /assets/blog/0-6-0-the-console-gets-out-of-the-way/console.webp

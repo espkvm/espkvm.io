@@ -1,6 +1,6 @@
 ---
-title: PiKVM vs JetKVM vs NanoKVM vs ESP-KVM - an honest IP-KVM comparison
-description: How an open-source IP-KVM with no Linux - firmware on an ESP32-P4 microcontroller - compares with PiKVM, JetKVM, JetKVM Mini, Sipeed NanoKVM and GL.iNet Comet - what each does better, and when to pick something else.
+title: PiKVM vs JetKVM vs NanoKVM vs PicoKVM vs ESP-KVM, compared
+description: How ESP-KVM, an open-source IP-KVM with no Linux, compares with PiKVM, JetKVM, JetKVM Mini, NanoKVM, PicoKVM and GL.iNet Comet. What each does better, and when to pick something else.
 canonical: https://espkvm.io/compare/
 og_type: article
 output: compare/index.html
@@ -208,7 +208,7 @@ output: compare/index.html
 
 <div class="wrap">
   <header class="hero">
-    <h1>ESP-KVM compared with PiKVM, JetKVM, NanoKVM and GL.iNet Comet</h1>
+    <h1>ESP-KVM compared with PiKVM, JetKVM, NanoKVM, PicoKVM and GL.iNet Comet</h1>
     <p class="tagline">
       An honest look at where an IP-KVM on a microcontroller wins, where it
       loses, and when you should buy one of the others instead.
@@ -237,8 +237,9 @@ output: compare/index.html
   </section>
 
   <p class="checked">
-    Checked on 25 September 2026 against each vendor's own pages; the sources
-    are at the bottom. No prices here - they change by the month and by the shop.
+    Checked on 25 September 2026, PicoKVM on 11 November 2026, against each
+    vendor's own pages. The sources are at the bottom. No prices here - they
+    change by the month and by the shop.
   </p>
 
   <h2>The table</h2>
@@ -255,6 +256,7 @@ output: compare/index.html
           <th>JetKVM Mini</th>
           <th>Sipeed NanoKVM</th>
           <th>GL.iNet Comet</th>
+          <th>Luckfox PicoKVM</th>
         </tr>
       </thead>
       <tbody>
@@ -266,6 +268,7 @@ output: compare/index.html
           <td>ESP32-P4X microcontroller, no Linux</td>
           <td>SG2002 RISC-V, Linux (Pro: Axera AX630C)</td>
           <td>Rockchip RV1126, Linux</td>
+          <td>Rockchip RV1106G3, Linux</td>
         </tr>
         <tr>
           <td>What you get</td>
@@ -275,6 +278,7 @@ output: compare/index.html
           <td>Finished appliance, on sale since 26 October 2026</td>
           <td>Finished units (Lite is partly DIY)</td>
           <td>Finished appliance</td>
+          <td>Finished appliance: a bare board, or in a metal case with a touch display</td>
         </tr>
         <tr>
           <td>Video</td>
@@ -284,6 +288,7 @@ output: compare/index.html
           <td>1080p30 or 720p60, H.264</td>
           <td>1080p60, MJPEG and H.264 (Pro: 4K)</td>
           <td>H.264, up to 4K input</td>
+          <td>1080p60, H.264 and H.265, 80-200 ms claimed</td>
         </tr>
         <tr>
           <td>Virtual media</td>
@@ -291,6 +296,7 @@ output: compare/index.html
           <td>Yes</td>
           <td>Yes</td>
           <td>Yes, from a microSD card or a URL</td>
+          <td>Yes</td>
           <td>Yes</td>
           <td>Yes</td>
         </tr>
@@ -302,6 +308,7 @@ output: compare/index.html
           <td>Planned as an extension</td>
           <td>Full and PCIe versions</td>
           <td>Add-on board</td>
+          <td>Add-on board</td>
         </tr>
         <tr>
           <td>Network</td>
@@ -311,6 +318,7 @@ output: compare/index.html
           <td>Ethernet or Wi-Fi models</td>
           <td>Ethernet; PoE and Wi-Fi options</td>
           <td>Gigabit Ethernet; PoE, Wi-Fi 6 and 5G models</td>
+          <td>100 Mbit Ethernet</td>
         </tr>
         <tr>
           <td>Remote access</td>
@@ -320,6 +328,7 @@ output: compare/index.html
           <td>JetKVM Cloud, WebRTC through a relay. Tailscale built in</td>
           <td>Tailscale supported</td>
           <td>Tailscale built in; GL.iNet cloud</td>
+          <td>Guides for Tailscale, ZeroTier, WireGuard and others, set up by you</td>
         </tr>
         <tr>
           <td>Home Assistant</td>
@@ -329,12 +338,14 @@ output: compare/index.html
           <td>Built in, over MQTT</td>
           <td>Community integration (HACS)</td>
           <td>Community integration (HACS)</td>
+          <td></td>
         </tr>
         <tr>
           <td>Text off the screen</td>
           <td class="us">Reads the character grid of a text screen (BIOS, boot loader, console): exact, but text modes only</td>
           <td>OCR (Tesseract) on any screen region; can misread</td>
           <td>Two-way clipboard through OS Services, which needs software running on the target</td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -347,6 +358,7 @@ output: compare/index.html
           <td>MIT</td>
           <td>GPL-3.0</td>
           <td>GPL-3.0 (a fork of PiKVM's kvmd)</td>
+          <td>GPL-2.0 (a fork of JetKVM's software)</td>
         </tr>
       </tbody>
     </table>
@@ -386,6 +398,11 @@ output: compare/index.html
     lower frame rate - see the next section.
   </p>
 
+  <h2>PicoKVM vs JetKVM</h2>
+  <p>
+    Luckfox PicoKVM runs a fork of JetKVM's own software, under the same GPL-2.0, on a Rockchip RV1106 like the JetKVM. So the two work much alike: 1080p at 60 fps, virtual media, 100 Mbit Ethernet and power buttons on an add-on board. PicoKVM adds H.265, comes as a bare board or in a small metal case with a 1.54" touch display, and can take its power from the target's USB. JetKVM has its own JetKVM Cloud for access from outside. For PicoKVM, Luckfox has guides for Tailscale, ZeroTier, WireGuard and others that you set up yourself.
+  </p>
+
   <h2>NanoKVM vs PiKVM</h2>
   <p>
     Both run Linux and both do 1080p at 60 fps. PiKVM V4 is built on a
@@ -407,6 +424,11 @@ output: compare/index.html
     support out of the box. If you already run PiKVM and are happy, keep it. If
     you need a KVM on several machines that mostly sit at a BIOS or a console,
     the microcontroller build is simpler to live with.
+  </p>
+
+  <h2>ESP-KVM as a JetKVM alternative</h2>
+  <p>
+    JetKVM is the polished small box: 1080p at 60 fps over H.264, and JetKVM Cloud for access from outside. For smooth video it is the better choice. ESP-KVM is the alternative when you would rather not depend on one box from one company: the same job on boards from several makers, Tailscale and WireGuard in the firmware with no service in between, and no Linux to keep updated. If you already have a JetKVM Mini, ESP-KVM installs on it too: the Mini runs on the ESP32-P4X, the chip ESP-KVM uses. Back up the Mini's flash before you install it. The steps are on the <a href="/boards/jetkvm-mini/">JetKVM Mini page</a>. Luckfox PicoKVM is another alternative close to JetKVM: it runs a fork of JetKVM's software on the same family of Rockchip chip.
   </p>
 
   <h2>ESP-KVM and JetKVM Mini: the same chip</h2>
@@ -489,6 +511,7 @@ output: compare/index.html
     <li>JetKVM Mini: <a href="https://jetkvm.com/blog/introducing-jetkvm-mini" rel="noopener">jetkvm.com/blog/introducing-jetkvm-mini</a>, <a href="https://www.cnx-software.com/2026/09/14/jetkvm-mini-a-low-cost-esp32-p4x-based-kvm-with-ethernet-or-wifi-connectivity/" rel="noopener">CNX Software</a>, <a href="https://nascompares.com/2026/10/14/jetkvm-mini-39-ip-kvm-review-low-price-small-size-high-standard/" rel="noopener">NAS Compares review</a></li>
     <li>Sipeed NanoKVM: <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM)</a>, <a href="https://wiki.sipeed.com/hardware/en/kvm/NanoKVM_Pro/introduction.html" rel="noopener">wiki.sipeed.com (NanoKVM-Pro)</a>, <a href="https://github.com/sipeed/NanoKVM" rel="noopener">github.com/sipeed/NanoKVM</a></li>
     <li>GL.iNet Comet: <a href="https://www.gl-inet.com/en-us/products/gl-rm1" rel="noopener">gl-inet.com (GL-RM1)</a>, <a href="https://docs.gl-inet.com/kvm/en/user_guide/gl-rm1/" rel="noopener">docs.gl-inet.com</a>, <a href="https://github.com/gl-inet/glkvm" rel="noopener">github.com/gl-inet/glkvm</a>, <a href="https://www.cnx-software.com/2025/07/13/review-of-gl-inet-comet-gl-rm1-kvm-over-ip-solution-and-atx-power-control-board/" rel="noopener">CNX Software review</a></li>
+    <li>Luckfox PicoKVM: <a href="https://wiki.luckfox.com/Luckfox-PicoKVM/Introduction" rel="noopener">wiki.luckfox.com</a>, <a href="https://wiki.luckfox.com/Luckfox-PicoKVM/Remote-Access" rel="noopener">remote access</a>, <a href="https://www.luckfox.com/luckfox-picokvm-Base" rel="noopener">luckfox.com</a>, <a href="https://github.com/LuckfoxTECH/kvm" rel="noopener">github.com/LuckfoxTECH/kvm</a>, <a href="https://www.cnx-software.com/2025/09/23/luckfox-picokvm-low-cost-ip-kvm-with-1080p-hdmi-capture-wake-on-lan-virtual-storage-emulation/" rel="noopener">CNX Software</a></li>
     <li>TinyPilot: <a href="https://tinypilotkvm.com/products/tinypilot-voyager-3" rel="noopener">tinypilotkvm.com (Voyager 3)</a>, <a href="https://github.com/tiny-pilot/tinypilot" rel="noopener">github.com/tiny-pilot/tinypilot</a></li>
     <li>Home Assistant: <a href="https://github.com/jetkvm/kvm/pull/1195" rel="noopener">JetKVM MQTT and discovery (PR #1195)</a>, <a href="https://github.com/adamoutler/pikvm-homeassistant-integration" rel="noopener">PiKVM integration</a>, <a href="https://github.com/chmajster/Home-Assistant-nanokvm-rest-api" rel="noopener">NanoKVM integration</a>, <a href="https://github.com/heidrickla/ha-glkvm" rel="noopener">GL.iNet Comet integration</a></li>
     <li>Text off the screen: <a href="https://docs.pikvm.org/ocr/" rel="noopener">PiKVM OCR</a>, <a href="https://jetkvm.com/blog/introducing-jetkvm-os-services" rel="noopener">JetKVM OS Services</a></li>

@@ -59,6 +59,21 @@
    "note": "The high-speed USB lines are not brought out anywhere; its Type-C is the serial bridge."
   },
   {
+   "id": "spotpear-p4-mini",
+   "name": "Spotpear ESP32-P4-MINI-A with ESP32-P4-EXT",
+   "maker": "Spotpear",
+   "verdict": "no",
+   "psram": "y",
+   "camera": "y",
+   "ribbon": "22-pin on the EXT board",
+   "usb": "n",
+   "network": "y",
+   "chip": "1.x",
+   "checked": "2026-11",
+   "note": "A tiny core module and a plug-on board with a C6, a 22-pin camera socket and four USB-C ports. Those four ports hang off a CH334F hub on the high-speed USB, so it is always a host and can never be the target's keyboard. The core's own USB-C is the serial and JTAG port. No Ethernet and no microSD slot.",
+    "src": "https://cdn.static.spotpear.com/uploads/picture/learn/ESP32/ESP32-P4-Pico/esp32-p4-ext.pdf"
+  },
+  {
    "id": "waveshare-pico-core",
    "name": "Waveshare ESP32-P4-Pico, ESP32-P4-Core-DEV-KIT",
    "maker": "Waveshare",

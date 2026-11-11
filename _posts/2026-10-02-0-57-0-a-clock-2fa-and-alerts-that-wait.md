@@ -1,6 +1,6 @@
 ---
 title: 0.57.0 - a clock, 2FA, and alerts that wait
-description: An optional DS3231 clock module keeps the time across a restart with no network, sign-in can ask for a code from an authenticator app, and alerts wait for the network instead of being lost.
+description: An optional DS3231 clock module keeps the time across a restart with no network, and sign-in can ask for a code from an authenticator app. Alerts wait for the network instead of being lost.
 tags: security, hardware, notifications
 date: 2026-10-02 23:00
 image: /assets/blog/0-57-0-a-clock-2fa-and-alerts-that-wait/hero.webp

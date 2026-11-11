@@ -1,5 +1,6 @@
 ---
 title: 0.52.3 - Fixed: firmware install from Home Assistant, and a more reliable MQTT integration
+page_title: Fixed: firmware install from Home Assistant - ESP-KVM 0.52.3
 description: Pressing Install on the firmware card in Home Assistant gave an error and did nothing. One missing field. Then I went through the rest of the MQTT side.
 tags: home-assistant, update
 date: 2026-09-21 20:00

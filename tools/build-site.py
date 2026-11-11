@@ -132,6 +132,8 @@ def read_posts(include_drafts):
             "body": body,
             "path": path,
             "redirect_from": meta.get("redirect_from", ""),
+            "page_title": meta.get("page_title", ""),
+            "image_alt": meta.get("image_alt", ""),
         })
 
     slugs = [p["slug"] for p in posts]
@@ -683,14 +685,14 @@ def compare_page(shell, catalog, capture=False):
     if capture:
         meta = {"title": "Compare HDMI capture boards for ESP-KVM, an open-source IP-KVM",
                 "og_title": "Compare ESP-KVM capture boards",
-                "description": "The HDMI to CSI capture boards ESP-KVM works with side by "
-                               "side: TC358743 or LT6911D, connector, HDMI pass-through, "
+                "description": "The HDMI to CSI capture boards ESP-KVM works with, side by "
+                               "side. TC358743 or LT6911D, connector, HDMI pass-through, "
                                "CEC, audio and the ESP32-P4 boards each one fits."}
     else:
         meta = {"title": "Compare ESP32-P4 boards for ESP-KVM, an open-source IP-KVM",
                 "og_title": "Compare ESP-KVM boards",
                 "description": "The ESP32-P4 boards ESP-KVM runs on side by side, with their rating "
-                               "for an IP-KVM: chip revision, memory, network, HDMI capture, USB to the target, microSD and "
+                               "for an IP-KVM. Chip revision, memory, network, HDMI capture, USB to the target, microSD and "
                                "measured frame rates."}
     meta.update({"canonical": url, "og_type": "website"})
     return render_page(shell, meta, content, json_ld(breadcrumbs(
@@ -1140,8 +1142,10 @@ def every_page(shell, e):
            status=status, verdict=html.escape(EVERY_VERDICT_TEXT[v]), note=html.escape(e["note"]),
            checks=checks, chip=html.escape(chip_line), src=src, ask=ask)
     url = SITE + every_url(e)
-    title = "%s as an IP-KVM - %s - ESP-KVM" % (e["name"], {
-        "candidate": "a candidate", "maybe": "maybe", "no": "why not", "terminal": "as a terminal"}[v])
+    verdict = {"candidate": "a candidate", "maybe": "maybe", "no": "why not", "terminal": "as a terminal"}[v]
+    title = tab_title("%s as an IP-KVM - %s - ESP-KVM" % (e["name"], verdict),
+                      "%s as an IP-KVM - %s" % (e["name"], verdict), "%s as an IP-KVM" % e["name"],
+                      e["name"])
     return render_page(shell, {
         "title": title,
         "og_title": e["name"],
@@ -1503,7 +1507,8 @@ def item_page(shell, item, catalog):
                              (html.unescape(m["title"]), SITE + item["url"])),
                  *([faq] if faq else []))
     return render_page(shell, {
-        "title": m.get("page_title") or "%s - %s with ESP-KVM" % (m["title"], what),
+        "title": tab_title(m["page_title"]) if m.get("page_title") else tab_title(
+            "%s - %s with ESP-KVM" % (m["title"], what), "%s - %s" % (m["title"], what), m["title"]),
         "og_title": m["title"],
         "description": (m.get("description") or m["summary"]) + (
             " Rated %s for an IP-KVM." % fit_text(fit(item)[0])
@@ -1712,7 +1717,7 @@ def catalog_page(shell, catalog):
         "title": "ESP32-P4 boards for an IP-KVM, rated - ESP-KVM boards and cases",
         "og_title": "ESP-KVM boards, rated",
         "description": "The ESP32-P4 boards ESP-KVM runs on, rated for an IP-KVM out of "
-                       "five and sorted best first, which ones have been run on "
+                       "five and sorted best first. Also which ones have been run on "
                        "hardware, the HDMI capture boards, status displays, clocks, "
                        "serial adapters and "
                        "printed cases for them.",
@@ -1816,7 +1821,7 @@ def write_catalog(shell, catalog):
 # One folder per thing ESP-KVM plugs into, in _integrations/: an index.md and
 # the mark as a one-path SVG (Simple Icons, CC0). Front matter: name (the
 # label under the mark), title, description, tip (the mark's tooltip), summary
-# (its line on /integrations/), mark, order, and link.<label>: <url> lines. A body makes a page at
+# (its line on /integrations/), mark, order, foot (the trademark line, or none), and link.<label>: <url> lines. A body makes a page at
 # /integrations/<folder>/. An entry with no body is a mark only, and its href
 # says where the mark leads, so the row on the front page can carry a name
 # before its page is written.
@@ -1884,6 +1889,12 @@ def integrations_row(items):
             '        <ul>\n%s\n        </ul>\n      </nav>' % lis)
 
 
+def integration_foot(meta):
+    """The trademark line: foot overrides it, and foot: none drops it for a generic protocol."""
+    foot = meta.get("foot") or INTEGRATION_FOOT % meta["name"]
+    return "" if foot == "none" else '<p class="post-meta">%s</p>' % html.escape(foot)
+
+
 def integration_page(shell, item):
     m = item["meta"]
     links = ""
@@ -1903,19 +1914,19 @@ def integration_page(shell, item):
       </div>
       <footer class="post-foot">
         {links}
-        <p class="post-meta">{foot}</p>
+        {foot}
       </footer>
     </article>
 """.format(mark=mark_svg(item), title=html.escape(m["title"]), description=m["description"],
            body=render_markdown(item["body"], item["path"]), links=links,
-           foot=html.escape(INTEGRATION_FOOT % m["name"]))
+           foot=integration_foot(m))
     url = SITE + item["url"]
     ld = json_ld(
         {"@type": "TechArticle", "headline": m["title"], "description": html.unescape(m["description"]),
          "url": url, "mainEntityOfPage": url, "author": PUBLISHER, "publisher": PUBLISHER},
         breadcrumbs(("ESP-KVM", SITE + "/"), ("Integrations", SITE + "/integrations/"), (m["title"], url)))
     return render_page(shell, {
-        "title": m.get("page_title") or "%s - ESP-KVM" % m["title"],
+        "title": tab_title(m.get("page_title") or "%s - ESP-KVM" % m["title"]),
         "og_title": m["title"],
         "description": m["description"],
         "canonical": url,
@@ -1939,10 +1950,10 @@ def integrations_index(shell, items):
 {tiles}
       </ul>
       <footer class="post-foot">
-        <p class="post-meta">{foot}</p>
+        {foot}
       </footer>
     </article>
-""".format(tiles=tiles, foot=html.escape(
+""".format(tiles=tiles, foot='<p class="post-meta">%s</p>' % html.escape(
         "The names and marks belong to their owners. ESP-KVM is an independent open-source "
         "project and is not affiliated with or endorsed by any of them."))
     url = SITE + "/integrations/"
@@ -1990,8 +2001,8 @@ VERSION_LEAD = re.compile(r"^(\d+\.\d+\.\d+(?:\s*(?:to|and|,)\s*\d+\.\d+\.\d+)*)
 def post_title_tag(title):
     m = VERSION_LEAD.match(title)
     if m:
-        return "%s - ESP-KVM %s" % (m.group(2), m.group(1))
-    return "%s - ESP-KVM" % title
+        return tab_title("%s - ESP-KVM %s" % (m.group(2), m.group(1)), "%s - ESP-KVM" % m.group(2), m.group(2))
+    return tab_title("%s - ESP-KVM" % title, title)
 
 
 def json_ld(*objs):
@@ -2016,6 +2027,22 @@ def faq_ld(body, where):
     return {"@type": "FAQPage", "mainEntity": items} if items else None
 
 
+def details_faq_ld(body):
+    """The <details class="faq-item"> blocks of an HTML page as FAQPage data, so the
+    questions a page already answers can show as such in a search result."""
+    items = []
+    for q, a in re.findall(r'<details class="faq-item"[^>]*>\s*<summary>(.*?)</summary>(.*?)</details>',
+                           body, re.S):
+        def plain(t):
+            t = re.sub(r"<(?:/p|/li|/td|/th|br\s*/?|/h\d)>", " ", t)  # block ends keep a gap
+            return html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t))).strip()
+        q, a = plain(q), plain(a)
+        if q and a:
+            items.append({"@type": "Question", "name": q,
+                          "acceptedAnswer": {"@type": "Answer", "text": a}})
+    return {"@type": "FAQPage", "mainEntity": items} if items else None
+
+
 def breadcrumbs(*crumbs):
     return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": name, "item": url}
@@ -2032,13 +2059,44 @@ def safe(text):
     return text.replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
+META_DESC_MAX = 160
+TITLE_MAX = 70
+
+
+def tab_title(*variants):
+    """The first of the variants, longest first, that fits in 70 characters: past that a
+    search page cuts the title off."""
+    for v in variants:
+        if len(html.unescape(v)) <= TITLE_MAX:
+            return v
+    sys.exit("title over %d characters, shorten it: %s" % (TITLE_MAX, variants[-1]))
+
+
+def meta_description(text):
+    """The <meta name="description">: whole sentences of the description while they
+    fit in 160 characters, which is what a search page shows. The lead on the page
+    and og:description keep all of it. The build stops if the first sentence alone
+    is longer, so a cut never lands mid-sentence."""
+    plain = html.unescape(re.sub(r"<[^>]+>", "", text)).strip()
+    out = ""
+    for sentence in re.split(r"(?<=[.!?])\s+", plain):
+        joined = (out + " " + sentence).strip()
+        if len(joined) > META_DESC_MAX:
+            break
+        out = joined
+    if len(out) < 25:
+        sys.exit("description: the first sentence must fit in %d characters (search pages "
+                 "cut the rest): %s" % (META_DESC_MAX, plain[:120]))
+    return out
+
+
 def render_page(shell, meta, content, page_head=""):
     with open(TEMPLATE, encoding="utf-8") as fh:
         page = fh.read()
 
     fields = {
-        "title": safe(meta["title"]),
-        "description": safe(meta["description"]),
+        "title": safe(tab_title(meta["title"])),
+        "description": html.escape(meta_description(meta["description"])),
         "canonical": meta["canonical"],
         "og_title": safe(meta.get("og_title") or meta["title"]),
         "og_description": safe(meta.get("og_description") or meta["description"]),
@@ -2100,6 +2158,9 @@ def build_pages(shell, catalog, integrations=()):
         body = fill_catalog(body, catalog)
         body = body.replace("<!-- integrations -->", integrations_row(integrations))
         body = link_boards(body, set(catalog["by_id"]))
+        faq = details_faq_ld(body)
+        if faq:
+            head.append(json_ld(faq).rstrip("\n"))
         body = re.sub(r"\n{3,}", "\n\n", body).strip("\n")
         write(os.path.join(ROOT, meta["output"]),
               render_page(shell, meta, body, "\n".join(head)))
@@ -2412,8 +2473,11 @@ def share_links(url, text):
 def post_page(shell, post, known=frozenset()):
     hero = ""
     if post["image"]:
-        hero = ('<figure class="post-hero"><img src="%s" alt="" loading="lazy" />'
-                "</figure>" % html.escape(post["image"]))
+        # The hero carries the post's title as a picture, so the title is its alt
+        # unless image_alt says more.
+        hero_alt = post["image_alt"] or html.unescape(re.sub(r"<[^>]+>", "", post["title"]))
+        hero = ('<figure class="post-hero"><img src="%s" alt="%s" loading="lazy" />'
+                "</figure>" % (html.escape(post["image"]), html.escape(hero_alt)))
         # image_link: the hero opens that page, e.g. the table it is a picture of.
         if post["image_link"]:
             hero = hero.replace("<img", '<a href="%s" aria-label="Open the page this picture is from"><img' % html.escape(post["image_link"]), 1)
@@ -2480,11 +2544,12 @@ def post_page(shell, post, known=frozenset()):
          "keywords": ", ".join(post["tags"])},
         breadcrumbs(("ESP-KVM", SITE + "/"), ("Blog", SITE + "/blog/"), (plain_title, url)))
     return render_page(shell, {
-        "title": post_title_tag(post["title"]),
+        "title": tab_title(post["page_title"]) if post["page_title"] else post_title_tag(post["title"]),
         "og_title": post["title"],
         "description": post["description"],
         "canonical": url,
         "image": image,
+        "image_alt": post["image_alt"] or html.unescape(re.sub(r"<[^>]+>", "", post["title"])),
         "og_type": "article",
     }, content, ld)
 

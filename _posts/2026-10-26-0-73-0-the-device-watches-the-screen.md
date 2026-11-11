@@ -1,6 +1,6 @@
 ---
 title: 0.73.0 - The device watches the screen
-description: Screen areas. Draw a rectangle on the picture and the device watches it with no tab open, for a change, a picture that stops moving, a saved picture or a colour. Plus a first-run question about profiles and a remote that docks under the picture.
+description: Screen areas: draw a rectangle on the picture and the device watches it with no tab open. It looks for a change, a picture that stops moving, a saved picture or a colour. Plus a first-run question about profiles and a remote that docks under the picture.
 tags: automation, console
 date: 2026-10-26 21:00
 image: /assets/blog/0-73-0-the-device-watches-the-screen/hero.webp

@@ -1,6 +1,6 @@
 ---
 title: Compare the boards side by side
-description: A new page puts the ESP32-P4 boards ESP-KVM runs on in one table - chip, memory, network, capture, the port to the target and the measured frame rate - with the best of the chosen boards marked.
+description: A new page puts the ESP32-P4 boards ESP-KVM runs on in one table, with the best of the chosen boards marked. Chip, memory, network, capture, the port to the target and the measured frame rate.
 tags: boards, hardware
 date: 2026-10-12 21:30
 image: /assets/blog/compare-boards/hero.webp

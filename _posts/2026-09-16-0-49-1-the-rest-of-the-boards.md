@@ -1,6 +1,6 @@
 ---
 title: 0.49.1 - microSD on every board, and a faster virtual drive
-description: Every board with a card slot now turns on the slot's regulator, the target reads the virtual drive at 9 MB/s instead of 5.6, and swapping the image reaches the target without re-plugging the cable.
+description: Every board with a card slot now turns on the slot's regulator, and the target reads the virtual drive at 9 MB/s instead of 5.6. Swapping the image reaches the target without re-plugging the cable.
 tags: storage, media, hardware
 date: 2026-09-16
 ---

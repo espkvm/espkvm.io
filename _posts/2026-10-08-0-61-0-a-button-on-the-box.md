@@ -1,6 +1,6 @@
 ---
 title: 0.61.0 - a button on the box, and a console you can trim
-description: A push button on the device that runs an action, a UI tab to hide the buttons you never use, full screen with nothing but the picture, and four more M5Stack units.
+description: A push button on the device that runs an action, and a UI tab to hide the buttons you never use. Also full screen with nothing but the picture, and four more M5Stack units.
 tags: console, hardware, display
 date: 2026-10-08 22:00
 image: /assets/blog/0-61-0-a-button-on-the-box/hero.webp

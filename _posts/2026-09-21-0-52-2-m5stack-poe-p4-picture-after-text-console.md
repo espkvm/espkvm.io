@@ -1,5 +1,6 @@
 ---
 title: 0.52.2 - Fixed: no picture on the M5Stack PoE-P4 after the target switches to a text console
+page_title: Fixed: no picture on the M5Stack PoE-P4 in a text console - ESP-KVM
 description: The picture vanished when the target switched to a text console, and the firmware had an answer for exactly that - behind a check the board could never pass.
 tags: video, diagnostics, console
 date: 2026-09-21 06:00

@@ -1,6 +1,6 @@
 ---
 title: The demo is a whole fake computer now
-description: The interactive demo moved to its own address and stopped being a screenshot: it is the real console, driving a machine that boots, crashes and lets you update its firmware.
+description: The interactive demo moved to its own address and stopped being a screenshot. It is the real console, driving a machine that boots, crashes and lets you update its firmware.
 tags: demo, console
 date: 2026-08-27
 image: /assets/blog/the-demo-is-a-whole-fake-computer/sheep.webp

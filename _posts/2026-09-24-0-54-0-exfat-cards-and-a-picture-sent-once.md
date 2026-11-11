@@ -1,5 +1,6 @@
 ---
 title: 0.54.0 - exFAT cards, all keys in full screen, and a picture that left the device twice
+page_title: exFAT cards and all keys in full screen - ESP-KVM 0.54.0
 description: A microSD card straight out of the packet works now, even above 32 GB. The console can send Alt+Tab and the Windows key to the target. And every frame had been leaving the device twice.
 tags: storage, console, video
 date: 2026-09-24 12:00

@@ -1,6 +1,6 @@
 ---
 title: 0.63.0 - a Let's Encrypt certificate over Tailscale
-description: The device gets a real certificate for its tailnet name and renews it itself, so a browser on the tailnet opens the console with no warning and nothing to import.
+description: The device gets a real certificate for its tailnet name and renews it itself. A browser on the tailnet opens the console with no warning and nothing to import.
 tags: security, network
 date: 2026-10-11 18:00
 image: /assets/blog/0-63-0-lets-encrypt-over-tailscale/hero.webp

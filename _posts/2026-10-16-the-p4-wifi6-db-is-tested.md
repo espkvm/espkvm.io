@@ -1,5 +1,6 @@
 ---
 title: The ESP32-P4-WIFI6-DB runs ESP-KVM, and the browser flasher talks to it now
+page_title: The ESP32-P4-WIFI6-DB runs ESP-KVM, and the flasher talks to it
 description: The Waveshare ESP32-P4-WIFI6-DB is tested on hardware - Wi-Fi through its ESP32-C5, a 1080p30 picture, keyboard and mouse. On the way the browser flasher had to be fixed for boards with a CH343 USB bridge.
 tags: hardware
 date: 2026-10-16 20:00

@@ -2,7 +2,7 @@
 name: Home Assistant
 title: ESP-KVM in Home Assistant
 page_title: Home Assistant IP-KVM over MQTT - ESP-KVM
-description: Turn on MQTT and the KVM shows up in Home Assistant as one device, found by MQTT discovery: sensors for the screen and the target, buttons for power and runbooks, a camera with the screen, and firmware updates.
+description: Turn on MQTT and the KVM shows up in Home Assistant as one device, found by MQTT discovery. Sensors for the screen and the target, buttons for power and runbooks, a camera with the screen, and firmware updates.
 tip: Home Assistant, over MQTT
 summary: Found by MQTT discovery: sensors, buttons, the screen as a camera.
 mark: mark.svg

@@ -210,6 +210,9 @@ output: flash/index.html
       }
       /* The same warning again in words, once a board is picked: the badge says
          which board, this says what it means. */
+      #flash-result { text-align: left; }
+      .flash-tips { margin: .5rem 0 .6rem; padding-left: 1.3rem; }
+      .flash-tips li { margin: .25rem 0; }
       .board-note.warn {
         color: var(--text);
         border-left: 3px solid var(--warn);
@@ -430,7 +433,7 @@ output: flash/index.html
           </span>
         </esp-web-install-button>
         <p class="board-note" id="board-note"></p>
-        <p class="board-note warn" id="flash-result" hidden></p>
+        <div class="board-note warn" id="flash-result" hidden></div>
         <p class="board-note">
           ESP-KVM comes with no warranty; you flash and use it at your own risk.
           <a href="/disclaimer/">Disclaimer</a>.
@@ -500,10 +503,12 @@ output: flash/index.html
         </div>
 
         <div class="note">
-          <strong>If Install fails to connect,</strong> hold the board&rsquo;s
-          BOOT button, press Install, and keep holding until it starts writing.
-          That forces the chip into its bootloader when the automatic reset
-          does not take.
+          <strong>If Install fails to connect</strong> (&ldquo;Failed to
+          initialize&rdquo;), hold the board&rsquo;s BOOT button, press and
+          release RESET, then let go of BOOT, and press Install again. That puts
+          the chip in its bootloader when the automatic reset does not take.
+          Also close anything else using the port: another tab with the serial
+          monitor, Arduino IDE or a terminal.
         </div>
 
         <div class="note">
@@ -707,6 +712,13 @@ output: flash/index.html
       // After an install, ask how it went: a prefilled post in Discussions.
       // A failure is the one I most need to hear about.
       const DISCUSS = "https://github.com/espkvm/espkvm/discussions/new";
+      const FLASH_TIPS = [
+        "Close the dialog. Hold BOOT, press and release RESET, then let go of BOOT. The chip now waits in its bootloader. Press Install again.",
+        "Close anything else that has the port open: another tab with this site's serial monitor, Arduino IDE, idf.py monitor, PuTTY. Only one program can use a serial port at a time.",
+        "Use the board's USB-serial socket, not the OTG one, and a data cable. Some cables only charge, and then the port does not appear at all.",
+        "Unplug the board, wait a few seconds, plug it back in and reload this page.",
+      ];
+
       function report(how, error) {
         const box = document.getElementById("flash-result");
         box.hidden = !how;
@@ -724,13 +736,25 @@ output: flash/index.html
           category = "q-a";
           title = "Install failed on " + name;
           lines.push("Error: " + String(error || "").slice(0, 300), "", "What I tried:", "");
-          text = "The install failed. Try the tips below; if it still fails, post the error " +
-            "and I will look at it. A failed install is the report I need most. ";
+          text = "The install failed. ";
           label = "Post the error";
         }
         const url = DISCUSS + "?category=" + category + "&title=" + encodeURIComponent(title) +
           "&body=" + encodeURIComponent(lines.join("\n"));
         box.textContent = text;
+        if (how !== "done") {
+          // What fixes most failed installs, here where the error shows rather
+          // than further down the page. "Failed to initialize" is nearly all of them.
+          const ol = document.createElement("ol");
+          ol.className = "flash-tips";
+          for (const tip of FLASH_TIPS) {
+            const li = document.createElement("li");
+            li.textContent = tip;
+            ol.appendChild(li);
+          }
+          box.appendChild(ol);
+          box.appendChild(document.createTextNode("If it still fails, post the error and I will look at it. A failed install is the report I need most. "));
+        }
         const a = document.createElement("a");
         a.href = url;
         a.rel = "noopener";
@@ -1013,7 +1037,7 @@ output: flash/index.html
           detectOut.classList.add("warn");
           const msg = e && e.message ? e.message : String(e);
           detectOut.textContent = /No port selected|cancel/i.test(msg)
-            ? "No port chosen."
+            ? "No port chosen. If the list was empty: try the board's other USB socket, or another cable (some only charge)."
             : "Could not read the board: " + msg + ". Hold BOOT while pressing RESET, then try again - or just choose by hand.";
         } finally {
           detectBtn.disabled = false;

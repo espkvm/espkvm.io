@@ -1,6 +1,6 @@
 ---
 title: Two more boards, and a watchdog for a picture that breaks into blocks
-description: 0.46.0 adds the Waveshare ESP32-P4-NANO-WIFI6-DB and the VIEWE ESP32-P4-Pi, and ships a guard for the still-screen fault where the picture goes blocky and heals itself.
+description: 0.46.0 adds the Waveshare ESP32-P4-NANO-WIFI6-DB and the VIEWE ESP32-P4-Pi. It also ships a guard for the still-screen fault where the picture goes blocky and heals itself.
 tags: hardware, video
 date: 2026-09-11
 image: /assets/blog/0-46-0-two-more-boards/boards-two.webp

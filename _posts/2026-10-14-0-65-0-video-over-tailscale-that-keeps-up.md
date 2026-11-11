@@ -1,6 +1,6 @@
 ---
 title: 0.65.0 - video over Tailscale that keeps up
-description: Frame acks, so a slow link shows the newest frame instead of a queue of old ones, and a run of Tailscale fixes that took video between two ESP32-P4 devices from 1-3 fps to 11-14.
+description: Frame acks, so a slow link shows the newest frame instead of a queue of old ones. And a run of Tailscale fixes that took video between two ESP32-P4 devices from 1-3 fps to 11-14.
 tags: video, network, tailscale
 date: 2026-10-14 21:00
 ---

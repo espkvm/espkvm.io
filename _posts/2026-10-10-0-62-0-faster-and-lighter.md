@@ -1,6 +1,6 @@
 ---
 title: 0.62.0 - 155 ms from your mouse to the picture, and twice the free memory
-description: H.264 in the browser lost 170 ms of delay, a button measures the whole round trip, video adapts to a slow link, task stacks were cut to what they use, and a restart no longer signs anyone out.
+description: H.264 in the browser lost 170 ms of delay, and a button measures the whole round trip. Video adapts to a slow link, task stacks were cut to what they use, and a restart no longer signs anyone out.
 tags: console, video, hardware
 date: 2026-10-10 18:00
 image: /assets/blog/0-62-0-faster-and-lighter/hero.webp

@@ -1,6 +1,6 @@
 ---
 title: 0.72.0 - A profile for each device
-description: Device profiles. A Steam Deck gets the relative pointer, a Switch gets the gamepad, and the device switches between them by itself, from what HDMI-CEC or USB says about the target.
+description: Device profiles: a Steam Deck gets the relative pointer, a Switch gets the gamepad. The device switches between them by itself, from what HDMI-CEC or USB says about the target.
 tags: input, console
 date: 2026-10-25 21:00
 image: /assets/blog/0-72-0-a-profile-for-each-device/hero.webp

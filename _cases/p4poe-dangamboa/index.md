@@ -1,7 +1,7 @@
 ---
 title: ESP32-P4 IP-KVM enclosure, enhanced
 author: dangamboa
-summary: jrowny's box for the Waveshare ESP32-P4-WIFI6-POE-ETH, with thicker walls, a microSD slot, an SMA antenna cutout, more vents and four holes for the power and reset wires.
+summary: jrowny's box for the Waveshare ESP32-P4-WIFI6-POE-ETH, with thicker walls, a microSD slot, an SMA antenna cutout. It also has more vents and four holes for the power and reset wires.
 boards: p4-poe
 photo_credit: Photo by the author.
 link.Model on MakerWorld: https://makerworld.com/en/models/3407493-esp32-p4-ip-kvm-enclosure-enhanced

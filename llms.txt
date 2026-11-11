@@ -45,9 +45,14 @@ Key facts:
   volume, playback keys, standby and wake. Also in the API, in runbooks
   (`hdmi standby`, `hdmi key up`) and in Home Assistant. TV boxes, consoles
   and a Raspberry Pi speak CEC; ordinary PCs do not.
-- Push notifications: when a watched phrase appears or the screen goes blank,
-  the device sends a message to Telegram (with a screenshot on the MJPEG codec)
-  or to a webhook. Off by default.
+- Notifications: when a watched phrase appears, the screen goes blank, a
+  dashcam clip is saved or the Tailscale key is about to run out, the device
+  sends a message to Telegram (with a screenshot), to a webhook as JSON, to
+  browsers as Web Push and to an ntfy topic, with a table of which event goes to which channel. Off
+  by default.
+- Upload: recordings, dashcam clips and screenshots go from the card to a
+  WebDAV folder (Nextcloud, ownCloud, a Synology or QNAP share), by hand or as
+  soon as they are saved. Files wait on the card while the server is down.
 - Pasting text types it out as keystrokes, so it follows the target's keyboard
   layout: US English, Russian, Czech, Ukrainian and Lithuanian. A character the
   layout cannot type is reported rather than guessed at.
@@ -99,10 +104,11 @@ Key facts:
 - [Supported boards, rated for an IP-KVM out of five, with capture boards and cases](https://espkvm.io/boards/)
 - [Every ESP32-P4 board, supported or not, and why some cannot work](https://espkvm.io/boards/all/)
 - [JetKVM Mini and Mini W: custom firmware, a first version, not tested enough yet](https://espkvm.io/boards/jetkvm-mini/)
+- [Integrations: Home Assistant, MQTT, Tailscale, WireGuard, Telegram, Web Push, ntfy, webhook, WebDAV](https://espkvm.io/integrations/)
 - [Serial monitor in the browser](https://espkvm.io/serial/)
 - [Tools: read a firmware image, decode a panic, inspect an EDID](https://espkvm.io/tools/)
 - [ESP-KVM terminal on an M5Stack Tab5 (experimental)](https://espkvm.io/terminal/)
-- [Comparison with PiKVM, JetKVM, JetKVM Mini, NanoKVM and GL.iNet Comet](https://espkvm.io/compare/)
+- [Comparison with PiKVM, JetKVM, JetKVM Mini, NanoKVM, PicoKVM and GL.iNet Comet](https://espkvm.io/compare/)
 - [For writers: descriptions, facts, logo files, pictures](https://espkvm.io/press/)
 - [Interactive demo, no hardware needed](https://demo.espkvm.io/)
 - [Blog: what each release changed, and how](https://espkvm.io/blog/)
