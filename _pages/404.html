@@ -330,7 +330,7 @@ noindex: yes
         <a href="/features/">Features</a>
         <a href="/compare/">Compared to other KVMs</a>
         <a href="/scripts/">Macros and runbooks</a>
-        <a href="/agent/">Agent for the target</a>
+        <a href="/espkvm-tools/">ESP-KVM Tools</a>
         <a href="/blog/">Blog</a>
       </div>
       <div class="nf-group">
@@ -371,7 +371,7 @@ noindex: yes
     var SECTIONS = {
       home: "/", boards: "/boards/", flash: "/flash/", blog: "/blog/", features: "/features/",
       compare: "/compare/", tools: "/tools/", serial: "/serial/", scripts: "/scripts/",
-      agent: "/agent/", demo: "https://demo.espkvm.io/", github: "https://github.com/espkvm/espkvm",
+      "espkvm-tools": "/espkvm-tools/", demo: "https://demo.espkvm.io/", github: "https://github.com/espkvm/espkvm",
     };
     var urls = [];
     var sitemap = fetch("/sitemap.xml")
@@ -739,7 +739,7 @@ noindex: yes
         case "boards":
         case "blog":
         case "demo":
-        case "agent":
+        case "espkvm-tools":
           return go(name);
         case "vim":
         case "vi":

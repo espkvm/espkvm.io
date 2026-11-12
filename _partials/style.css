@@ -170,7 +170,7 @@
         gap: 6px;
       }
 
-      /* Icon-only links to the project's Telegram channel and X account. The
+      /* Icon-only links to the project's Telegram group and X account. The
          glyphs are inline SVG like every other icon here - the point of this
          site is that it fetches nothing from a third party. */
       .nav-social {

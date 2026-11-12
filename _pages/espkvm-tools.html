@@ -1,13 +1,15 @@
 ---
-title: ESP-KVM agent
-description: espkvm-agent is a small program for the machine ESP-KVM controls. Over the USB cable it gives the device the machine's name and addresses, the clipboard both ways and a clean shutdown. How to install it on Linux, Windows and macOS, and what it is allowed to do.
-canonical: https://espkvm.io/agent/
+title: ESP-KVM Tools
+description: ESP-KVM Tools is a small program for the machine ESP-KVM controls. Over the USB cable it gives the device the machine's name and addresses, the clipboard both ways and a clean shutdown. How to install it on Linux, Windows and macOS, and what it is allowed to do.
+canonical: https://espkvm.io/espkvm-tools/
 og_type: article
-output: agent/index.html
+output: espkvm-tools/index.html
+redirect_from: /agent/
 ---
 <!--
-  The agent's own page: the blog post stays short and links here. The same
-  facts live in the agent repo's README and PROTOCOL.md; keep them in step.
+  ESP-KVM Tools' own page: the blog post stays short and links here. The same
+  facts live in the tools repo's README and PROTOCOL.md; keep them in
+  step. Not /tools/: that is the page of browser tools.
 -->
 <style>
   .doc {
@@ -37,7 +39,7 @@ output: agent/index.html
 
 <div class="wrap">
   <header class="hero">
-    <h1>ESP-KVM agent</h1>
+    <h1>ESP-KVM Tools</h1>
     <p class="tagline">
       A small program for the machine ESP-KVM is plugged into. It talks to the
       device over the same USB cable as the keyboard and mouse, with no network
@@ -45,8 +47,8 @@ output: agent/index.html
       from its clipboard and can shut it down cleanly.
     </p>
     <p>
-      <a class="btn btn-primary" href="https://github.com/espkvm/agent/releases">Download</a>
-      &nbsp;<a href="https://github.com/espkvm/agent">Source</a> (Apache-2.0)
+      <a class="btn btn-primary" href="https://github.com/espkvm/tools/releases">Download</a>
+      &nbsp;<a href="https://github.com/espkvm/tools">Source</a> (Apache-2.0)
     </p>
   </header>
 
@@ -69,11 +71,11 @@ output: agent/index.html
   <section class="doc">
     <h2>Turn it on in ESP-KVM</h2>
     <p>
-      Settings, Power, "Serial port over USB": set it to <strong>agent</strong>
+      Settings, Power, "Serial port over USB": set it to <strong>ESP-KVM Tools</strong>
       and restart the device. The machine then sees a serial port next to the
       keyboard and mouse. Linux, Windows 10 and 11 and macOS all have the driver
-      built in. The agent finds the port by its USB IDs (303A:4013), so the port
-      name does not matter.
+      built in. The program finds the port by its USB IDs (303A:4013, or
+      303A:4033 with Sound over USB on), so the port name does not matter.
     </p>
     <p>
       The port can't be on together with the gamepad: the two need more USB
@@ -83,39 +85,39 @@ output: agent/index.html
 
   <section class="doc">
     <h2>Install on the machine</h2>
-    <p>Pick the file for the machine from the <a href="https://github.com/espkvm/agent/releases">releases</a>. It is one file, about 3.5 MB.</p>
+    <p>Pick the file for the machine from the <a href="https://github.com/espkvm/tools/releases">releases</a>. It is one file, about 3.5 MB.</p>
 
     <h3>Linux</h3>
     <p>In the desktop session, with the clipboard:</p>
-    <pre><code>sudo ./espkvm-agent-linux-amd64 install --desktop</code></pre>
+    <pre><code>sudo ./espkvm-tools-linux-amd64 install --desktop</code></pre>
     <p>
       It starts at every login of every user. The clipboard needs
       <code>wl-clipboard</code> on Wayland or <code>xclip</code> on X11.
     </p>
     <p>As a system service, for a server with no desktop (no clipboard):</p>
-    <pre><code>sudo ./espkvm-agent-linux-amd64 install</code></pre>
+    <pre><code>sudo ./espkvm-tools-linux-amd64 install</code></pre>
     <p>
-      The service runs as its own user <code>espkvm-agent</code>, not root. Both
+      The service runs as its own user <code>espkvm-tools</code>, not root. Both
       ways add a udev rule that keeps ModemManager away from the port.
       Files for arm64 and 32-bit arm are there too.
     </p>
 
     <h3>Windows</h3>
-    <pre><code>espkvm-agent-windows-amd64.exe install</code></pre>
+    <pre><code>espkvm-tools-windows-amd64.exe install</code></pre>
     <p>From a terminal, no administrator needed. It starts at every login.</p>
 
     <h3>macOS</h3>
-    <pre><code>xattr -d com.apple.quarantine espkvm-agent-darwin-arm64
-./espkvm-agent-darwin-arm64 install</code></pre>
+    <pre><code>xattr -d com.apple.quarantine espkvm-tools-darwin-arm64
+./espkvm-tools-darwin-arm64 install</code></pre>
     <p>The file is not signed yet, hence the first line. It starts at every login.</p>
 
     <h3>Without installing</h3>
     <div class="table-scroll">
       <table>
-        <tr><td><code>espkvm-agent run</code></td><td>answer the device until Ctrl+C</td></tr>
-        <tr><td><code>espkvm-agent find</code></td><td>print which port is ESP-KVM's</td></tr>
-        <tr><td><code>espkvm-agent info</code></td><td>print what it would tell the device</td></tr>
-        <tr><td><code>espkvm-agent uninstall</code></td><td>take it all out again (with sudo on Linux)</td></tr>
+        <tr><td><code>espkvm-tools run</code></td><td>answer the device until Ctrl+C</td></tr>
+        <tr><td><code>espkvm-tools find</code></td><td>print which port is ESP-KVM's</td></tr>
+        <tr><td><code>espkvm-tools info</code></td><td>print what it would tell the device</td></tr>
+        <tr><td><code>espkvm-tools uninstall</code></td><td>take it all out again (with sudo on Linux)</td></tr>
       </table>
     </div>
   </section>
@@ -129,12 +131,12 @@ output: agent/index.html
     <div class="table-scroll">
       <table>
         <tr><td><code>--allow-clipboard-read</code></td><td>the device may read the clipboard, while the screen is not locked</td></tr>
-        <tr><td><code>--allow-power</code></td><td>the device may shut the machine down or restart it. On Linux as a service this adds a polkit rule for the <code>espkvm-agent</code> user</td></tr>
+        <tr><td><code>--allow-power</code></td><td>the device may shut the machine down or restart it. On Linux as a service this adds a polkit rule for the <code>espkvm-tools</code> user</td></tr>
       </table>
     </div>
     <p>
       Whoever controls ESP-KVM already has this machine's keyboard and mouse,
-      so the agent adds little they could not get by typing. The exception is a
+      so the program adds little they could not get by typing. The exception is a
       locked screen: typing gets nowhere there, and the clipboard may still hold
       a password copied a minute ago. That is why reading it is off by default
       and stops while the screen is locked. Linux checks logind's lock flag,
@@ -143,7 +145,7 @@ output: agent/index.html
     </p>
     <p>
       On Linux the system service also runs without capabilities, with most of
-      the system read-only, so a bug in the agent does not hand out root.
+      the system read-only, so a bug in the program does not hand out root.
     </p>
   </section>
 
@@ -151,7 +153,7 @@ output: agent/index.html
     <h2>When something does not work</h2>
     <div class="table-scroll">
       <table>
-        <tr><td>"No agent on the machine yet"</td><td>is the setting on "agent" and was the device restarted? Does <code>espkvm-agent find</code> see the port? On Linux, is the agent running: <code>systemctl status espkvm-agent</code>, or <code>systemctl --user status espkvm-agent</code> for the desktop one</td></tr>
+        <tr><td>"ESP-KVM Tools is not on the machine yet"</td><td>is the setting on "ESP-KVM Tools" and was the device restarted? Does <code>espkvm-tools find</code> see the port? On Linux, is it running: <code>systemctl status espkvm-tools</code>, or <code>systemctl --user status espkvm-tools</code> for the desktop one</td></tr>
         <tr><td>"runs as a system service, which has no clipboard"</td><td>install it with <code>--desktop</code></td></tr>
         <tr><td>"Reading the clipboard is off"</td><td>install it again with <code>--allow-clipboard-read</code></td></tr>
         <tr><td>"The machine's screen is locked"</td><td>unlock it, or send text with Send, which works either way</td></tr>
@@ -163,14 +165,14 @@ output: agent/index.html
   <section class="doc">
     <h2>For scripts</h2>
     <p>The device passes it all on over its REST API:</p>
-    <pre><code>GET  /api/v1/agent             is an agent there, its version and OS
-GET  /api/v1/agent/info        the machine
-GET  /api/v1/agent/clipboard   {"text": "..."}
-POST /api/v1/agent/clipboard   {"text": "..."}
-POST /api/v1/agent/power       {"action": "shutdown"} or {"action": "reboot"}</code></pre>
+    <pre><code>GET  /api/v1/tools             is the program there, its version and OS
+GET  /api/v1/tools/info        the machine
+GET  /api/v1/tools/clipboard   {"text": "..."}
+POST /api/v1/tools/clipboard   {"text": "..."}
+POST /api/v1/tools/power       {"action": "shutdown"} or {"action": "reboot"}</code></pre>
     <p>
-      The protocol between the device and the agent is in
-      <a href="https://github.com/espkvm/agent/blob/main/PROTOCOL.md">PROTOCOL.md</a>.
+      The protocol between the device and the program is in
+      <a href="https://github.com/espkvm/tools/blob/main/PROTOCOL.md">PROTOCOL.md</a>.
     </p>
   </section>
 </div>
