@@ -442,7 +442,7 @@ output: flash/index.html
         <!-- Any release, not only the latest: the image comes from a file on
              this computer, and the page builds the manifest for it. -->
         <details class="file-install" id="file-install">
-          <summary>Install another version from a file</summary>
+          <summary>Install a file: another version or a backup</summary>
           <p>
             The button above always installs the latest release. For an older one,
             or your own build, download the board&rsquo;s
@@ -451,6 +451,12 @@ output: flash/index.html
             and pick it here. It has to be the <code>-merged</code> one: the plain
             <code>.bin</code> is the over-the-network update and does not start on
             its own.
+          </p>
+          <p>
+            A backup from Back up the flash goes here too. Writing it back puts the
+            device as it was when you saved it, settings included. That is also the
+            way back to the firmware a device came with, such as JetKVM&rsquo;s on a
+            JetKVM Mini.
           </p>
           <input type="file" id="file-pick" accept=".bin,application/octet-stream" />
           <p class="file-verdict" id="file-verdict" hidden></p>
@@ -880,15 +886,27 @@ output: flash/index.html
         const rev =
           min >= 300 ? "rev 3.x chips" : max < 300 ? "rev 1.x chips" : "any chip revision";
         const mb = (f.size / 1048576).toFixed(1);
-        say(f.name + " - " + mb + " MB, for " + rev + ". Check that it is the right board.");
+        // A whole-flash backup is exactly the flash's size (4, 8, 16 or 32 MB).
+        // A merged release image stops where its last partition's data ends.
+        const backup = [4, 8, 16, 32].some((n) => f.size === n * 1048576);
+        if (backup) {
+          say(
+            f.name + " - a backup of a whole " + mb.replace(".0", "") + " MB flash. Installing it puts the " +
+              "device back as it was when the backup was made, its settings included. Check that it " +
+              "is from this device.",
+          );
+        } else {
+          say(f.name + " - " + mb + " MB, for " + rev + ". Check that it is the right board.");
+        }
         const image = URL.createObjectURL(f);
         const manifest = URL.createObjectURL(
           new Blob(
             [
               JSON.stringify({
-                name: "ESP-KVM (" + f.name + ")",
+                name: backup ? "Flash backup (" + f.name + ")" : "ESP-KVM (" + f.name + ")",
                 version: f.name,
-                new_install_prompt_erase: true,
+                // A backup covers the whole flash, so there is nothing left to erase.
+                new_install_prompt_erase: !backup,
                 builds: [{ chipFamily: "ESP32-P4", parts: [{ path: image, offset: 0 }] }],
               }),
             ],
@@ -898,7 +916,7 @@ output: flash/index.html
         fileUrls = [image, manifest];
         fileBtn.setAttribute("manifest", manifest);
         fileBtn.hidden = false;
-        track("flash_file", { rev: min >= 300 ? "3" : "1" });
+        track("flash_file", { rev: min >= 300 ? "3" : "1", backup: backup ? "1" : "0" });
       });
 
       const render = () => {
@@ -1079,8 +1097,9 @@ output: flash/index.html
           setTimeout(() => URL.revokeObjectURL(a.href), 60000);
           track("flash_backup", { mb: Math.round(r.size / 1048576) });
           backupOut.textContent =
-            "Saved " + name + " (" + Math.round(r.size / 1048576) + " MB). Keep it: writing it back with " +
-            "esptool (write-flash 0x0 " + name + ") restores the device as it was.";
+            "Saved " + name + " (" + Math.round(r.size / 1048576) + " MB). Keep it: pick it under " +
+            "Install a file below, or write it back with esptool (write-flash 0x0 " + name + "), " +
+            "and the device is back as it was.";
         } catch (e) {
           backupOut.classList.add("warn");
           const msg = e && e.message ? e.message : String(e);

@@ -25,4 +25,8 @@ Both side buttons on the Mini can now be set up. The top one still flips the sta
 
 The round GC9A01 and the Mini's ST7789 now turn in quarters: Settings, Display, Turned. Upright, 90° either way or upside down, for a box that stands on its side. A screen that was set upside down stays that way.
 
+## A backup goes back from the flasher
+
+The [web flasher](/flash/) could already save the whole flash before the first install. Now it writes that backup back too: pick the file under "Install a file: another version or a backup". The device is then as it was when you saved it, settings included. On a JetKVM Mini that is also the way back to JetKVM's own firmware.
+
 The full list is in the [changelog](https://github.com/espkvm/espkvm/blob/main/CHANGELOG.md).
