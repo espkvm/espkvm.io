@@ -6,7 +6,7 @@ date: 2026-11-12 23:00
 image: /assets/blog/0-83-0-custom-firmware-for-the-jetkvm-mini-is-ready/hero.webp
 ---
 
-Custom firmware for the JetKVM Mini is ready. ESP-KVM images for the Mini came out in 0.80.0 as a first version, made from the pins in JetKVM's open firmware. Since then I have had a Mini on the desk, and everything I tried works.
+Custom firmware for the JetKVM Mini is ready. The Mini has an ESP32-P4X inside, the chip ESP-KVM runs on, and JetKVM opened its firmware, so the pins were known. I had a Mini on the desk, and everything I tried works.
 
 ## What I checked on the Mini
 
@@ -17,7 +17,7 @@ Custom firmware for the JetKVM Mini is ready. ESP-KVM images for the Mini came o
 - The microSD slot.
 - The "Back up the flash" button on the [flasher](/flash/). I also read the flash with esptool, and the two files were the same to the byte.
 
-The "first version" warning is off the [Mini's page](/boards/jetkvm-mini/), and that page has the steps to install it and to go back. The Mini W is still untried: I do not have one.
+The [Mini's page](/boards/jetkvm-mini/) has the steps to install it and to go back. The Mini W is the same hardware apart from its Wi-Fi, which has not run on one yet: I do not have a Mini W.
 
 Here the Mini takes an update over the network. The screen wakes from its sleep, shows the progress, restarts and comes back with the pages I left on.
 

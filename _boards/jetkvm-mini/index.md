@@ -26,7 +26,7 @@ photo_style: product
 
 The JetKVM Mini is a small ready-made KVM. Inside is the ESP32-P4X, the chip ESP-KVM runs on, with the same 32 MB of PSRAM and a TC358743 for the HDMI input. The box, the screen and the USB port are already there, so it makes a very nice home for ESP-KVM. Thank you, JetKVM, for building it and for publishing its firmware.
 
-ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the network, keyboard and mouse, the screen and its button, the microSD slot and sound. The [Mini W](/boards/jetkvm-mini-w/) is still a first version: I do not have one.
+ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the network, keyboard and mouse, the screen and its button, the microSD slot and sound. On the [Mini W](/boards/jetkvm-mini-w/) everything but the Wi-Fi is the same hardware. Its Wi-Fi has not run yet: I do not have one.
 
 ## What the image uses
 
@@ -35,8 +35,9 @@ ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the net
 - The microSD slot, for virtual media and recordings.
 - Sound over USB: the Mini offers the target a USB speaker, since its HDMI sound is not wired. Turn it on in Settings, Audio.
 - The 240x240 screen, switched on from the first boot for the address and the status.
-- The SW2 button on the side, for the password reset.
-- The SW3 button: a press shows the next page on the screen, holding it turns the screen off or on. In Settings, Buttons it can do something else, such as press the target's power button.
+- The top button (SW3): a press shows the next page on the screen, holding it turns the screen off or on.
+- The bottom button (SW2): a press opens a menu on the screen, for power on over USB, Wake-on-LAN, a screenshot, a restart and more. Held at start-up it resets the password.
+- Both buttons can do something else in Settings, Buttons.
 
 ## Before you flash
 
