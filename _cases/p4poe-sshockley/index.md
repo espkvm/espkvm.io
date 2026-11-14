@@ -11,6 +11,6 @@ photo: case.webp
 photo_style: photo
 ---
 
-By [Steve Shockley](https://codeberg.org/sshockley). The Waveshare ESP32-P4-WIFI6-POE-ETH sits in the tray, and Waveshare's HDMI board sits on the inside of the lid, so the lid folds over on the ribbon cable. The tray has a honeycomb vent and holes and channels for the Boot and Power buttons. The FreeCAD model is parametric, so it is easy to change for another cable. The files are free for non-commercial use under Creative Commons.
+By [Steve Shockley](https://codeberg.org/sshockley). The Waveshare ESP32-P4-WIFI6-POE-ETH sits in the tray, and Waveshare's HDMI board sits on the inside of the lid, so the lid folds over on the ribbon cable. The honeycomb grille in the tray holds the small speaker that comes with the board, and without the speaker it is a vent. The tray also has holes and channels for the Boot and Power buttons. The FreeCAD model is parametric, so it is easy to change for another cable. The files are free for non-commercial use under Creative Commons.
 
 There is a [post about it](/blog/a-third-case-for-the-p4-poe/).

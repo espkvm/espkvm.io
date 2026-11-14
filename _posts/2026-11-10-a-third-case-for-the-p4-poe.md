@@ -8,9 +8,9 @@ image: /assets/blog/a-third-case-for-the-p4-poe/hero.webp
 
 Steve Shockley shared [a case](https://www.printables.com/model/1867223-esp32-p4-wifi6-poe-eth-kvm-case) for the Waveshare ESP32-P4-WIFI6-POE-ETH and Waveshare's HDMI to CSI board. Before it there were [jrowny's box](/cases/p4poe-jrowny/) and [dangamboa's remix](/cases/p4poe-dangamboa/).
 
-![The closed case: Ethernet, USB and microSD on one side, a honeycomb vent on top.](/assets/blog/a-third-case-for-the-p4-poe/case.webp)
+![The closed case: Ethernet, USB and microSD on one side, the honeycomb speaker grille on top.](/assets/blog/a-third-case-for-the-p4-poe/case.webp)
 
-There are two printed parts. The P4 board goes in the tray, and the HDMI board sits on the inside of the lid. The ribbon cable stays connected, and the lid folds over onto the tray. The tray has a honeycomb vent, and the latest version adds holes and channels for the Boot and Power buttons. The photos show an earlier version without them.
+There are two printed parts. The P4 board goes in the tray, and the HDMI board sits on the inside of the lid. The ribbon cable stays connected, and the lid folds over onto the tray. The honeycomb grille in the tray holds the small speaker that comes with the board, and without the speaker it is a vent. The latest version adds holes and channels for the Boot and Power buttons. The photos show an earlier version without them.
 
 ![Open: the HDMI board on the lid, the P4 board in the tray, the ribbon between them.](/assets/blog/a-third-case-for-the-p4-poe/open.webp)
 
