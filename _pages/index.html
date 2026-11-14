@@ -674,6 +674,25 @@ output: index.html
             </p>
           </div>
         </details>
+        <details class="faq-item" id="faq-vga">
+          <summary>Does it work with a VGA, DVI or DisplayPort target?</summary>
+          <div class="prose">
+            <p>
+              Yes, through an adapter to HDMI. A passive DVI-to-HDMI adapter,
+              or a passive one on a DP++ port, is just another plug, and
+              everything works as with HDMI.
+            </p>
+            <p>
+              An <strong>active VGA-to-HDMI converter</strong> works too, but
+              the target then reads the converter&rsquo;s EDID, not the
+              device&rsquo;s, and may pick a mode the capture cannot take. If
+              there is no picture or the console says &ldquo;too fast&rdquo;,
+              set the target to 1280x720 or 1024x768 at 60&nbsp;Hz, or 1080p
+              at 30&nbsp;Hz. The same goes for an active DisplayPort adapter.
+              <a href="https://github.com/espkvm/espkvm/blob/main/docs/TROUBLESHOOTING.md#a-vga-dvi-or-displayport-target">More, with an xrandr example</a>.
+            </p>
+          </div>
+        </details>
         <details class="faq-item">
           <summary>The mouse pointer lands in the wrong place on the target &mdash; why?</summary>
           <div class="prose">
@@ -749,8 +768,9 @@ output: index.html
               does the checking and the download; the device itself never reaches
               the internet. An update that fails to start rolls back to the version
               that worked. The same happens when the console cannot reach the
-              device within 10 minutes of the update, so a broken network setting
-              undoes itself too.
+              device within 10 minutes of the update. A change to the network
+              settings gets the same 10 minutes: if it cuts the device off, the old
+              settings come back by themselves.
             </p>
             <p>
               To go back to an older release, turn on <strong>Let the device fetch

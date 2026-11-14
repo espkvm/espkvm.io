@@ -571,7 +571,7 @@ def compare_page(shell, catalog, capture=False):
     head = "".join(
         '<th class="cmp-col" data-id="{id}" scope="col"><div class="cmp-head">'
         '<a href="{url}" tabindex="-1" aria-hidden="true">'
-        '<img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></a>'
+        '<img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="{title}" /></a>'
         '{size}<a href="{url}"><span>{title}</span></a></div></th>'.format(
             id=html.escape(d["id"]), url=d["url"], photo=d["photo"], w=d["photo_w"],
             h=d["photo_h"], size=head_size(d), title=html.escape(d["meta"]["title"]))
@@ -965,7 +965,7 @@ def tile(item):
         rating = ('\n              <span class="cat-fit" data-fit="{e}" title="{tip}" aria-label="Fit for a KVM: {t}">{i}</span>'
                   .format(e=earned, tip=html.escape(fit_title(item)), t=fit_text(halves), i=fit_icons(halves)))
     return """          <a class="cat-card{off}" href="{url}" data-f="{keys}" data-item-id="{iid}" data-item-name="{iname}" data-item-category="{icat}">
-            <span class="cat-photo{fit}"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="" /></span>
+            <span class="cat-photo{fit}" aria-hidden="true"><img src="{photo}" width="{w}" height="{h}" loading="lazy" alt="{iname}" /></span>
             <span class="cat-body">
               <span class="cat-maker">{maker}{status}</span>
               <span class="cat-model">{model}</span>{rating}
@@ -1551,7 +1551,7 @@ def catalog_page(shell, catalog):
       <div class="cat-grid" id="cat-devices">
 {devices}
           <a class="cat-card cat-card-add" href="https://github.com/espkvm/espkvm/issues/new" rel="noopener">
-            <span class="cat-photo"><img src="/assets/board-add.svg" width="680" height="340" loading="lazy" alt="" /></span>
+            <span class="cat-photo" aria-hidden="true"><img src="/assets/board-add.svg" width="680" height="340" loading="lazy" alt="Add a board" /></span>
             <span class="cat-body">
               <span class="cat-maker">Yours, maybe</span>
               <span class="cat-model">Not on the list?</span>
@@ -2572,13 +2572,13 @@ def index_page(shell, posts, tag=None, all_tags=None):
                 title=html.escape(p["title"]),
                 description=html.escape(p["description"]),
                 tags=tag_links(p["tags"]),
-                # A post with a picture shows it here as well. The alt is empty
-                # on purpose: the heading right next to it already says what the
-                # post is, and a screen reader repeating that helps nobody.
+                # A post with a picture shows it here as well. The link is
+                # hidden from screen readers (the heading says the same), the
+                # alt is for search engines.
                 thumb_class=" has-thumb" if p["thumb"] else "",
                 thumb=('          <a class="post-thumb" href="/blog/%s/" tabindex="-1" '
-                       'aria-hidden="true"%s><img src="%s" alt="" loading="lazy" /></a>\n'
-                       % (p["slug"], thumb_shape(p["thumb"]), html.escape(p["thumb"]))
+                       'aria-hidden="true"%s><img src="%s" alt="%s" loading="lazy" /></a>\n'
+                       % (p["slug"], thumb_shape(p["thumb"]), html.escape(p["thumb"]), html.escape(p["title"]))
                        if p["thumb"] else ""),
             )
             for p in posts

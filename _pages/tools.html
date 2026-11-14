@@ -475,7 +475,7 @@ output: tools/index.html
               list.map(function (b) {
                 var id = b.url.split("/").filter(Boolean).pop();
                 return '<li><a href="' + esc(b.url) + '" data-item-id="' + esc(id) + '" data-item-name="' + esc(b.label) +
-                  '" data-item-category="board"><img src="' + esc(b.photo) + '" alt="" loading="lazy" />' +
+                  '" data-item-category="board"><img src="' + esc(b.photo) + '" alt="' + esc(b.label) + '" loading="lazy" aria-hidden="true" />' +
                   "<span>" + esc(b.label) +
                   (b.flash ? "" : ' <span class="muted">flash size not listed</span>') + "</span></a></li>";
               }).join("") + "</ul>";

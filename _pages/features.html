@@ -228,6 +228,7 @@ output: features/index.html
         <tr><td>Ethernet with WiFi as the backup</td><td>Pull the cable and the device moves to WiFi, then back, with no restart.</td></tr>
         <tr><td>Tailscale, built in</td><td>The device joins your tailnet itself: no port forward, no gateway, no cloud of mine.</td></tr>
         <tr><td>WireGuard</td><td>A split tunnel to your own hub. The key is made on the device.</td></tr>
+        <tr><td>Safety net <span class="tag tag-new">new</span></td><td>A change to Wi-Fi, the address, Tailscale or WireGuard that cuts the device off goes back by itself after 10 minutes. With no network for half an hour, the device restarts.</td></tr>
       </table>
     </div>
   </section>
@@ -240,6 +241,7 @@ output: features/index.html
         <tr><td>Let's Encrypt over Tailscale <span class="tag tag-new">new</span></td><td>A real certificate for the device's tailnet name, got and renewed on the device. No warning, nothing to import. <a href="/blog/0-63-0-lets-encrypt-over-tailscale/">How it works</a>.</td></tr>
         <tr><td>Your own certificate</td><td>From an internal CA or any other, in Settings or with <code>PUT /api/v1/tls/cert</code> from a renewal hook.</td></tr>
         <tr><td>Login and two-factor sign-in</td><td>A password, and optionally a TOTP app with eight recovery codes.</td></tr>
+        <tr><td>Your own USB and monitor names <span class="tag tag-new">new</span></td><td>The target can see a plain USB device and a plain monitor instead of ESP-KVM, or the names and IDs you type in.</td></tr>
         <tr><td>Password reset by hand</td><td>The board button, held after a reset, clears a lost password and the second factor. No reflash.</td></tr>
       </table>
     </div>

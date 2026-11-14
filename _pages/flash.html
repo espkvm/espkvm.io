@@ -931,7 +931,8 @@ output: flash/index.html
           if (b.image) {
             const im = document.createElement("img");
             im.src = b.image;
-            im.alt = "";
+            im.alt = b.label;
+            im.setAttribute("aria-hidden", "true");
             im.loading = "lazy";
             card.appendChild(im);
           }
@@ -964,7 +965,8 @@ output: flash/index.html
         ask.addEventListener("click", () => track("flash_board_request"));
         const askImg = document.createElement("img");
         askImg.src = "../assets/board-add.svg";
-        askImg.alt = "";
+        askImg.alt = "Add a board";
+        askImg.setAttribute("aria-hidden", "true");
         askImg.loading = "lazy";
         ask.appendChild(askImg);
         const askName = document.createElement("span");
