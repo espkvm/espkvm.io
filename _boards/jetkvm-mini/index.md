@@ -39,6 +39,18 @@ ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the net
 - The bottom button (SW2): a press opens a menu on the screen, for power on over USB, Wake-on-LAN, a screenshot, a restart and more. Held at start-up it resets the password.
 - Both buttons can do something else in Settings, Buttons.
 
+## What ESP-KVM adds
+
+Things JetKVM's own firmware for the Mini does not have:
+
+- A VNC server, so TigerVNC can connect over TLS, next to the browser.
+- Recordings, screenshots and a dashcam on the microSD card.
+- Runbooks: steps that type, wait for text on the screen and press keys, by hand or on a schedule.
+- Reading the text off a BIOS or console screen, for runbooks and alerts.
+- Alerts to Telegram, ntfy, Discord, email or a browser push.
+- WireGuard next to Tailscale.
+- Two-factor sign-in with an authenticator app.
+
 ## Before you flash
 
 JetKVM's firmware only takes updates signed by JetKVM, so ESP-KVM goes on over USB:
@@ -65,7 +77,7 @@ No. The original JetKVM is a Linux computer on a Rockchip RV1106, and ESP-KVM is
 
 ### What does ESP-KVM add on the Mini?
 
-The same firmware as on the other boards: recordings and screenshots on the microSD card, runbooks, alerts to Telegram and other places, Tailscale and WireGuard, Home Assistant. ATX power control and a serial console on pins need wires, and the Mini has no free pins for them.
+A VNC server, recordings on the microSD card, runbooks, reading text off the screen, alerts, WireGuard and two-factor sign-in. The full list is above. ATX power control and a serial console on pins need wires, and the Mini has no free pins for them.
 
 ### Can I go back to JetKVM's firmware?
 
