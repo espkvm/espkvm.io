@@ -26,8 +26,22 @@ photo_style: product
 
 The Mini W is the [JetKVM Mini](/boards/jetkvm-mini/) with an ESP32-C5 for Wi-Fi 6 on 2.4 and 5 GHz instead of the Ethernet port. Everything else is the same box, and the steps before flashing are on the Mini's page.
 
-The firmware is the same ESP-KVM as on the other boards, and the capture, the USB to the target, the screen, the buttons and the microSD slot are the same hardware as on the Mini, where I tested it. Only the Wi-Fi part, the ESP32-C5 with the firmware it ships with, has not run on a Mini W yet: I do not have one. Make the backup from the steps on the [Mini's page](/boards/jetkvm-mini/) first, as with any flashing. At worst the image does not start, and you flash it again over USB.
+The capture, the USB to the target, the screen, the buttons and the microSD slot are the same hardware as on the Mini, where I tested ESP-KVM. Only the Wi-Fi has not run on a Mini W yet: I do not have one. Make the backup from the [Mini's page](/boards/jetkvm-mini/) first. At worst the image does not start, and you flash it again over USB.
 
-On the first boot ESP-KVM opens its own setup hotspot, and the screen shows a code to join it. The C5 keeps the firmware it ships with. If the Wi-Fi does not come up, tell me.
+On the first boot ESP-KVM opens its own setup hotspot, and the screen shows a code to join it. The ESP32-C5 keeps the firmware it ships with. If the Wi-Fi does not come up, tell me.
+
+## What ESP-KVM adds
+
+Things JetKVM's own firmware for the Mini W does not have:
+
+- A VNC server. TigerVNC connects to it over TLS, next to the browser console.
+- Recordings, screenshots and a dashcam on the microSD card.
+- Runbooks: steps that type, wait for text on the screen and press keys, by hand or on a schedule.
+- Reading the text off a BIOS or console screen, for runbooks and alerts.
+- Alerts to Telegram, ntfy, Discord, email or a browser push.
+- WireGuard next to Tailscale.
+- Two-factor sign-in with an authenticator app.
+
+JetKVM's firmware for both models is open source, at [github.com/jetkvm/mini](https://github.com/jetkvm/mini). The flagship JetKVM is a Linux computer on a Rockchip chip, so ESP-KVM does not run on it.
 
 ESP-KVM is a separate open-source project. It is not made, sold or supported by JetKVM.

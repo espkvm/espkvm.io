@@ -24,7 +24,7 @@ photo: board.webp
 photo_style: product
 ---
 
-The JetKVM Mini is a small ready-made KVM. Inside is the ESP32-P4X, the chip ESP-KVM runs on, with the same 32 MB of PSRAM and a TC358743 for the HDMI input. The box, the screen and the USB port are already there, so it makes a very nice home for ESP-KVM. Thank you, JetKVM, for building it and for publishing its firmware.
+The JetKVM Mini is a small ready-made KVM. Inside is the ESP32-P4X, the chip ESP-KVM runs on, with the same 32 MB of PSRAM and a TC358743 for the HDMI input. The box, the screen and the USB port are already there, so nothing else is needed. Thank you, JetKVM, for building it and for publishing its firmware.
 
 ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the network, keyboard and mouse, the screen and its button, the microSD slot and sound. On the [Mini W](/boards/jetkvm-mini-w/) everything but the Wi-Fi is the same hardware. Its Wi-Fi has not run yet: I do not have one.
 
@@ -35,7 +35,7 @@ ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the net
 - The microSD slot, for virtual media and recordings.
 - Sound over USB: the Mini offers the target a USB speaker, since its HDMI sound is not wired. Turn it on in Settings, Audio.
 - The 240x240 screen, switched on from the first boot for the address and the status.
-- The top button (SW3): a press shows the next page on the screen, holding it turns the screen off or on.
+- The top button (SW3): a press shows the next page on the screen. Holding it turns the screen off or on.
 - The bottom button (SW2): a press opens a menu on the screen, for power on over USB, Wake-on-LAN, a screenshot, a restart and more. Held at start-up it resets the password.
 - Both buttons can do something else in Settings, Buttons.
 
@@ -43,7 +43,7 @@ ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the net
 
 Things JetKVM's own firmware for the Mini does not have:
 
-- A VNC server, so TigerVNC can connect over TLS, next to the browser.
+- A VNC server. TigerVNC connects to it over TLS, next to the browser console.
 - Recordings, screenshots and a dashcam on the microSD card.
 - Runbooks: steps that type, wait for text on the screen and press keys, by hand or on a schedule.
 - Reading the text off a BIOS or console screen, for runbooks and alerts.
@@ -63,17 +63,17 @@ JetKVM's firmware only takes updates signed by JetKVM, so ESP-KVM goes on over U
 
 ## Back to JetKVM's firmware
 
-Connect the EXT port as above and write your backup back with `esptool.py write_flash 0 jetkvm-mini.bin`. Without a backup, JetKVM has a recovery image for each model on its [recovery page](https://jetkvm.com/docs/advanced-usage/factory-reset-mini).
+Connect the EXT port as above and write the backup to it with `esptool.py write_flash 0 jetkvm-mini.bin`. Without a backup, JetKVM has a recovery image for each model on its [recovery page](https://jetkvm.com/docs/advanced-usage/factory-reset-mini).
 
 ## Questions
 
 ### Can I put custom firmware on a JetKVM Mini?
 
-Yes, over USB. JetKVM's firmware is open source, and its build turns on neither Secure Boot nor flash encryption. The steps above check that on your own unit before anything is written.
+Yes, over USB. JetKVM's firmware for the Mini is open source, at [github.com/jetkvm/mini](https://github.com/jetkvm/mini), and its build turns on neither Secure Boot nor flash encryption. The steps above check that on your own unit before anything is written.
 
-### Does ESP-KVM run on the original JetKVM?
+### Does ESP-KVM run on the flagship JetKVM?
 
-No. The original JetKVM is a Linux computer on a Rockchip RV1106, and ESP-KVM is firmware for the ESP32-P4. JetKVM's own software for it is open source at [github.com/jetkvm/kvm](https://github.com/jetkvm/kvm).
+No. The flagship JetKVM is a Linux computer on a Rockchip RV1106, and ESP-KVM is firmware for the ESP32-P4. Of JetKVM's devices, only the Mini and the Mini W have that chip.
 
 ### What does ESP-KVM add on the Mini?
 
@@ -81,12 +81,12 @@ A VNC server, recordings on the microSD card, runbooks, reading text off the scr
 
 ### Can I go back to JetKVM's firmware?
 
-Yes. Write your backup back, or JetKVM's recovery image, as described above.
+Yes. Write your backup or JetKVM's recovery image to it, as described above.
 
 ## Mini and Mini W
 
 The two differ in the network. The Mini has 100M Ethernet. The [Mini W](/boards/jetkvm-mini-w/) has an ESP32-C5 for Wi-Fi 6 on 2.4 and 5 GHz in its place.
 
-How ESP-KVM and the JetKVM Mini compare today is on the [comparison page](/compare/).
+The [comparison page](/compare/) puts ESP-KVM next to the JetKVM Mini and other KVMs.
 
 ESP-KVM is a separate open-source project. It is not made, sold or supported by JetKVM.

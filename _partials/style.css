@@ -461,14 +461,19 @@
         text-transform: uppercase;
         color: var(--muted);
       }
+      /* Six to a row, the last row centred: eleven marks make 6 + 5 rather
+         than one left on a line of its own. */
       .works ul {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 22px 16px;
+        justify-content: center;
+        gap: 28px 16px;
         margin: 0;
         padding: 0;
         list-style: none;
+      }
+      .works li {
+        flex: 0 0 calc((100% - 5 * 16px) / 6);
       }
       .works a {
         display: flex;
@@ -484,8 +489,8 @@
         color: var(--text);
       }
       .works svg {
-        width: 44px;
-        height: 44px;
+        width: 52px;
+        height: 52px;
         fill: currentColor;
       }
       .works span {
@@ -496,6 +501,9 @@
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 22px 8px;
+        }
+        .works li {
+          flex: none;
         }
         .works svg {
           width: 36px;
