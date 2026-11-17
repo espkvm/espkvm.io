@@ -356,9 +356,9 @@ output: index.html
             <h3>Boot from a disk image</h3>
             <p>
               A rescue or live image becomes a bootable USB drive for the
-              target, from a microSD card or the device&rsquo;s own flash.
-              <a href="#faq-netboot">netboot.xyz</a> in one click; any link
-              downloads straight to the card.
+              target: from a microSD card, the device&rsquo;s own flash, a web
+              server or your own computer, with nothing copied to the card.
+              <a href="#faq-netboot">netboot.xyz</a> in one click.
             </p>
           </div>
 
@@ -461,7 +461,9 @@ output: index.html
             <h3>Power and reset, held down for you</h3>
             <p>
               Two optocouplers on the front-panel (ATX) header put the power and
-              reset buttons in the browser. The power LED is read back.
+              reset buttons in the browser. The power LED is read back. With a
+              KVM switch in front of several machines, the device picks the
+              machine too.
             </p>
           </div>
 
@@ -550,7 +552,9 @@ output: index.html
           memtest, a DOS floppy) kept in a 4&nbsp;MB flash partition, served from
           memory and writable from the browser. The Media panel puts
           <a href="#faq-netboot">netboot.xyz</a> there in one click, downloaded by
-          the device straight from its site.
+          the device straight from its site. An image can also stay where it is:
+          the target reads it from a web server, about 4&nbsp;MB/s on the JetKVM
+          Mini, or from the computer the console is open on, about 1.6&nbsp;MB/s.
         </p>
       </section>
 
@@ -799,9 +803,12 @@ output: index.html
               internet access, not the device.
             </p>
             <p>
-              For a full installer ISO, use a microSD card: upload the file from the
-              browser, or paste a link under the card list and the device
-              downloads it itself. On exFAT an image can be over 4&nbsp;GB.
+              For a full installer ISO, paste its link and press <em>Boot from URL</em>,
+              or press <em>Boot from this computer</em> and pick the file: the target
+              reads it from the web server or from the console tab, and nothing goes
+              onto the card. Or put it on a microSD card: upload the file from the
+              browser, or paste a link and the device downloads it itself. On exFAT
+              an image can be over 4&nbsp;GB.
             </p>
           </div>
         </details>
@@ -1165,7 +1172,7 @@ output: index.html
                 <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>
-                <td>Virtual media &mdash; boot the target from a disk image <span class="tnote">(on a card or in flash)</span></td>
+                <td>Virtual media &mdash; boot the target from a disk image <span class="tnote">(on a card, in flash, on a web server or on your computer)</span></td>
                 <td class="yes"><span class="st st-ok">Works</span></td>
               </tr>
               <tr>

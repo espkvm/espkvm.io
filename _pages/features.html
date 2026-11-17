@@ -170,6 +170,8 @@ output: features/index.html
       <table class="feat-table">
         <tr><td>Boot from a disk image</td><td>An image handed to the target as a USB drive it can boot from, from a microSD card (FAT32 or exFAT, MBR or GPT).</td></tr>
         <tr><td>An image with no card</td><td>A small rescue image kept in the device's own flash. netboot.xyz goes there in one click.</td></tr>
+        <tr><td>Boot from a URL <span class="tag tag-new">new</span></td><td>Paste a link and the target boots the image straight from the web server. Nothing is copied to the card, and the image can be bigger than it. The server has to support HTTP Range requests.</td></tr>
+        <tr><td>Boot from this computer <span class="tag tag-new">new</span></td><td>Pick a file in the console and the target reads it from the browser tab as it boots. Nothing is uploaded first. The tab has to stay open.</td></tr>
         <tr><td>Drop a file <span class="tag tag-new">new</span></td><td>Drop a file on the picture and it goes onto the card. A text file dropped on the other half is typed on the target.</td></tr>
         <tr><td>Download onto the card</td><td>Paste a link and the device downloads the image itself.</td></tr>
         <tr><td>The whole card as a disk</td><td>The target sees the card itself, read-write.</td></tr>
@@ -211,6 +213,7 @@ output: features/index.html
     <div class="table-scroll">
       <table class="feat-table">
         <tr><td>ATX power control</td><td>Power, reset and the power LED, wired to the motherboard's front-panel header. <a href="https://github.com/espkvm/espkvm/blob/main/docs/wiring.md">Wiring</a>.</td></tr>
+        <tr><td>A KVM switch <span class="tag tag-new">new</span></td><td>Several machines behind one device, picked by name in the Power menu, from a schedule, a button, Home Assistant or the API. One wire to the switch's select button, or a TESmart switch over the network. <a href="https://github.com/espkvm/espkvm/blob/main/docs/wiring.md#a-kvm-switch">Wiring</a>.</td></tr>
         <tr><td>Wake-on-LAN</td><td>From the console, a schedule, a button or Home Assistant.</td></tr>
         <tr><td>A button on the box</td><td>A push button on a free pin, with one action for a short press and one for a hold.</td></tr>
         <tr><td>Serial console <span class="tag tag-new">new</span></td><td>Two pins to the target's UART give a terminal in the browser that keeps the boot messages. For a NAS, a router or a server with no screen. Or no wires at all: a serial port over the USB cable the target already has. Not tried on hardware yet.</td></tr>
