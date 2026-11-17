@@ -13,7 +13,7 @@ both links, 100M Ethernet on a PoE-capable magjack and an ESP32-C6 for WiFi 6,
 and its pins are the ones already in use here, so the overlay declares almost
 nothing. It is configured from the published schematic; nobody has run this
 firmware on one yet. One thing to check before wiring: a jumper switches the USB
-OTG port between HOST and DEVICE, and the KVM needs DEVICE.
+OTG port between HOST and DEVICE, and the KVM needs DEVICE. The labels changed between board versions: on v1.2 the target's port is HOST (see [0.56.0](/blog/0-56-0-two-dual-band-boards-and-the-right-image-for-every-chip/), where the board was confirmed on hardware).
 
 Two boards in the same family were looked at and left out. The ESP32-P4-Pico and
 the ESP32-P4-Core-DEV-KIT have neither Ethernet nor a WiFi co-processor, so

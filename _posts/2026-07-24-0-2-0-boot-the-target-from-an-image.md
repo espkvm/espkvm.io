@@ -15,10 +15,10 @@ way it would from a stick you plugged in yourself.
 
 Two things to know in this version:
 
-- the card is served read-only, because this board cannot write a microSD reliably, so you prepare images in a card reader;
-- the card must be FAT32, and one image can be at most 4 GB, that limit is FAT32's, not ours.
+- ~~the card is served read-only, because this board cannot write a microSD reliably, so you prepare images in a card reader;~~ since [0.49.0](/blog/0-49-0-microsd-at-full-speed/) the card is writable and images upload from the console;
+- ~~the card must be FAT32, and one image can be at most 4 GB, that limit is FAT32's, not ours.~~ exFAT cards work since [0.54.0](/blog/0-54-0-exfat-cards-and-a-picture-sent-once/), and images over 4 GB since [0.55.0](/blog/0-55-0-a-real-dvd-drive-and-images-over-4-gb/).
 
-Reads run at 4 MHz, about 1.5 MB/s. A heavy graphical image takes minutes to
+Reads run at ~~4 MHz, about 1.5 MB/s~~ 40 MHz, about 9 MB/s, since [0.49.0](/blog/0-49-0-microsd-at-full-speed/). A heavy graphical image takes minutes to
 boot, a small rescue image about a minute. Higher clock rates fail on this
 chip.
 

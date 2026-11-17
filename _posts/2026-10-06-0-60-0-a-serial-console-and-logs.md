@@ -13,7 +13,7 @@ BIOSes talk over a serial port too. Now the device can be the other end of
 that wire. Asked for in #69.
 
 Turn it on in Settings -> Power -> Serial console and pick two free pins. TX
-goes to the target's RX, RX to the target's TX, and the grounds join. A 3.3 V
+goes to the target's RX, RX to the target's TX, and the grounds join. Since [0.74.0](/blog/0-74-0-a-program-on-the-other-end-of-the-cable/) it can also run over the device's USB port, with no wires. A 3.3 V
 console, like a Raspberry Pi's, wires straight in. A real RS-232 port on a PC
 or a switch needs a MAX3232 module in between, because its levels would burn
 the pin.

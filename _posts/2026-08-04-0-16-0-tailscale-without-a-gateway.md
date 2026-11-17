@@ -9,7 +9,7 @@ image:
 WireGuard wants somewhere to connect to: a peer with a fixed address, or a port
 opened on your router. The device now speaks Tailscale natively instead.
 
-Set a Tailscale auth key in Settings and the device joins your tailnet. It is
+Set a Tailscale auth key in Settings and the device joins your tailnet. Since [0.77.0](/blog/0-77-0-tailscale-without-a-key/) the key is optional: a Sign in to Tailscale button does the same. It is
 then reachable at its 100.x address, or its MagicDNS name, from anywhere you are
 signed in - NAT traversal handled for it, nothing forwarded, no gateway machine
 in the middle. It is built on a native client ported to ESP-IDF 6, and it runs on

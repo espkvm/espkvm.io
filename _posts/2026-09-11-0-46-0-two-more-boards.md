@@ -47,7 +47,7 @@ Its 40-pin header came out of the schematic identical to the Waveshare PoE
 board's, pin for pin. That is three boards with one layout now, which is worth
 knowing before you wire anything to a fourth.
 
-Neither board has been run on hardware. Both were built from vendor schematics,
+~~Neither board has been run on hardware.~~ The NANO-WIFI6-DB has, since [0.64.0](/blog/0-64-0-an-original-xbox-pad/). Both were built from vendor schematics,
 the images build, CI publishes them, and that is the whole claim. If you have
 one, flash it and tell me what happened.
 

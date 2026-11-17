@@ -18,8 +18,8 @@ closed, and it fails with the line it was on when a phrase never turns up.
 Enter the setup, pick the boot device, answer an installer: the sort of thing
 that used to need somebody watching.
 
-Waits only see a text screen. On a picture they wait out their timeout and say
-so. Each runbook is a button in Home Assistant, with a sensor saying how the
+~~Waits only see a text screen. On a picture they wait out their timeout and say
+so.~~ Since [0.73.0](/blog/0-73-0-the-device-watches-the-screen/) a wait can also watch a screen area, so it works on a graphical firmware setup too. Each runbook is a button in Home Assistant, with a sensor saying how the
 last run went.
 
 ## DuckyScript
@@ -41,8 +41,8 @@ until the clock is set.
 ## Push notifications
 
 When a watched phrase appears, or the screen goes blank, the device sends a
-message to Telegram or a webhook. On the MJPEG codec the screenshot goes with
-it, and the tail of the device log can too, so the alert carries what explains
+message to Telegram or a webhook. ~~On the MJPEG codec~~ The screenshot goes with
+it (with H.264 too since [0.51.0](/blog/0-51-0-a-dashcam-for-the-machine-in-the-closet/)), and the tail of the device log can too, so the alert carries what explains
 it. Off by default, on its own low-priority task, and it borrows nothing from
 the encoder's internal RAM.
 

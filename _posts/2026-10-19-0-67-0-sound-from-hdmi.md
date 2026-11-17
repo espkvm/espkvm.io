@@ -8,7 +8,7 @@ image: /assets/blog/0-67-0-sound-from-hdmi/hero.webp
 
 Until now ESP-KVM gave you the picture only. You could not hear the Windows error chime, or tell whether a video on the target played with sound. In 0.67.0 the console plays the target's sound.
 
-The HDMI signal carries the sound, and the TC358743 on the C790 takes it out and sends it as I2S on a small connector of its own, next to the HDMI socket. Geekworm puts a cable for it in the box. Three wires (SCK, SD, WFS) and a ground go to free pins on the P4 board, and you pick the pins in Settings -> Audio. The bridge drives the clocks, so the device takes whatever rate the source plays. On the Function EV the C790's cable lands on the Raspberry Pi header: GPIO 22, 27 and 53. The M5Stack PoE-P4 and its Display In module have no sound: M5Stack left the LT6911D's audio pins unconnected.
+The HDMI signal carries the sound, and the TC358743 on the C790 takes it out and sends it as I2S on a small connector of its own, next to the HDMI socket. Geekworm puts a cable for it in the box. Three wires (SCK, SD, WFS) and a ground go to free pins on the P4 board, and you pick the pins in Settings -> Audio. The bridge drives the clocks, so the device takes whatever rate the source plays. On the Function EV the C790's cable lands on the Raspberry Pi header: GPIO 22, 27 and 53. The M5Stack PoE-P4 and its Display In module have no HDMI sound: M5Stack left the LT6911D's audio pins unconnected. Since [0.83.0](/blog/0-83-0-custom-firmware-for-the-jetkvm-mini-is-ready/) these boards get sound over USB instead.
 
 The work started from Zachary Leahan's audio code in his fork. I kept his idea and rewrote the parts that fixed the pins and the rate at build time.
 
@@ -20,7 +20,7 @@ The encoder runs below the video, so the frame rate stays the same with the soun
 
 ## In recordings
 
-A recording gets the sound as mono AAC next to the picture, in the .ts and in a dashcam clip's MP4. When the source plays nothing, the track holds silence, so picture and sound stay in step to the end. The dashcam keeps the last two minutes of sound in memory, about 1.3 MB of PSRAM, so the part of a clip from before the event has sound too.
+A recording gets the sound as ~~mono AAC~~ stereo Opus (since [0.68.0](/blog/0-68-0-a-stick-for-the-pointer/)) next to the picture, in the .ts and in a dashcam clip's MP4. When the source plays nothing, the track holds silence, so picture and sound stay in step to the end. The dashcam keeps the last two minutes of sound in memory, about 1.3 MB of PSRAM, so the part of a clip from before the event has sound too.
 
 ## Also in 0.67.0
 

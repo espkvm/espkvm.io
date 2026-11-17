@@ -33,7 +33,7 @@ without that Chrome's decoder held about four frames back before it showed
 one. The device now writes "frames are never reordered" into the stream's
 header, and the console adds it to a stream from older firmware. The
 browser's share went from 174 ms to 2, and the whole round trip at 1080p to
-about 155 ms - the same as MJPEG.
+about 155 ms - the same as MJPEG. Since [0.70.0](/blog/0-70-0-half-the-delay/) it is 58 ms at 1080p50 and 86 ms at 1080p30.
 
 On the M5Stack Unit PoE-P4, where H.264 runs at 5 to 16 fps, four frames
 held back were most of a second. There the round trip at 720p is now about

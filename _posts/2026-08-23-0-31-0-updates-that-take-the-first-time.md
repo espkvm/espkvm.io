@@ -20,7 +20,7 @@ now.
 
 Updating to this version is enough and needs no cable. The restart that installs
 it is still done by the old firmware, so if the device comes back on the old
-version, run the update once more. From this version on it stops happening.
+version, run the update once more. ~~From this version on it stops happening.~~ It did not stop: the real cause was found and fixed in [0.52.1](/blog/0-52-1-the-update-that-undid-itself/).
 Found in a serial log by
 [@petrn](https://github.com/petrn) in
 [#22](https://github.com/orgs/espkvm/discussions/22).

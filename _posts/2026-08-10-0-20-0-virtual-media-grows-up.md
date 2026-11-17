@@ -17,7 +17,7 @@ drive for you.
 
 **The whole card, not one file.** A new item in the Media panel hands the target
 the entire microSD card as a USB drive - every file on it, not a single image.
-On rev 3.x boards it is read-write, so the target can copy files onto it, which
+On rev 3.x boards (and on rev 1.3 since [0.49.1](/blog/0-49-1-the-rest-of-the-boards/)) it is read-write, so the target can copy files onto it, which
 makes the KVM a way to get data off a machine with no network. While the target
 has the card the console steps off it, so there is only ever one owner, and it
 re-reads the card when you take it back, including when the target reformatted

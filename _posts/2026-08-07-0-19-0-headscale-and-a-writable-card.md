@@ -8,12 +8,12 @@ image:
 
 Tailscale is convenient, and it is somebody else's control server. If you run
 your own, Headscale or Ionscale, point the device at it instead. One field in
-the VPN settings: the control server URL, and a port if it needs one. The rest
-works the same.
+the VPN settings: the control server URL, and a port if it needs one. ~~The rest
+works the same.~~ This only works since [0.77.0](/blog/0-77-0-tailscale-without-a-key/): before, the device expected the key of Tailscale's own server.
 
 Two smaller things in the same few days:
 
-- on rev 3.x boards the microSD card is writable, so images can be uploaded and deleted from the console. The code was always there but switched off, because the older chip revision times out on SD writes. Rev 3.x handles it, verified on hardware. Pre-3.0 boards stay read-only.
+- on rev 3.x boards the microSD card is writable, so images can be uploaded and deleted from the console. The code was always there but switched off, because the older chip revision times out on SD writes. Rev 3.x handles it, verified on hardware. ~~Pre-3.0 boards stay read-only.~~ Since [0.49.1](/blog/0-49-1-the-rest-of-the-boards/) boards with a rev 1.3 chip write the card too.
 - the target now sees the monitor as ESP-KVM, rather than under the capture chip's Toshiba name.
 
 The NANO and Guition builds were also switched to pre-3.0 silicon by default,

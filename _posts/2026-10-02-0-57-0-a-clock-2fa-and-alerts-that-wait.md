@@ -26,7 +26,7 @@ The clock chips it knows:
 | Chip | Common modules | Found by itself | Tried on hardware |
 |---|---|---|---|
 | DS3231, DS3231M | ZS-042, "DS3231 for Pi", ChronoDot v2, Adafruit DS3231 | yes | yes |
-| PCF8563, BM8563, RTC8563 | M5Stack Unit RTC | yes | not yet |
+| PCF8563, BM8563, RTC8563 | M5Stack Unit RTC | yes | ~~not yet~~ yes, since [0.61.0](/blog/0-61-0-a-button-on-the-box/) |
 | PCF85063 | | no, name it in Settings | not yet |
 | PCF8523 | Adafruit PCF8523 | no, name it in Settings | not yet |
 

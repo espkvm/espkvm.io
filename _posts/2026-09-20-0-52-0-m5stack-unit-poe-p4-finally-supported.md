@@ -57,7 +57,7 @@ settled it in an hour.
 H.264 looked impossible here at first - this silicon's encoder takes one layout
 and nothing on the chip makes it from what the module sends. But the conversion
 is a plain rearrangement of bytes, so the processor does it, in place of work it
-was already doing. 15 frames a second at 720p, 6 at 1080p.
+was already doing. 15 frames a second at 720p, 6 at 1080p (7.2 since [0.62.0](/blog/0-62-0-faster-and-lighter/)).
 
 One thing to set on the machine at the other end: the module's EDID makes a PC
 treat it as a television, so the picture comes out flat. Set the output range to

@@ -10,7 +10,7 @@ The JetKVM Mini is a small finished KVM, 42 x 42 x 23 mm. Inside is the ESP32-P4
 
 ## A first version
 
-This is the first ESP-KVM version for the Mini, and it has not been through enough testing yet. It cannot harm the device: at worst the image does not start, and you flash it again over USB. Still, for now flashing it is at your own risk. Back up the flash first, as described below. Once the testing is done, I will say so on the [Mini's page](/boards/jetkvm-mini/), and from then on it can be installed without any worry.
+This is the first ESP-KVM version for the Mini, and ~~it has not been through enough testing yet~~ since [0.83.0](/blog/0-83-0-custom-firmware-for-the-jetkvm-mini-is-ready/) it is tested and ready. It cannot harm the device: at worst the image does not start, and you flash it again over USB. ~~Still, for now flashing it is at your own risk.~~ Back up the flash first, as described below. Once the testing is done, I will say so on the [Mini's page](/boards/jetkvm-mini/), and from then on it can be installed without any worry.
 
 ## What the images use
 

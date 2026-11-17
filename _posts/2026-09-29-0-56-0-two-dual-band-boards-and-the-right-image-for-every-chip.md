@@ -11,7 +11,7 @@ Espressif and Waveshare both made a version of a board ESP-KVM already runs on,
 with a dual-band ESP32-C5 in place of the C6, so it can join a 5 GHz network:
 the ESP32-P4X-C5-Function-EV-Board and the ESP32-P4-WIFI6-DB. In both the C5
 sits on the pins the C6 used, so each image is the old board's with the
-co-processor swapped. Neither has been run on hardware yet.
+co-processor swapped. ~~Neither has been run on hardware yet.~~ The WIFI6-DB is [tested](/blog/the-p4-wifi6-db-is-tested/) now.
 
 ## The right image for the chip
 

@@ -16,7 +16,7 @@ all, because one that can never answer is worse than nothing.
 There is also a camera holding a still of the target's screen. A button takes
 one, and a setting takes one by itself when the screen watch matches a phrase,
 so the notification that says `kernel panic` arrives with the screen attached.
-It needs the MJPEG codec, because while H.264 runs there is no still to take.
+~~It needs the MJPEG codec, because while H.264 runs there is no still to take.~~ Since [0.51.0](/blog/0-51-0-a-dashcam-for-the-machine-in-the-closet/) it works with H.264 too.
 It is off by default too: a 1080p frame is a few hundred kilobytes through your
 broker.
 

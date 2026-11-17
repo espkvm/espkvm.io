@@ -2181,6 +2181,7 @@ def build_pages(shell, catalog, integrations=()):
 INLINE_CODE = re.compile(r"`([^`]+)`")
 LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
 BOLD = re.compile(r"\*\*(\S(?:[^*]*\S)?)\*\*")
+STRIKE = re.compile(r"~~(\S(?:[^~]*\S)?)~~")
 ITALIC = re.compile(r"(?<![*\w])\*(\S(?:[^*]*\S)?)\*(?!\*)")
 IMAGE_ONLY = re.compile(r"^!\[([^\]]*)\]\(([^)\s]+)\)$")
 # [[Ctrl+Shift+P]] draws keys: each name between the pluses as a key cap.
@@ -2218,6 +2219,7 @@ def inline(text, where):
     text = html.escape(text)
     text = LINK.sub(r'<a href="\2">\1</a>', text)
     text = BOLD.sub(r"<strong>\1</strong>", text)
+    text = STRIKE.sub(r"<del>\1</del>", text)
     text = ITALIC.sub(r"<em>\1</em>", text)
     text = re.sub(r"\x01(\d+)\x01", lambda m: keys[int(m.group(1))], text)
     return re.sub(r"\x00(\d+)\x00",

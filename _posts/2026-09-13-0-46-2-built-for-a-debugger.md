@@ -16,7 +16,7 @@ keeps variables where a debugger can watch them and skips most of what an
 optimiser would do. Every release so far was built that way - the capture path,
 the frame conversions, TLS, all of it.
 
-0.46.2 is built at `-O2`. The frame rate at 1080p is the same 22 fps, because
+0.46.2 is built at `-O2`. The frame rate at 1080p is the same 22 fps (27 since faster memory in [0.69.0](/blog/0-69-0-faster-memory-faster-h264/)), because
 the encoder is hardware and was never the bottleneck. What changes is everything
 that runs on the CPU beside it: the pixel-format conversion, the text-screen
 scanner, the TLS handshake, the web server.

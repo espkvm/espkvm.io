@@ -124,7 +124,7 @@ remote desktop is faster and sharper, and it can move files. Use it.
 An IP-KVM is for the other times, when there is nothing on the far machine left
 to connect to.
 
-It does not carry sound, and it cannot repair broken hardware. It lets you see
+ESP-KVM carries the sound too, since [0.67.0](/blog/0-67-0-sound-from-hdmi/). It cannot repair broken hardware. It lets you see
 and press, exactly as if you were standing in front of the machine.
 
 ## One warning
