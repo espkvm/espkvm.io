@@ -64,6 +64,16 @@ jobs:
             --exclude='.gitignore' \
             ./ _site/
 
+      # Which pages changed since the live deploy, for IndexNow below. It also
+      # writes the new hashes into _site, so the next deploy compares with these.
+      - name: Pages that changed
+        run: python3 tools/indexnow.py diff _site > indexnow-urls.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: indexnow-urls
+          path: indexnow-urls.txt
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
@@ -77,3 +87,17 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  # After the deploy, so the engines fetch the new pages. A failure here does
+  # not touch the site: the pages are already live.
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: indexnow-urls
+      - name: Tell search engines (IndexNow)
+        run: python3 tools/indexnow.py send indexnow-urls.txt

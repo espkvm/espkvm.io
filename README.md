@@ -37,6 +37,8 @@ A file in `_pages/` is front matter and then the markup that goes between the
 navigation and the footer. Its `<style>` and JSON-LD blocks are lifted into
 `<head>` for it.
 
+After each deploy, CI tells Bing, Yandex and the other IndexNow engines which pages changed (`tools/indexnow.py`). The build is deterministic, so it hashes every page in the sitemap and compares with `indexnow-hashes.txt` on the live site: only new, changed or removed pages are sent. The key file `cd24dc9eb3b349052cef02c827968b9c.txt` in the root shows the engines that the requests come from this site. It is public by design, so do not delete it. Google does not take part in IndexNow and reads the sitemap as before.
+
 ## Renaming a page or a post
 
 Changing a file name in `_posts/` changes the URL, and something out there may

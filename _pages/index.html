@@ -679,12 +679,11 @@ output: index.html
           </div>
         </details>
         <details class="faq-item" id="faq-vga">
-          <summary>Does it work with a VGA, DVI or DisplayPort target?</summary>
+          <summary>Does it work with a VGA or DVI target?</summary>
           <div class="prose">
             <p>
-              Yes, through an adapter to HDMI. A passive DVI-to-HDMI adapter,
-              or a passive one on a DP++ port, is just another plug, and
-              everything works as with HDMI.
+              Yes, through an adapter to HDMI. A passive DVI-to-HDMI adapter
+              is just another plug, and everything works as with HDMI.
             </p>
             <p>
               An <strong>active VGA-to-HDMI converter</strong> works too, but
@@ -692,8 +691,37 @@ output: index.html
               device&rsquo;s, and may pick a mode the capture cannot take. If
               there is no picture or the console says &ldquo;too fast&rdquo;,
               set the target to 1280x720 or 1024x768 at 60&nbsp;Hz, or 1080p
-              at 30&nbsp;Hz. The same goes for an active DisplayPort adapter.
+              at 30&nbsp;Hz.
               <a href="https://github.com/espkvm/espkvm/blob/main/docs/TROUBLESHOOTING.md#a-vga-dvi-or-displayport-target">More, with an xrandr example</a>.
+            </p>
+          </div>
+        </details>
+        <details class="faq-item" id="faq-dp">
+          <summary>Does it work with a DisplayPort or USB-C target?</summary>
+          <div class="prose">
+            <p>
+              Yes, through an adapter to HDMI. DisplayPort is a different
+              signal, not just a different plug, so which adapter you need
+              depends on the target&rsquo;s port.
+            </p>
+            <p>
+              <strong>A full-size DisplayPort marked DP++</strong>, as on most
+              graphics cards and desktop PCs, takes a cheap passive adapter.
+              The graphics card then sends HDMI itself, and everything works
+              as with an HDMI cable. On a port without DP++ a passive adapter
+              gives no picture at all.
+            </p>
+            <p>
+              <strong>USB-C, Thunderbolt and many small PCs and docks</strong>
+              need an active adapter, with a chip that turns DisplayPort into
+              HDMI. Every USB-C-to-HDMI adapter is this kind. Most pass the
+              device&rsquo;s EDID through, so its modes and EDID profiles
+              still work. Some answer with an EDID of their own, or keep the
+              hotplug line up so a restart of the device does not make the
+              target pick a mode again. Then set the mode on the target
+              yourself, or unplug the adapter from the target and plug it
+              back in.
+              <a href="https://github.com/espkvm/espkvm/blob/main/docs/TROUBLESHOOTING.md#a-vga-dvi-or-displayport-target">More in the docs</a>.
             </p>
           </div>
         </details>

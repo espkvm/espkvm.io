@@ -8,6 +8,7 @@ order: 20
 role: Clock (optional)
 chip: DS3231
 summary: The common blue board with a CR2032 holder on the back. Four wires to the capture board's I2C bus.
+description: A DS3231 clock on the common blue ZS-042 board keeps ESP-KVM's time through a power cut. Four wires to the capture board's I2C bus, and it is found by itself.
 spec.Chip: DS3231SN at 0x68, plus a 24C32 memory chip at 0x57
 spec.Wiring: VCC to 3V3, GND, SDA and SCL to the capture board's I2C bus
 spec.Battery: CR2032 or LIR2032

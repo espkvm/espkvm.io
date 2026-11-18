@@ -375,7 +375,8 @@ def family_page(shell, slug, name, items):
         "title": "%s parts for ESP-KVM, an open-source ESP32-P4 IP-KVM" % name,
         "og_title": "%s and ESP-KVM" % name,
         "description": "The %s boards, HDMI capture and modules ESP-KVM works with, "
-                       "and which of them have been run on hardware." % name,
+                       "which of them have been run on hardware, and how each one rates "
+                       "for an IP-KVM." % name,
         "canonical": url,
         "og_type": "website",
     }, content, json_ld(breadcrumbs(("ESP-KVM", SITE + "/"), ("Boards", SITE + "/boards/"),
@@ -1427,10 +1428,13 @@ def item_page(shell, item, catalog):
                  "There is no ESP-KVM image for the %s yet, and one request from "
                  "someone who has it is enough to make one." % name)
     elif kind == "device":
+        # A device with the capture built in (the JetKVM Mini) needs no extra board.
+        add = ("Flash it" if "built in" in m.get("spec.Capture", "")
+               else "Add an HDMI capture board, flash it")
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns the "
                  "%s into an IP-KVM: the screen, keyboard and mouse of another computer "
-                 "in your browser, from the BIOS up. Add an HDMI capture board, flash it "
-                 "from the browser, and it runs with no Linux, no app and no cloud." % name)
+                 "in your browser, from the BIOS up. %s from the browser, and it runs "
+                 "with no Linux, no app and no cloud." % (name, add))
     elif kind == "capture":
         intro = ("<strong>ESP-KVM</strong> is free, open-source firmware that turns an "
                  "ESP32-P4 board into an IP-KVM: another computer's screen, keyboard and "
@@ -2060,6 +2064,7 @@ def safe(text):
 
 
 META_DESC_MAX = 160
+META_DESC_MIN = 120
 TITLE_MAX = 70
 
 
@@ -2072,21 +2077,50 @@ def tab_title(*variants):
     sys.exit("title over %d characters, shorten it: %s" % (TITLE_MAX, variants[-1]))
 
 
-def meta_description(text):
+def sentences(text):
+    plain = html.unescape(re.sub(r"<[^>]+>", "", text))
+    return [x for x in re.split(r"(?<=[.!?])\s+", re.sub(r"\s+", " ", plain).strip()) if x]
+
+
+def page_sentences(content):
+    """The sentences of a page's own paragraphs, in order: what a short description
+    is topped up from."""
+    out = []
+    for para in re.findall(r"<p\b[^>]*>(.*?)</p>", content, re.S):
+        out += sentences(para)
+    return out
+
+
+def meta_description(text, more=()):
     """The <meta name="description">: whole sentences of the description while they
     fit in 160 characters, which is what a search page shows. The lead on the page
     and og:description keep all of it. The build stops if the first sentence alone
-    is longer, so a cut never lands mid-sentence."""
-    plain = html.unescape(re.sub(r"<[^>]+>", "", text)).strip()
+    is longer, so a cut never lands mid-sentence.
+    Under META_DESC_MIN characters, search engines call it too short (Bing flags
+    them), so it is topped up with whole sentences from the page itself (@p more)
+    while they still fit."""
     out = ""
-    for sentence in re.split(r"(?<=[.!?])\s+", plain):
+    for sentence in sentences(text):
         joined = (out + " " + sentence).strip()
         if len(joined) > META_DESC_MAX:
             break
         out = joined
     if len(out) < 25:
         sys.exit("description: the first sentence must fit in %d characters (search pages "
-                 "cut the rest): %s" % (META_DESC_MAX, plain[:120]))
+                 "cut the rest): %s" % (META_DESC_MAX, html.unescape(text)[:120]))
+    for sentence in more:
+        if len(out) >= META_DESC_MIN:
+            break
+        # A sentence the description already has, or a fragment (a caption, a
+        # label), adds nothing.
+        if len(sentence) < 30 or sentence in out or not sentence[-1] in ".!?":
+            continue
+        # Out of the page, "the button above" points at nothing.
+        if re.search(r"\b(above|below|here|this page)\b", sentence, re.I):
+            continue
+        joined = out + " " + sentence
+        if len(joined) <= META_DESC_MAX:
+            out = joined
     return out
 
 
@@ -2096,7 +2130,8 @@ def render_page(shell, meta, content, page_head=""):
 
     fields = {
         "title": safe(tab_title(meta["title"])),
-        "description": html.escape(meta_description(meta["description"])),
+        "description": html.escape(meta_description(
+            meta["description"], page_sentences(content) if meta.get("topup", True) else ())),
         "canonical": meta["canonical"],
         "og_title": safe(meta.get("og_title") or meta["title"]),
         "og_description": safe(meta.get("og_description") or meta["description"]),
@@ -2628,7 +2663,9 @@ def index_page(shell, posts, tag=None, all_tags=None):
             "title": "Posts tagged %s - ESP-KVM" % tag,
             "og_title": "ESP-KVM posts tagged %s" % tag,
             "description": "Every ESP-KVM release note and engineering write-up "
-                           "tagged %s." % tag,
+                           "tagged %s, newest first. ESP-KVM is open-source IP-KVM "
+                           "firmware for the ESP32-P4." % tag,
+            "topup": False,  # its paragraphs are other posts' summaries
             "canonical": "%s/blog/tags/%s/" % (SITE, tag),
             "og_type": "website",
         }

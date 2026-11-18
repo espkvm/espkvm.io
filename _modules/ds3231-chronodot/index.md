@@ -8,6 +8,7 @@ order: 30
 role: Clock (optional)
 chip: DS3231SN
 summary: Macetech's round DS3231SN board, with a CR1632 holder and no charging circuit, so a plain cell is fine.
+description: Macetech's round ChronoDot v2 with a DS3231SN keeps ESP-KVM's time through a power cut. It has a CR1632 holder and no charging circuit, so a plain cell is fine.
 spec.Chip: DS3231SN, at 0x68
 spec.Wiring: VCC to 3V3, GND, SDA and SCL to the capture board's I2C bus
 spec.Battery: CR1632

@@ -37,3 +37,6 @@ _drafts/
 
 # Python bytecode from importing the builder
 __pycache__/
+
+# IndexNow list made by CI
+/indexnow-urls.txt
