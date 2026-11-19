@@ -41,7 +41,7 @@ Reload WireGuard on the server. The device keeps the connection open with a keep
 
 It is a split tunnel. Only the tunnel network, taken as a /24 around the tunnel address, goes through WireGuard. Everything else, the local network and the console on it, stays as it was, so turning WireGuard on cannot lock you out of the device on the LAN.
 
-The video works through the tunnel on both codecs. WebRTC sends H.264 in packets small enough to fit in it.
+The video works through the tunnel on both codecs. On a P4-ETH with a rev 1.3 chip, H.264 at 1080p gets the same frame rate through the tunnel as on the LAN.
 
 ## Good to know
 

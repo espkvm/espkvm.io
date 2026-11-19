@@ -16,6 +16,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.request
 
@@ -85,8 +86,18 @@ def send(list_file):
         }).encode("utf-8")
         req = urllib.request.Request(ENDPOINT, data=body, method="POST", headers={
             "Content-Type": "application/json; charset=utf-8"})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            print("indexnow: sent %d URLs, HTTP %d" % (len(urls[i:i + 10000]), r.status))
+        # Right after a deploy the key file may not be on the CDN yet, and the
+        # engines answer 403 until they can fetch it. Wait and try again.
+        for wait in (60, 120, 240, 0):
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    print("indexnow: sent %d URLs, HTTP %d" % (len(urls[i:i + 10000]), r.status))
+                break
+            except urllib.error.HTTPError as e:
+                print("indexnow: HTTP %d %s" % (e.code, e.read()[:300].decode("utf-8", "replace")))
+                if e.code not in (403, 429) or not wait:
+                    sys.exit(1)
+                time.sleep(wait)
 
 
 if __name__ == "__main__":
