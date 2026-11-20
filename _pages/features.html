@@ -140,7 +140,7 @@ output: features/index.html
         <tr><td>Keyboard, mouse and media keys</td><td>The device is a USB keyboard and mouse to the target. Works in a BIOS, with no drivers.</td></tr>
         <tr><td>Absolute and relative pointer</td><td>Absolute: the click lands where you aimed, whatever the target's mouse acceleration. Relative for the few programs that need it.</td></tr>
         <tr><td>Alt+Tab, Ctrl+W, the Windows key</td><td>Reach the target in Chrome and Edge, in full screen with control taken. Firefox and Safari give a page no way to catch them.</td></tr>
-        <tr><td>Paste text</td><td>Typed out as key presses, with a keyboard layout: US English, Russian, Czech, Ukrainian, Lithuanian.</td></tr>
+        <tr><td>Paste text <span class="tag tag-new">new</span></td><td>Typed out as key presses, with the target's keyboard layout: one of 21, Western European ones with dead keys included. Where Windows and Linux differ, the target's OS decides.</td></tr>
         <tr><td>Phone and tablet</td><td>A touch trackpad and an on-screen keyboard, with a short tick under the finger on Android. Pinch to zoom in on a small part of the screen. The screen stays on while the picture plays.</td></tr>
         <tr><td>Fn keyboard <span class="tag tag-new">new</span></td><td>F1-F12, Esc, Enter, the arrows and the media keys (volume, tracks, a laptop's screen brightness) on one on-screen layout. Media keys on your own keyboard reach the target too, when your OS lets them through.</td></tr>
         <tr><td>Command palette <span class="tag tag-new">new</span></td><td>Ctrl+K or Ctrl+Shift+P, then a few letters: a panel, a key combination, a macro, a runbook or one setting by its name. Enter runs it.</td></tr>
@@ -173,6 +173,7 @@ output: features/index.html
         <tr><td>Boot from a URL <span class="tag tag-new">new</span></td><td>Paste a link and the target boots the image straight from the web server. Nothing is copied to the card, and the image can be bigger than it. The server has to support HTTP Range requests.</td></tr>
         <tr><td>Boot from this computer <span class="tag tag-new">new</span></td><td>Pick a file in the console and the target reads it from the browser tab as it boots. Nothing is uploaded first. The tab has to stay open.</td></tr>
         <tr><td>Drop a file <span class="tag tag-new">new</span></td><td>Drop a file on the picture and it goes onto the card. A text file dropped on the other half is typed on the target.</td></tr>
+        <tr><td>Pick the image on the box <span class="tag tag-new">new</span></td><td>The menu on the status screen lists the images on the card. Pick one with the buttons and the target sees it, and a Media page on the screen shows which image is in the drive.</td></tr>
         <tr><td>Download onto the card</td><td>Paste a link and the device downloads the image itself.</td></tr>
         <tr><td>The whole card as a disk</td><td>The target sees the card itself, read-write.</td></tr>
       </table>
@@ -266,6 +267,7 @@ output: features/index.html
         <tr><td>Thermal protection</td><td>Halves the frame rate when the chip is warm, and stops encoding when it is hot until it cools.</td></tr>
         <tr><td>A clock that survives a restart</td><td>Optional: a DS3231 or a similar chip on the capture board's I2C bus, found by itself.</td></tr>
         <tr><td>A small status display</td><td>Optional: an I2C OLED or a round GC9A01 with the address, the link and the capture.</td></tr>
+        <tr><td>The console in your language <span class="tag tag-new">new</span></td><td>Each browser picks its own, and the device can keep one for all of them, sign-in page included. No translations yet: they can be made in the demo, see <a href="/translations/">translations</a>.</td></tr>
         <tr><td>Diagnostics and a live log</td><td>Memory, temperatures, the network and the capture, and the device's own log as it happens.</td></tr>
       </table>
     </div>

@@ -36,7 +36,7 @@ ESP-KVM is tested on a real Mini: the picture, Ethernet and updates over the net
 - Sound over USB: the Mini offers the target a USB speaker, since its HDMI sound is not wired. Turn it on in Settings, Audio.
 - The 240x240 screen, switched on from the first boot for the address and the status.
 - The top button (SW3): a press shows the next page on the screen. Holding it turns the screen off or on.
-- The bottom button (SW2): a press opens a menu on the screen, for power on over USB, Wake-on-LAN, a screenshot, a restart and more. Held at start-up it resets the password.
+- The bottom button (SW2): a press opens a menu on the screen, for power on over USB, Wake-on-LAN, picking the image on the card, a screenshot, a restart and more. Held at start-up it resets the password.
 - Both buttons can do something else in Settings, Buttons.
 
 ## What ESP-KVM adds
