@@ -20,38 +20,42 @@ output: translations/index.html
     margin: 18px 0 28px;
   }
 
-  .lang .credits {
-    grid-column: 1 / -1;
-    margin: 0;
-    overflow-wrap: anywhere;
-  }
+  /* One language: name and how much is done on one line, a thin bar, who
+     translated it, and small actions. */
   .lang {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 8px 16px;
-    align-items: center;
+    gap: 6px 16px;
+    align-items: baseline;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 14px 18px;
     background: var(--bg-raised);
   }
 
-  .lang h2 {
-    margin: 0;
-    font-size: 1.15rem;
+  .lang .name {
+    font-weight: 700;
+    font-size: 1.1rem;
   }
 
   .lang .code {
     color: var(--faint);
     font-family: var(--mono);
     font-size: 0.85rem;
+    font-weight: 400;
     margin-left: 6px;
+  }
+
+  .lang .pct {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--muted, var(--faint));
   }
 
   .lang .bar {
     grid-column: 1 / -1;
-    height: 6px;
-    border-radius: 3px;
+    height: 4px;
+    border-radius: 2px;
     background: var(--bg-soft);
     overflow: hidden;
   }
@@ -62,10 +66,21 @@ output: translations/index.html
     background: var(--accent);
   }
 
+  .lang .meta {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted, var(--faint));
+    overflow-wrap: anywhere;
+  }
+
   .lang .actions {
+    grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-start;
     gap: 8px;
+    margin-top: 4px;
   }
 
   .viewer {
@@ -291,38 +306,40 @@ output: translations/index.html
         list.forEach(function (l) {
           var pct = Math.max(0, Math.min(100, Number(l.percent) || 0));
           var card = el("div", "lang");
-          var head = el("div");
-          var h = el("h2", "", l.name);
-          h.appendChild(el("span", "code", l.code));
-          head.appendChild(h);
+          var name = el("div", "name", l.name);
+          name.appendChild(el("span", "code", l.code));
+          card.appendChild(name);
+          card.appendChild(el("div", "pct", pct + "%"));
+          var bar = el("div", "bar");
+          var fill = el("span");
+          fill.style.width = pct + "%";
+          bar.appendChild(fill);
+          card.appendChild(bar);
           var done = Number(l.translated), total = Number(l.total);
-          head.appendChild(el("span", "note", total > 0 && done >= 0
-            ? done + " of " + total + " strings translated (" + pct + "%)"
-            : pct + "% translated"));
-          card.appendChild(head);
-          var actions = el("div", "actions");
-          var b = el("button", "btn", "View");
-          b.type = "button";
-          b.addEventListener("click", function () { view(l); });
-          actions.appendChild(b);
-          var dl = link("Download", BASE + encodeURIComponent(l.code) + ".json");
-          dl.setAttribute("download", l.code + ".json");
-          actions.appendChild(dl);
-          actions.appendChild(link("Edit in the demo", DEMO + "?lang=" + encodeURIComponent(l.code) + "&edit=1", true));
-          card.appendChild(actions);
+          var meta = [];
+          if (total > 0 && done >= 0) meta.push(done + " of " + total + " strings");
           var names = Array.isArray(l.translators)
             ? l.translators.filter(function (x) { return typeof x === "string" && x.trim(); })
             : [];
           if (names.length) {
             var by = names.join(", ");
             try { by = new Intl.ListFormat("en", { type: "conjunction" }).format(names); } catch (e) {}
-            card.appendChild(el("p", "note credits", "Translated by " + by));
+            meta.push("translated by " + by);
           }
-          var bar = el("div", "bar");
-          var fill = el("span");
-          fill.style.width = pct + "%";
-          bar.appendChild(fill);
-          card.appendChild(bar);
+          if (meta.length) card.appendChild(el("p", "meta", meta.join(", ")));
+          var actions = el("div", "actions");
+          var b = el("button", "btn btn-sm", "View");
+          b.type = "button";
+          b.addEventListener("click", function () { view(l); });
+          actions.appendChild(b);
+          var dl = link("Download", BASE + encodeURIComponent(l.code) + ".json");
+          dl.className = "btn btn-sm";
+          dl.setAttribute("download", l.code + ".json");
+          actions.appendChild(dl);
+          var ed = link("Edit in the demo", DEMO + "?lang=" + encodeURIComponent(l.code) + "&edit=1", true);
+          ed.className = "btn btn-sm btn-primary";
+          actions.appendChild(ed);
+          card.appendChild(actions);
           langs.appendChild(card);
         });
       })
