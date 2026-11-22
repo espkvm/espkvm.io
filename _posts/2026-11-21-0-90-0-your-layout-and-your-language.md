@@ -30,7 +30,7 @@ The device can also keep one language of its own. Every browser that has not pic
 
 A language file is checked every time the console loads it. One that is not a language file at all is refused. A bad line, such as one with a placeholder the English does not have, is left out and shows in English.
 
-Right now the console has no translation into any language. That is where I need help.
+~~Right now the console has no translation into any language.~~ Belarusian came in [0.91.0](/blog/0-91-0-an-rk628-driver-for-hdmi-adapters/). More are where I need help.
 
 ## Translate it into your language
 

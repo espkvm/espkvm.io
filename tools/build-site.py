@@ -955,6 +955,10 @@ def tile(item):
     elif m.get("kind") == "device" or item["section"] == "modules":
         status = ('<span class="cat-status untested">Untested</span>' if untested
                   else '<span class="cat-status">Tested</span>')
+    elif untested:
+        # A capture board is shown as tested by default; one nobody has run
+        # (the RK628 adapters) has to say so on its tile too.
+        status = '<span class="cat-status untested">Untested</span>'
     chips = "".join('<span class="cat-chip">%s</span>' % html.escape(label)
                     for _, label in feats)
     keys = " ".join([k for k, _ in feats] + ([] if untested or planned else ["tested"]))
