@@ -19,7 +19,7 @@ The C790 does the job for me. But some people already have an RK628 adapter, or 
 - **The same EDID choices** as the TC358743, the monitor name included.
 - **Sound over I2S**, wired to the P4 like the C790's.
 - **HDMI-CEC** through the chip's own controller, if the board wires the CEC pin to it. Whether these boards do, I do not know.
-- **A rev 3.x ESP32-P4 only.** The chip sends only YUV422, and the images for rev 1.x boards capture RGB888. On a rev 1.x board the log says so and the picture stays off.
+- ~~**A rev 3.x ESP32-P4 only.** The chip sends only YUV422, and the images for rev 1.x boards capture RGB888. On a rev 1.x board the log says so and the picture stays off.~~ Since [0.91.1](https://github.com/espkvm/espkvm/releases/tag/v.0.91.1) a rev 1.x board takes it too, MJPEG only.
 
 It is written from what Rockchip's own Linux driver does. That driver is GPL, so I took the facts from it and no code.
 

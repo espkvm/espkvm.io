@@ -12,7 +12,7 @@ spec.Input: HDMI
 spec.15-pin ribbon: no; a 22-to-15-pin ribbon for a board with the wide connector
 spec.22-pin ribbon: yes (0.5 mm), wired for four lanes; ESP-KVM uses two
 spec.24-pin ribbon (M5Stack): no
-spec.ESP32-P4: rev 3.x only; the chip sends YUV422 and rev 1.x images capture RGB888
+spec.ESP32-P4: rev 3.x; rev 1.x with MJPEG only from 0.91.1 (the chip sends only YUV422)
 spec.HDMI audio: I2S header, wired to the P4 like the C790's; never tried
 spec.HDMI-CEC: through the chip's own controller, if the board wires the pin; never tried
 spec.Size: 45 x 30 mm
@@ -29,6 +29,6 @@ The WarpKVM team published three RK628 boards as open hardware, under CERN-OHL-S
 ## Good to know
 
 - **RK628H, not RK628D.** The design takes either chip. This driver knows only the F/H generation: an RK628D is found, named in the log and left alone.
-- **A rev 3.x ESP32-P4.** The RK628 sends only YUV422, and the images for rev 1.x boards capture RGB888.
+- **MJPEG only on a rev 1.x ESP32-P4, from 0.91.1.** The RK628 sends only YUV422, and before chip rev 3.0 the H.264 encoder needs RGB. The same path, tried with a TC358743 sent to YUV422, gives about 7 fps at 1080p.
 
 The photo is WarpKVM's, from their repository (CERN-OHL-S-2.0).

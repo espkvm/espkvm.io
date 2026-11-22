@@ -12,7 +12,7 @@ spec.Input: HDMI
 spec.15-pin ribbon: yes (1.0 mm, the Pi 4 kind), two lanes
 spec.22-pin ribbon: no; a 15-to-22-pin ribbon for a board with the narrow connector
 spec.24-pin ribbon (M5Stack): no
-spec.ESP32-P4: rev 3.x only; the chip sends YUV422 and rev 1.x images capture RGB888
+spec.ESP32-P4: rev 3.x; rev 1.x with MJPEG only from 0.91.1 (the chip sends only YUV422)
 spec.HDMI audio: I2S, wired to the P4 like the C790's; never tried
 spec.HDMI-CEC: through the chip's own controller, if the board wires the pin; never tried
 spec.Size: 30 x 65 mm
@@ -30,5 +30,5 @@ The adapter also has a wide 31-pin four-lane connector for 4K30. The ESP32-P4 ha
 ## Good to know
 
 - **The reset line.** The adapter takes the chip's reset from pin 5 of the 15-pin connector, the camera's GPIO line. A board that holds that pin low keeps the chip in reset, and then the log says nothing answered on the capture bus. The board's schematic shows what that pin does.
-- **A rev 3.x ESP32-P4.** The RK628 sends only YUV422, and the images for rev 1.x boards capture RGB888.
+- **MJPEG only on a rev 1.x ESP32-P4, from 0.91.1.** The RK628 sends only YUV422, and before chip rev 3.0 the H.264 encoder needs RGB. The same path, tried with a TC358743 sent to YUV422, gives about 7 fps at 1080p.
 - **Two lanes, 1080p.** A 4K source is scaled down to 1080p on the chip.
