@@ -237,8 +237,9 @@ output: compare/index.html
   </section>
 
   <p class="checked">
-    Checked on 25 September 2026, PicoKVM on 11 November 2026, against each
-    vendor's own pages. The sources are at the bottom. No prices here - they
+    Checked on 25 September 2026, PicoKVM on 11 November 2026, and the rows
+    from audio to recording on 25 November 2026, against each vendor's own
+    pages and issue trackers. The sources are at the bottom. No prices here - they
     change by the month and by the shop.
   </p>
 
@@ -301,6 +302,16 @@ output: compare/index.html
           <td>Yes</td>
         </tr>
         <tr>
+          <td>Audio</td>
+          <td class="us">HDMI audio on boards with a TC358743 capture chip. On the others the device can be the target's USB speaker</td>
+          <td>Yes</td>
+          <td>Yes, experimental since September 2026</td>
+          <td>Yes</td>
+          <td>No (Pro: yes)</td>
+          <td></td>
+          <td>Yes</td>
+        </tr>
+        <tr>
           <td>ATX power control</td>
           <td class="us">Yes, with an optocoupler module you wire</td>
           <td>Included</td>
@@ -331,6 +342,26 @@ output: compare/index.html
           <td>Guides for Tailscale, ZeroTier, WireGuard and others, set up by you</td>
         </tr>
         <tr>
+          <td>HTTPS certificate</td>
+          <td class="us win">Let's Encrypt over Tailscale, or your own certificate</td>
+          <td>Let's Encrypt</td>
+          <td>Let's Encrypt is an open request</td>
+          <td></td>
+          <td></td>
+          <td>Let's Encrypt is not planned</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>VNC</td>
+          <td class="us">Yes, H.264 or Tight, over TLS. Off by default</td>
+          <td>Yes</td>
+          <td>Not yet, an open request</td>
+          <td></td>
+          <td>Not yet, an open request</td>
+          <td>TigerVNC only, says GL.iNet</td>
+          <td></td>
+        </tr>
+        <tr>
           <td>Home Assistant</td>
           <td class="us">Built in, over MQTT discovery: sensors, power buttons, a camera, runbooks</td>
           <td>Community integration (HACS)</td>
@@ -351,6 +382,46 @@ output: compare/index.html
           <td></td>
         </tr>
         <tr>
+          <td>The target's serial port</td>
+          <td class="us">In the browser, wired to the device's pins, and its log over the network</td>
+          <td></td>
+          <td>Serial console add-on</td>
+          <td></td>
+          <td>Two channels</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>IPMI and Redfish</td>
+          <td class="us">Redfish: power, and booting an image at a URL. No IPMI</td>
+          <td>IPMI and Redfish</td>
+          <td>Redfish is an open request</td>
+          <td></td>
+          <td>IPMI</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Several machines</td>
+          <td class="us win">A KVM switch in front of them, picked in the console: one wire to its button, or a TESmart switch over the network</td>
+          <td>Multiport KVM switches, and its own PiKVM Switch</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Recording</td>
+          <td class="us win">Video, screenshots, a dashcam and timelapse, on the microSD card</td>
+          <td></td>
+          <td>Not yet, an open request</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
           <td>Source code</td>
           <td class="us win">Apache-2.0</td>
           <td>GPL-3.0</td>
@@ -363,7 +434,7 @@ output: compare/index.html
       </tbody>
     </table>
   </div>
-  <p class="legend"><b>&#x2713;&#xFE0E;</b> marks where ESP-KVM is ahead. The video row is where the others are ahead; on Home Assistant and text the approaches differ more than they rank. An empty cell means the vendor's pages do not say either way.</p>
+  <p class="legend"><b>&#x2713;&#xFE0E;</b> marks where ESP-KVM is ahead. The video row is where the others are ahead. On Home Assistant and text the approaches differ more than they rank. An empty cell means the vendor's pages do not say either way.</p>
 
   <h2>When to pick something else</h2>
   <p>
@@ -515,6 +586,7 @@ output: compare/index.html
     <li>TinyPilot: <a href="https://tinypilotkvm.com/products/tinypilot-voyager-3" rel="noopener">tinypilotkvm.com (Voyager 3)</a>, <a href="https://github.com/tiny-pilot/tinypilot" rel="noopener">github.com/tiny-pilot/tinypilot</a></li>
     <li>Home Assistant: <a href="https://github.com/jetkvm/kvm/pull/1195" rel="noopener">JetKVM MQTT and discovery (PR #1195)</a>, <a href="https://github.com/adamoutler/pikvm-homeassistant-integration" rel="noopener">PiKVM integration</a>, <a href="https://github.com/chmajster/Home-Assistant-nanokvm-rest-api" rel="noopener">NanoKVM integration</a>, <a href="https://github.com/heidrickla/ha-glkvm" rel="noopener">GL.iNet Comet integration</a></li>
     <li>Text off the screen: <a href="https://docs.pikvm.org/ocr/" rel="noopener">PiKVM OCR</a>, <a href="https://jetkvm.com/blog/introducing-jetkvm-os-services" rel="noopener">JetKVM OS Services</a></li>
+    <li>Audio, VNC, certificates, serial, IPMI, several machines, recording: <a href="https://docs.pikvm.org/audio/" rel="noopener">PiKVM audio</a>, <a href="https://docs.pikvm.org/vnc/" rel="noopener">PiKVM VNC</a>, <a href="https://docs.pikvm.org/letsencrypt/" rel="noopener">PiKVM Let's Encrypt</a>, <a href="https://docs.pikvm.org/ipmi/" rel="noopener">PiKVM IPMI and Redfish</a>, <a href="https://docs.pikvm.org/multiport/" rel="noopener">PiKVM multiport</a>, <a href="https://docs.pikvm.org/switch/" rel="noopener">PiKVM Switch</a>, <a href="https://github.com/jetkvm/kvm/pull/1475" rel="noopener">JetKVM audio (PR #1475)</a>, <a href="https://github.com/jetkvm/kvm/issues/170" rel="noopener">JetKVM ACME request</a>, <a href="https://github.com/jetkvm/kvm/issues/117" rel="noopener">JetKVM VNC request</a>, <a href="https://jetkvm.com/docs/extensions/serial-console" rel="noopener">JetKVM serial console</a>, <a href="https://github.com/jetkvm/kvm/issues/36" rel="noopener">JetKVM Redfish request</a>, <a href="https://github.com/jetkvm/kvm/issues/966" rel="noopener">JetKVM recording request</a>, <a href="https://github.com/jetkvm/mini#readme" rel="noopener">JetKVM Mini README</a>, <a href="https://github.com/sipeed/NanoKVM#readme" rel="noopener">NanoKVM README</a>, <a href="https://github.com/sipeed/NanoKVM/issues/181" rel="noopener">NanoKVM VNC request</a>, <a href="https://github.com/gl-inet/glkvm/issues/12" rel="noopener">GL.iNet Let's Encrypt</a>, <a href="https://github.com/gl-inet/glkvm/issues/27" rel="noopener">GL.iNet VNC</a>, <a href="https://wiki.luckfox.com/Luckfox-PicoKVM/Introduction" rel="noopener">PicoKVM audio</a></li>
     <li>BliKVM: <a href="https://github.com/blikvm/blikvm" rel="noopener">github.com/blikvm/blikvm</a>, <a href="https://www.blikvm.com/docs/device-guides/BliKVM-v4-datasheet/" rel="noopener">BliKVM v4 datasheet</a></li>
     <li>ESP-KVM: the numbers are from the <a href="https://github.com/espkvm/espkvm#readme">README</a>, measured on hardware.</li>
   </ul>
